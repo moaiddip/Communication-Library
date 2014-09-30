@@ -11,7 +11,6 @@ package Protocols;
  */
 public class Items {
     boolean newOrOld=true;
-    int priority=1;
     boolean answered=false;//testing: true, default: false
     String message;
     String reply;
@@ -36,11 +35,5 @@ public class Items {
     }
     public synchronized Boolean getState(){
         return newOrOld;
-    }
-    public int getPriority(){
-        return priority;
-    }
-    public void setPriority(int prio){
-        this.priority=prio;
     }
 }
