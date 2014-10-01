@@ -15,9 +15,9 @@ ComProt
 		3.1.1: The query or the message as a string, which can be retrieved using getMsg().
 		3.1.2: If the query has been answered, as a Boolean. Can be returned using isAnswered(). Default = False
 		3.1.3: If the message is old or new, as a Boolean. Can be returned using getState(). New (Default)= True, Old = False
-		3.1.4: The reply as a string, which can be set using the method putReply(). Default=null
+		3.1.4: The reply as a string, which can be set using the method setReply(). Default=null
 4. Implementing a Queue for the server to process the queries:
-	4.1: The hashmap should be retrieved from the WriteQueue class using returnList().
+	4.1: The hashmap should be retrieved from the WriteQueue class using returnMap().
 	4.2: When picking the next query to process, one needs to make sure that isAnswered is false (unanswered) and getState is true        (new).
 	4.3: To implement priorities, one needs to quickly go through the queries, save the first found of each priority level and           then skip the rest until a higher priority level is found which should also be saved. In the end execute the one with the        highest priority level.
 	4.4: Repeat 4.3 every time one needs to process a new query.
