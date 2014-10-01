@@ -68,7 +68,7 @@ public final class WriteQueue {
     //between processing queues
     public void prepareQueries() {
         if (totalQueries == 5) {
-            System.out.println("Duplicating list.");
+            System.out.println("Preparing queries to be processed.");
             totalQueries = 0;
             synchronized (secondList) {
                 for (int i = 0; i < items.size(); i++) {
