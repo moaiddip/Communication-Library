@@ -49,18 +49,23 @@ public final class WriteQueue {
         return items.get(count - 1);
     }
 
-    //checks if a message at position pos was processed.
+    //returns an Items instance at the given position in the hashmap
     public Items getObject(int pos) {
         return items.get(pos);
 
     }
-
+    //returns the static list, synchronized because it is accessed by multiple threads
     public HashMap returnMap() {
         synchronized (secondList) {
             return secondList;
         }
     }
-
+    //puts the new unanswered queries in a second hashmap that is
+    //handled by the other half of the queue
+    //one queue is responsible for queueing the queries
+    //the other is responsible for processing them
+    //this is done to reduce how much the waiting time might vary
+    //between processing queues
     public void replace() {
         if (more == 5) {
             System.out.println("Duplicating list.");
