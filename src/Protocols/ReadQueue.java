@@ -12,9 +12,9 @@ import java.util.HashMap;
  * @author Sozos
  */
 public class ReadQueue {
-
+    
     HashMap<Integer, Items> items;
-
+    //Gets the reference of the static queue from the other half of the queue implementation
     public ReadQueue() {
         WriteQueue que = new WriteQueue();
         items = que.returnMap();

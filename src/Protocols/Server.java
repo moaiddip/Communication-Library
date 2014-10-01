@@ -28,7 +28,8 @@ public class Server extends Thread {
     String keystorePass;
     String keypass;
     //The main server, creates the serversocket and then create a multithreaded
-    //listener, needs a port
+    //listener, needs a port, an int indicating if the server should only be run locally
+    //the name of the keystore, the pass of the keystore and the pass of the key
     public Server(int port, int locality, String keystore, String keystorePass, String keypass) {
         this.port = port;
         this.locality=locality;
