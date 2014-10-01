@@ -19,7 +19,8 @@ import javax.net.ssl.TrustManagerFactory;
  * @author Sozos Assias
  */
 public class Client {
-    //Creates and returns the socket
+    //Creates and returns the socket, requires the destination address
+    //the destination port, the name of the truststore and the pass of the truststore
     public SSLSocket createSocket(String url, int port, String truststore, String trustpass) {
 
         String string;
