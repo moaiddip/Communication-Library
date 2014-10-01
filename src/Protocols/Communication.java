@@ -56,19 +56,19 @@ public class Communication extends Thread {
                         //Answered, then it sends the answer back to the client
 
                         System.out.println("Putting query in queue.");
-                        Items pos;
+                        Items object;
                         synchronized (que) {
-                            pos = que.putMsg(string);
+                            object = que.putMsg(string);
                         }
-                        synchronized (pos) {
-                            while (pos.isAnswered() == false) {
-                                pos.wait();
+                        synchronized (object) {
+                            while (object.isAnswered() == false) {
+                                object.wait();
                             }
                         }
                         System.out.println("Answer processed, preparing to reply.");
 
-                        string = pos.getReply();
-                        pos.makeOld();
+                        string = object.getReply();
+                        object.makeOld();
 
                         System.out.println("Replying.");
                         out.println(string);

@@ -46,25 +46,25 @@ public class Server extends Thread {
             //Password to the keystore
             char[] passphrase = keystorePass.toCharArray();
             //Load the keystore class and then load the keystore file using the password
-            KeyStore ks = KeyStore.getInstance("JKS");
-            ks.load(new FileInputStream(keystore), passphrase);
+            KeyStore store = KeyStore.getInstance("JKS");
+            store.load(new FileInputStream(keystore), passphrase);
             //KeyManagerFactory initiated to get the key from the keystore using the key's password
-            KeyManagerFactory kmf
+            KeyManagerFactory factory
                     = KeyManagerFactory.getInstance("SunX509");
-            kmf.init(ks, keypass.toCharArray());
+            factory.init(store, keypass.toCharArray());
             //Set security to TSL and initiate using the key we just recovered
-            SSLContext sc = SSLContext.getInstance("TLS");
-            sc.init(kmf.getKeyManagers(), null, null);
+            SSLContext context = SSLContext.getInstance("TLS");
+            context.init(factory.getKeyManagers(), null, null);
             //Create a socket factory and then create a socket using the factory
-            SSLServerSocketFactory ssf = sc.getServerSocketFactory();   
+            SSLServerSocketFactory socketfactory = context.getServerSocketFactory();   
             SSLServerSocket sslserversocket;
             if (locality==0){
             sslserversocket
-                    = (SSLServerSocket) ssf.createServerSocket(port);
+                    = (SSLServerSocket) socketfactory.createServerSocket(port);
             }
             else{
                 sslserversocket
-                    = (SSLServerSocket) ssf.createServerSocket(port,0, InetAddress.getByName(null));
+                    = (SSLServerSocket) socketfactory.createServerSocket(port,0, InetAddress.getByName(null));
             }
             System.out.println("Server Socket created. Listening.");
             //Creates the que and listens to the socket.

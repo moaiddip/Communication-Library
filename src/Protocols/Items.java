@@ -42,7 +42,7 @@ public class Items {
         newOrOld=!newOrOld;
     }
     //sets the reply message and sets the answered boolean to true (answered)
-    public synchronized void putReply(String message){
+    public synchronized void setReply(String message){
         reply=message;
         answered=true;
     }

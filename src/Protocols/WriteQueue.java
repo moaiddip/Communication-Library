@@ -16,24 +16,24 @@ public final class WriteQueue {
     public WriteQueue() {
 
     }
-    int count = 0;
+    int hashTail = 0;
     static HashMap<Integer, Items> items = new HashMap<>();
     static HashMap<Integer, Items> secondList = new HashMap<>();
-    int more = 0;
+    int totalQueries = 0;
     //int[] prio = {0, 0, 0, 0};
     //int[] prioVal = {1, 2, 5, 10};
 
     //puts a new message in the queue
-    public Items putMsg(String msg) {
+    public Items putMsg(String message) {
         //looks for an old message to replace
-        int found = 0;
+        int placed = 0;
         for (int i = 0; i < items.size(); i++) {
-            if (found == 0) {
+            if (placed == 0) {
                 if (items.get(i).getState() == false) {
-                    items.get(i).create(msg);
-                    more++;
-                    found = 1;
-                    replace();
+                    items.get(i).create(message);
+                    totalQueries++;
+                    placed = 1;
+                    prepareQueries();
                     System.out.println(i);
                     return items.get(i);
                 }
@@ -41,12 +41,12 @@ public final class WriteQueue {
 
         }
         //creates new entry
-        items.put(count, new Items());
-        items.get(count).create(msg);
-        count++;
-        more++;
-        replace();
-        return items.get(count - 1);
+        items.put(hashTail, new Items());
+        items.get(hashTail).create(message);
+        hashTail++;
+        totalQueries++;
+        prepareQueries();
+        return items.get(hashTail - 1);
     }
 
     //returns an Items instance at the given position in the hashmap
@@ -66,28 +66,25 @@ public final class WriteQueue {
     //the other is responsible for processing them
     //this is done to reduce how much the waiting time might vary
     //between processing queues
-    public void replace() {
-        if (more == 5) {
+    public void prepareQueries() {
+        if (totalQueries == 5) {
             System.out.println("Duplicating list.");
-            more = 0;
+            totalQueries = 0;
             synchronized (secondList) {
                 for (int i = 0; i < items.size(); i++) {
-                    Boolean done = false;
                     if (secondList.isEmpty()) {
                         secondList.put(secondList.size() + 1, items.get(i));
                     } else {
-                        int found = 0;
+                        int placed = 0;
                         for (int j = 0; j < items.size(); j++) {
-                            if (found == 0) {
+                            if (placed == 0) {
                                 if (items.get(i).getState() == false) {
                                     secondList.replace(j, items.get(i));
-                                    done = true;
-                                    found=1;
+                                    placed=1;
                                 }
                             }
                         }
-
-                        if (!done) {
+                        if (placed==0) {
                             secondList.put(secondList.size() + 1, items.get(i));
                         }
                     }

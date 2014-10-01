@@ -24,7 +24,7 @@ public class Sender {
     }
     //Send method gets the message you want to send and the destination and
     //sends the message
-    public String send(String msg, SSLSocket sslsocket) {
+    public String send(String message, SSLSocket sslsocket) {
         try {
             //Creates I/O
             PrintWriter out
@@ -34,12 +34,12 @@ public class Sender {
             System.out.println("Created I/O.");
             System.out.println("Sending message.");
             //Sends message
-            out.println(msg);
+            out.println(message);
             System.out.println("Waiting for a reply.");
             //Waits for a reply and returns it to the caller class
-            while ((msg = in.readLine()) != null) {
+            while ((message = in.readLine()) != null) {
                 System.out.println("Reply received.");
-                return msg;
+                return message;
                 //System.out.println(msg);
             }
         } catch (Exception ex) {

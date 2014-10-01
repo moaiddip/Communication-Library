@@ -26,23 +26,23 @@ public class Client {
         String string;
         try {
             System.out.println("Creating socket.");
-            SSLContext ctx;
-            KeyStore ks;
+            SSLContext context;
+            KeyStore keystore;
             //Passphrase = the password to the truststore
             char[] passphrase = trustpass.toCharArray();
             //Get TrustManagerFactory
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            TrustManagerFactory trustfactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             //Set security to TLS
-            ctx = SSLContext.getInstance("TLS");
+            context = SSLContext.getInstance("TLS");
             //Get the keystore
-            ks = KeyStore.getInstance("JKS");
+            keystore = KeyStore.getInstance("JKS");
             //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
-            ks.load(new FileInputStream(truststore), passphrase);
-            tmf.init(ks);
+            keystore.load(new FileInputStream(truststore), passphrase);
+            trustfactory.init(keystore);
             //initialize the context using the keys you got from TMF
-            ctx.init(null, tmf.getTrustManagers(), null);
+            context.init(null, trustfactory.getTrustManagers(), null);
             //create the factory and then use the factory to create the socket
-            SSLSocketFactory factory = ctx.getSocketFactory();
+            SSLSocketFactory factory = context.getSocketFactory();
             SSLSocket sslsocket = (SSLSocket) factory.createSocket(url, port);
             System.out.println("Socket created.");
             return sslsocket;
