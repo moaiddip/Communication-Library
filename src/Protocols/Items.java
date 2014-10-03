@@ -21,7 +21,7 @@ public class Items {
     String message;
     String reply;
     String address;
-    //sets the query in the items instance
+    //sets the query of a client and the clients ip address in the items instance
     public void create(String message, String address){
         this.message=message;
         this.address=address;
@@ -54,6 +54,7 @@ public class Items {
     public synchronized Boolean getState(){
         return newOrOld;
     }
+    //returns the ip address of the client who issued the query
     public String getAddress(){
         return address;
     }

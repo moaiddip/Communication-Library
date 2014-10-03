@@ -41,6 +41,7 @@ public class Communication extends Thread {
                     new InputStreamReader(sslsocket.getInputStream()));
             System.out.println("Initialized I/O.");
             String string;
+            //Gets the ip address of the client.
             String remoteSocketAddress = sslsocket.getRemoteSocketAddress().toString();
             //System.out.println(remoteSocketAddress);
             
