@@ -41,6 +41,9 @@ public class Communication extends Thread {
                     new InputStreamReader(sslsocket.getInputStream()));
             System.out.println("Initialized I/O.");
             String string;
+            String remoteSocketAddress = sslsocket.getRemoteSocketAddress().toString();
+            //System.out.println(remoteSocketAddress);
+            
             //Listens in a loop until asked to exit
             while (listener) {
                 //Get string from the input stream
@@ -58,7 +61,7 @@ public class Communication extends Thread {
                         System.out.println("Putting query in queue.");
                         Items object;
                         synchronized (que) {
-                            object = que.putMsg(string);
+                            object = que.putMsg(string, remoteSocketAddress);
                         }
                         synchronized (object) {
                             while (object.isAnswered() == false) {

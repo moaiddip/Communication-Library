@@ -24,13 +24,13 @@ public final class WriteQueue {
     //int[] prioVal = {1, 2, 5, 10};
 
     //puts a new message in the queue
-    public Items putMsg(String message) {
+    public Items putMsg(String message, String address) {
         //looks for an old message to replace
         int placed = 0;
         for (int i = 0; i < items.size(); i++) {
             if (placed == 0) {
                 if (items.get(i).getState() == false) {
-                    items.get(i).create(message);
+                    items.get(i).create(message, address);
                     totalQueries++;
                     placed = 1;
                     prepareQueries();
@@ -42,7 +42,7 @@ public final class WriteQueue {
         }
         //creates new entry
         items.put(hashTail, new Items());
-        items.get(hashTail).create(message);
+        items.get(hashTail).create(message, address);
         hashTail++;
         totalQueries++;
         prepareQueries();
