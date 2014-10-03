@@ -20,9 +20,11 @@ public class Items {
     boolean answered=false;//testing: true, default: false
     String message;
     String reply;
+    String address;
     //sets the query in the items instance
-    public void create(String message){
+    public void create(String message, String address){
         this.message=message;
+        this.address=address;
     }
     //checks if the query is answered, synchronized because it can be accessed
     //and changed by multiple threads
@@ -51,5 +53,8 @@ public class Items {
     //to the client ONLY
     public synchronized Boolean getState(){
         return newOrOld;
+    }
+    public String getAddress(){
+        return address;
     }
 }
