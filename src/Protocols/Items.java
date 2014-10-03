@@ -32,7 +32,7 @@ public class Items {
 
     //checks if the query is answered, synchronized because it can be accessed
     //and changed by multiple threads
-
+    
     public Boolean isAnswered() {
         synchronized (this) {
             return answered;
