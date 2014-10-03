@@ -72,10 +72,11 @@ public class Communication extends Thread {
                         System.out.println("Answer processed, preparing to reply.");
 
                         string = object.getReply();
-                        object.makeOld();
+                        
 
                         System.out.println("Replying.");
                         out.println(string);
+                        object.makeOld();
                     }
 
                 }
