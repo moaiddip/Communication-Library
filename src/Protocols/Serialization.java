@@ -18,13 +18,14 @@ public class Serialization {
     String answer = null;
 
     public String ardSend(String msg, String port) {
-        serialPort = new SerialPort("COM1"); 
+        serialPort = new SerialPort(port); 
         try {
             serialPort.openPort();//Open port
             serialPort.setParams(9600, 8, 1, 0);//Set params
             int mask = SerialPort.MASK_RXCHAR + SerialPort.MASK_CTS + SerialPort.MASK_DSR;//Prepare mask
             serialPort.setEventsMask(mask);//Set mask
             serialPort.addEventListener(new SerialPortReader());//Add SerialPortEventListener
+            serialPort.writeBytes(msg.getBytes());
             synchronized(answer){
                 while(!answer.contains("!")){
                     answer.wait();
