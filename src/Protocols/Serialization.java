@@ -4,11 +4,11 @@
  * and open the template in the editor.
  */
 package Protocols;
-
 /**
  *
  * @author Sozos
  */
-public class Serialization {
-    //
+public class Serialization{
+    
+            
 }
