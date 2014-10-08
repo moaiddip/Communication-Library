@@ -15,7 +15,7 @@ import jssc.SerialPortException;
 public class ArdConnector {
 
     SerialPort serialPort;
-    String answer = null;
+    String answer = "empty";
 
     public String ardSend(String msg, String port) {
         serialPort = new SerialPort(port); 
