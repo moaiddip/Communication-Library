@@ -51,7 +51,7 @@ public class AltConnector {
         }
         try {
             CommPort commPort = portId.open(this.getClass().getName(), 6000);
-            SerialPort serialPort = (SerialPort) commPort;
+            serialPort = (SerialPort) commPort;
             serialPort.setSerialPortParams(4800, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_ODD);
             InputStream in = serialPort.getInputStream();
             OutputStream out = serialPort.getOutputStream();
@@ -77,6 +77,7 @@ public class AltConnector {
             this.in = in;
         }
 
+        @Override
         public void run() {
             byte[] buffer = new byte[200];
             int len = -1;
@@ -91,7 +92,7 @@ public class AltConnector {
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Logger.getLogger(AltConnector.class.getName()).log(Level.SEVERE, null, e);
             }
         }
     }
@@ -106,6 +107,7 @@ public class AltConnector {
             this.message = message;
         }
 
+        @Override
         public void run() {
             try {
 
@@ -116,7 +118,7 @@ public class AltConnector {
                     Thread.sleep(1500);
                 }
             } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
+                Logger.getLogger(AltConnector.class.getName()).log(Level.SEVERE, null, e);
             }
         }
     }
