@@ -62,13 +62,7 @@ public class AltConnector {
                     answer.wait();
                 }
             }
-        } catch (PortInUseException ex) {
-            Logger.getLogger(AltConnector.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedCommOperationException ex) {
-            Logger.getLogger(AltConnector.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(AltConnector.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
+        } catch (PortInUseException | UnsupportedCommOperationException | IOException | InterruptedException ex) {
             Logger.getLogger(AltConnector.class.getName()).log(Level.SEVERE, null, ex);
         }
 
