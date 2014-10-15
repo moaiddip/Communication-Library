@@ -10,20 +10,29 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * An example of the second half of the realtime queue implementation
+ * Needs to be implemented by the Servers group.
+ * Accessed by the server part that connects to the database to process queries.
  * @author Sozos
  */
 public class ReadQueue {
 
-    HashMap<Integer, Items> items;
+    HashMap<Integer, Item> items;
 
-    //Gets the reference of the static queue from the other half of the queue implementation
+    /**
+     * Receives a reference of WriteQueue and creates a reference of the second hashmap in the WriteQueue.
+     * The second hashmap is the one used to process queries.
+     */
     public ReadQueue() {
         WriteQueue que = new WriteQueue();
         items = que.returnMap();
     }
-
-    public Items getNext() { //First come, first served queue; Will change to give priority.
+    /**
+     * Gets the next item on the list.
+     * First in, First out implementation.
+     * @return An Item instance.
+     */
+    public Item getNext() { //First come, first served queue; Will change to give priority.
         synchronized (items) {
             while (items.isEmpty()) {
                 try {

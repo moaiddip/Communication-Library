@@ -8,7 +8,10 @@ package Protocols;
 import java.util.HashMap;
 
 /**
- *
+ * The first half of the realtime queue.
+ * Accessed by the Communication class to query a command.
+ * Implemented automatically.
+ * Only the method ReturnMap() should be used.
  * @author Sozos Assias
  */
 public final class WriteQueue {
@@ -17,14 +20,23 @@ public final class WriteQueue {
 
     }
     int hashTail = 0;
-    static HashMap<Integer, Items> items = new HashMap<>();
-    static HashMap<Integer, Items> secondList = new HashMap<>();
+    static HashMap<Integer, Item> items = new HashMap<>();
+    static HashMap<Integer, Item> secondList = new HashMap<>();
     int totalQueries = 0;
-    //int[] prio = {0, 0, 0, 0};
-    //int[] prioVal = {1, 2, 5, 10};
+
 
     //puts a new message in the queue
-    public Items putMsg(String message, String address) {
+    /**
+     * Creates an instance of the Item class, puts the message and ip address of the client
+     * that queried the message in the instance created, then it puts the instance in a hashmap.
+     * When 5 (NOT FINAL, NEEDS STRESS TESTING) Item class instances are created, the entries are
+     * copied into another hashmap to be used by the Server team to process the queries.
+     * Implemented automatically, should NOT be called.
+     * @param message The query in a string.
+     * @param address The ip address of the client with the query.
+     * @return Returns the instance of the Item class created.
+     */
+    public Item putMsg(String message, String address) {
         //looks for an old message to replace
         int placed = 0;
         for (int i = 0; i < items.size(); i++) {
@@ -41,31 +53,40 @@ public final class WriteQueue {
 
         }
         //creates new entry
-        items.put(hashTail, new Items());
+        items.put(hashTail, new Item());
         items.get(hashTail).create(message, address);
         hashTail++;
         totalQueries++;
         prepareQueries();
         return items.get(hashTail - 1);
     }
-
-    //returns an Items instance at the given position in the hashmap
-    public Items getObject(int pos) {
+    /**
+     * Returns an Item instance at a given position in the hashmap.
+     * Should not be called.
+     * @param pos The position in the hashmap as an int.
+     * @return An Item class instance.
+     */
+    public Item getObject(int pos) {
         return items.get(pos);
 
     }
-    //returns the static list, synchronized because it is accessed by multiple threads
+    /**
+     * Returns the static hashmap that has the queries that need to be processed.
+     * Should be used by the Servers group.
+     * The method is already synchronized.
+     * @return A hashmap(Integer, Item).
+     */
     public HashMap returnMap() {
         synchronized (secondList) {
             return secondList;
         }
     }
-    //puts the new unanswered queries in a second hashmap that is
-    //handled by the other half of the queue
-    //one queue is responsible for queueing the queries
-    //the other is responsible for processing them
-    //this is done to reduce how much the waiting time might vary
-    //between processing queues
+    /**
+     * Puts the new unaswered queries in the second hashmap that should be handled
+     * by the second half of the realtime queue.
+     * Reduces how much the waiting time for an answer might vary.
+     * Should not be called.
+     */
     public void prepareQueries() {
         if (totalQueries == 5) {
             System.out.println("Preparing queries to be processed.");

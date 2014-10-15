@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import javax.net.ssl.SSLSocket;
 
 /**
- *
+ * This is the class used by the Server class to handle communication with each client.
  * @author Sozos Assias
  */
 public class Communication extends Thread {
@@ -22,13 +22,16 @@ public class Communication extends Thread {
     SSLSocket sslsocket;
     WriteQueue que;
 
-    //Communication between a client and the server happens here
-    //Gets the socket linked to that client and the queue from the main server class
+    /**
+     * Handles communication with each client. It extends Thread.
+     * Implemented automatically in the Server class. Should not be called.
+     * @param sslsocket Requires an sslsocket with an established connection.
+     * @param que Requires a shared instance of the WriteQueue class.
+     */
     public Communication(SSLSocket sslsocket, WriteQueue que) {
         this.sslsocket = sslsocket;
         this.que = que;
     }
-
     @Override
     public void run() {
 
@@ -60,7 +63,7 @@ public class Communication extends Thread {
                         //Answered, then it sends the answer back to the client
 
                         System.out.println("Putting query in queue.");
-                        Items object;
+                        Item object;
                         synchronized (que) {
                             object = que.putMsg(string, remoteSocketAddress);
                         }

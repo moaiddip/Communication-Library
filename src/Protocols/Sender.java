@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import javax.net.ssl.SSLSocket;
 
 /**
- *
+ * The class used by the client to send and receive messages.
  * @author Sozos Assias
  */
 public class Sender {
@@ -22,8 +22,14 @@ public class Sender {
 
     public Sender() {
     }
-    //Send method gets the message you want to send and the destination and
-    //sends the message
+
+    /**
+     * Sends a message to the other end of an established connection and awaits for an answer.
+     * It is recommended that this method is called from a thread other than the main thread.
+     * @param message The message to send.
+     * @param sslsocket An already established connection using SSLSocket.
+     * @return Returns a String with the reply from the server.
+     */
     public String send(String message, SSLSocket sslsocket) {
         try {
             //Creates I/O

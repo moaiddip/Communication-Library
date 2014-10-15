@@ -18,7 +18,11 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+/**
+ * This is the class used to connect to the arduino.
+ * It is still in development.
+ * @author Sozos Assias
+ */
 public class AltConnector {
 
     SerialPort serialPort;
@@ -33,7 +37,13 @@ public class AltConnector {
      * Default bits per second for COM port.
      */
     final int DATA_RATE = 9600;
-
+    /**
+     * Sends a message to a serial port and waits for an answer.
+     * Should be implemented in a Thread.
+     * @param msg The message as a string.
+     * @param port The port as a string.
+     * @return Returns a String with the answer from the serial port.
+     */
     public String ardSend(String msg, String port) {
         CommPortIdentifier portId = null;
         Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();

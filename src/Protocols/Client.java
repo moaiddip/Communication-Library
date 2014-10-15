@@ -15,12 +15,18 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 /**
- *
+ * This is the class used to create an SSLSocket for the client.
  * @author Sozos Assias
  */
 public class Client {
-    //Creates and returns the socket, requires the destination address
-    //the destination port, the name of the truststore and the pass of the truststore
+    /**
+     * Creates and returns an SSLSocket.
+     * @param url The string of the destination address' ip.
+     * @param port The destination's port.
+     * @param truststore A string indicating the path and name of the truststore.
+     * @param trustpass A string with the password to the truststore.
+     * @return An SSLSocket or null in case of an error.
+     */
     public SSLSocket createSocket(String url, int port, String truststore, String trustpass) {
 
         String string;

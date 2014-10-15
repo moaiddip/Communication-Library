@@ -17,7 +17,8 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 
 /**
- *
+ * The class used to create an SSLServerSocket and listen to connection requests.
+ * This is the server.
  * @author Sozos Assias
  */
 public class Server extends Thread {
@@ -27,9 +28,15 @@ public class Server extends Thread {
     String keystore;
     String keystorePass;
     String keypass;
-    //The main server, creates the serversocket and then create a multithreaded
-    //listener, needs a port, an int indicating if the server should only be run locally
-    //the name of the keystore, the pass of the keystore and the pass of the key
+    /**
+     * Creates an SSLServerSocket and then it creates a loop that creates new threads
+     * of the Communication class, every time a new connection is established.
+     * @param port The port that the server should listen to, as an int.
+     * @param locality An int, either 0 or 1, indicating if the server should run remotely and locally or only locally respectively.
+     * @param keystore The path to and the name of a keystore.
+     * @param keystorePass The password of the keystore.
+     * @param keypass The password of the private key in the keystore.
+     */
     public Server(int port, int locality, String keystore, String keystorePass, String keypass) {
         this.port = port;
         this.locality=locality;
