@@ -12,8 +12,8 @@ import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
 /**
- * This is another class used to connect to the Arduino.
- * This class should not be used, it is not working.
+ * This is another class used to connect to the Arduino.This class should not be used, it is not working.
+ * 
  * @author Sozos Assias
  */
 public class ArdConnector {

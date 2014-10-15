@@ -10,9 +10,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Accessed by the server part that connects to the database to process queries.
  * An example of the second half of the realtime queue implementation
  * Needs to be implemented by the Servers group.
- * Accessed by the server part that connects to the database to process queries.
+ * 
  * @author Sozos
  */
 public class ReadQueue {

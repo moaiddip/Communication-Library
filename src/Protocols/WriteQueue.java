@@ -8,8 +8,9 @@ package Protocols;
 import java.util.HashMap;
 
 /**
- * The first half of the realtime queue.
  * Accessed by the Communication class to query a command.
+ * The first half of the realtime queue.
+ * 
  * Implemented automatically.
  * Only the method ReturnMap() should be used.
  * @author Sozos Assias

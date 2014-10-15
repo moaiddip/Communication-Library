@@ -8,7 +8,7 @@ package Protocols;
 import java.security.SecureRandom;
 
 /**
- * Used to create a single session key for a client.
+ * Used to create a single session key for a client, issued by the Server after a login.
  * NOT YET FINAL.
  * @author Sozos
  */
