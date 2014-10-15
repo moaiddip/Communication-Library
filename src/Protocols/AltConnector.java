@@ -69,7 +69,7 @@ public class AltConnector {
         return answer;
     }
 
-    public class SerialReader implements Runnable {
+    class SerialReader implements Runnable {
 
         InputStream in;
 
@@ -97,7 +97,7 @@ public class AltConnector {
         }
     }
 
-    public static class SerialWriter implements Runnable {
+    class SerialWriter implements Runnable {
 
         OutputStream out;
         String message;
