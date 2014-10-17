@@ -63,17 +63,18 @@ public class AltConnector {
             CommPort commPort = portId.open(this.getClass().getName(), 6000);
             serialPort = (SerialPort) commPort;
             serialPort.setSerialPortParams(4800, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_ODD);
-            InputStream in = serialPort.getInputStream();
+            //InputStream in = serialPort.getInputStream();
             OutputStream out = serialPort.getOutputStream();
-            (new Thread(new SerialReader(in))).start();
+            //(new Thread(new SerialReader(in))).start();
             (new Thread(new SerialWriter(out, msg))).start();
-            synchronized(answer){
-                while("empty".equals(answer)){
-                    answer.wait();
-                }
-            }
-        } catch (PortInUseException | UnsupportedCommOperationException | IOException | InterruptedException ex) {
+//            synchronized(answer){
+//                while("empty".equals(answer)){
+//                    answer.wait();
+//                }
+//            }
+        } catch (PortInUseException | UnsupportedCommOperationException | IOException ex) {
             Logger.getLogger(AltConnector.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
         }
 
         return answer;
@@ -93,13 +94,13 @@ public class AltConnector {
             int len = -1;
             try {
                 while ((len = this.in.read(buffer)) > -1) {
-                    if (Arrays.toString(buffer).contains("!")) {
+                    
                         synchronized (answer) {
                             answer = Arrays.toString(buffer);
                             answer.notify();
                         }
                         break;
-                    }
+                    
                 }
             } catch (IOException e) {
                 Logger.getLogger(AltConnector.class.getName()).log(Level.SEVERE, null, e);
@@ -126,6 +127,7 @@ public class AltConnector {
                     this.out.write(message.getBytes());
                     this.out.flush();
                     Thread.sleep(1500);
+                    out.close();
                 }
             } catch (IOException | InterruptedException e) {
                 Logger.getLogger(AltConnector.class.getName()).log(Level.SEVERE, null, e);

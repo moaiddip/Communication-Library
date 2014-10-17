@@ -37,15 +37,17 @@ public class Communication extends Thread {
 
         Boolean listener = true;
         try {
+            //Gets the ip address of the client.
+            String remoteSocketAddress = sslsocket.getRemoteSocketAddress().toString();
             //Create I/O for the socket
+            System.out.println(remoteSocketAddress+" connected.");
             PrintWriter out
                     = new PrintWriter(sslsocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(sslsocket.getInputStream()));
             System.out.println("Initialized I/O.");
             String string;
-            //Gets the ip address of the client.
-            String remoteSocketAddress = sslsocket.getRemoteSocketAddress().toString();
+            
             //System.out.println(remoteSocketAddress);
             
             //Listens in a loop until asked to exit

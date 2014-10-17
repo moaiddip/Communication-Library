@@ -6,6 +6,7 @@
 package Protocols;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,6 +42,9 @@ public class Client {
             //Set security to TLS
             context = SSLContext.getInstance("TLS");
             //Get the keystore
+            //keystore = KeyStore.getInstance("BKS");
+            //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
+            //InputStream trustStoreStream = context.getResources().openRawResource(R.raw.server);
             keystore = KeyStore.getInstance("JKS");
             //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
             keystore.load(new FileInputStream(truststore), passphrase);
