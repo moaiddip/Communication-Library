@@ -6,7 +6,8 @@
 package Protocols;
 
 /**
- *
+ * The serial class establishes a connection with the arduino and adds a listener to the serial port.
+ * It is responsible for all the commands sent and received.
  * @author Sozos
  */
 import java.io.BufferedReader;
