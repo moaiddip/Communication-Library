@@ -20,10 +20,10 @@ public final class WriteQueue {
 
     long firstTime;
     long secondTime;
-    int replaceInt=1;
+    int replaceInt = 1;
 
     public WriteQueue(long curTime) {
-        this.firstTime = curTime/1000;
+        this.firstTime = curTime / 1000;
         secondTime = firstTime;
         CalculateTime time = new CalculateTime();
         time.run();
@@ -37,7 +37,6 @@ public final class WriteQueue {
     Calendar cal;
 
     //puts a new message in the queue
-
     /**
      * Creates an instance of the Item class, puts the message and ip address of
      * the client that queried the message in the instance created, then it puts
@@ -54,7 +53,7 @@ public final class WriteQueue {
         //looks for an old message to replace
         cal = Calendar.getInstance();
         firstTime = secondTime;
-        secondTime = cal.getTimeInMillis()/1000;
+        secondTime = cal.getTimeInMillis() / 1000;
         int placed = 0;
         for (int i = 0; i < items.size(); i++) {
             if (placed == 0) {
@@ -142,12 +141,11 @@ public final class WriteQueue {
         public void run() {
             while (true) {
                 Calendar cal2 = Calendar.getInstance();
-                long past = cal2.getTimeInMillis()/1000;
+                long past = cal2.getTimeInMillis() / 1000;
 
-                if (((secondTime - past) % 3 <1) && replaceInt > 1) {
+                if (((secondTime - past) % 3 < 1) && replaceInt > 1) {
                     replaceInt--;
-                }
-                else if (firstTime - secondTime < 3 && firstTime != secondTime) {
+                } else if (firstTime - secondTime < 3 && firstTime != secondTime) {
                     replaceInt++;
                 }
             }
@@ -158,34 +156,36 @@ public final class WriteQueue {
 
         @Override
         public void run() {
-            synchronized (items) {
-                if (totalQueries == replaceInt) {
-                    System.out.println("Preparing queries to be processed.");
-                    totalQueries = 0;
-                    synchronized (secondList) {
-                        for (int i = 0; i < items.size(); i++) {
-                            if (secondList.isEmpty()) {
-                                secondList.put(secondList.size() + 1, items.get(i));
-                            } else {
-                                int placed = 0;
-                                for (int j = 0; j < items.size(); j++) {
-                                    if (placed == 0) {
-                                        if (items.get(i).getState() == false) {
-                                            secondList.replace(j, items.get(i));
-                                            placed = 1;
+            while (true) {
+                synchronized (items) {
+                    if (totalQueries == replaceInt) {
+                        System.out.println("Preparing queries to be processed.");
+                        totalQueries = 0;
+                        synchronized (secondList) {
+                            for (int i = 0; i < items.size(); i++) {
+                                if (secondList.isEmpty()) {
+                                    secondList.put(secondList.size() + 1, items.get(i));
+                                } else {
+                                    int placed = 0;
+                                    for (int j = 0; j < items.size(); j++) {
+                                        if (placed == 0) {
+                                            if (items.get(i).getState() == false) {
+                                                secondList.replace(j, items.get(i));
+                                                placed = 1;
+                                            }
                                         }
                                     }
-                                }
-                                if (placed == 0) {
-                                    secondList.put(secondList.size() + 1, items.get(i));
+                                    if (placed == 0) {
+                                        secondList.put(secondList.size() + 1, items.get(i));
+                                    }
                                 }
                             }
+                            secondList.notify();
                         }
-                        secondList.notify();
                     }
                 }
             }
         }
-    }
 
+    }
 }
