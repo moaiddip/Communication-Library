@@ -102,39 +102,10 @@ public final class WriteQueue {
         }
     }
 
+    
     /**
-     * Puts the new unaswered queries in the second hashmap that should be
-     * handled by the second half of the realtime queue. Reduces how much the
-     * waiting time for an answer might vary. Should not be called.
+     * Calculates when should the queries be copied onto the second hashmap to begin processing.
      */
-    public void prepareQueries() {
-        if (totalQueries == 5) {
-            System.out.println("Preparing queries to be processed.");
-            totalQueries = 0;
-            synchronized (secondList) {
-                for (int i = 0; i < items.size(); i++) {
-                    if (secondList.isEmpty()) {
-                        secondList.put(secondList.size() + 1, items.get(i));
-                    } else {
-                        int placed = 0;
-                        for (int j = 0; j < items.size(); j++) {
-                            if (placed == 0) {
-                                if (items.get(i).getState() == false) {
-                                    secondList.replace(j, items.get(i));
-                                    placed = 1;
-                                }
-                            }
-                        }
-                        if (placed == 0) {
-                            secondList.put(secondList.size() + 1, items.get(i));
-                        }
-                    }
-                }
-                secondList.notify();
-            }
-        }
-    }
-
     public class CalculateTime implements Runnable {
 
         @Override
@@ -151,7 +122,11 @@ public final class WriteQueue {
             }
         }
     }
-
+    /**
+     * Puts the new unaswered queries in the second hashmap that should be
+     * handled by the second half of the realtime queue. Reduces how much the
+     * waiting time for an answer might vary. Should not be called.
+     */
     public class Replace implements Runnable {
 
         @Override
