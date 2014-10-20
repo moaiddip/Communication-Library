@@ -26,9 +26,9 @@ public final class WriteQueue {
         this.firstTime = curTime / 1000;
         secondTime = firstTime;
         CalculateTime time = new CalculateTime();
-        time.run();
+        time.start();
         Replace replace = new Replace();
-        replace.run();
+        replace.start();
     }
     int hashTail = 0;
     static HashMap<Integer, Item> items = new HashMap<>();
@@ -51,30 +51,37 @@ public final class WriteQueue {
      */
     public Item putMsg(String message, String address) {
         //looks for an old message to replace
-        cal = Calendar.getInstance();
-        firstTime = secondTime;
-        secondTime = cal.getTimeInMillis() / 1000;
-        int placed = 0;
-        for (int i = 0; i < items.size(); i++) {
-            if (placed == 0) {
-                if (items.get(i).getState() == false) {
-                    items.get(i).create(message, address);
-                    totalQueries++;
-                    placed = 1;
-                    //prepareQueries();
-                    System.out.println(i);
-                    return items.get(i);
-                }
-            }
 
+        synchronized (items) {
+            cal = Calendar.getInstance();
+            firstTime = secondTime;
+            secondTime = cal.getTimeInMillis() / 1000;
+            int placed = 0;
+            if (firstTime - secondTime < 3 && firstTime != secondTime) {
+                replaceInt++;
+                System.out.println("Current replaceInt:" + replaceInt);
+            }
+            for (int i = 0; i < items.size(); i++) {
+                if (placed == 0) {
+                    if (items.get(i).getState() == false) {
+                        items.get(i).create(message, address);
+                        totalQueries++;
+                        placed = 1;
+                        //prepareQueries();
+                        System.out.println(i);
+                        return items.get(i);
+                    }
+                }
+
+            }
+            //creates new entry
+            items.put(hashTail, new Item());
+            items.get(hashTail).create(message, address);
+            hashTail++;
+            totalQueries++;
+            //prepareQueries();
+            return items.get(hashTail - 1);
         }
-        //creates new entry
-        items.put(hashTail, new Item());
-        items.get(hashTail).create(message, address);
-        hashTail++;
-        totalQueries++;
-        //prepareQueries();
-        return items.get(hashTail - 1);
     }
 
     /**
@@ -102,32 +109,34 @@ public final class WriteQueue {
         }
     }
 
-    
     /**
-     * Calculates when should the queries be copied onto the second hashmap to begin processing.
+     * Calculates when should the queries be copied onto the second hashmap to
+     * begin processing.
      */
-    public class CalculateTime implements Runnable {
+    public class CalculateTime extends Thread {
 
         @Override
         public void run() {
             while (true) {
-                Calendar cal2 = Calendar.getInstance();
-                long past = cal2.getTimeInMillis() / 1000;
+                synchronized (items) {
+                    Calendar cal2 = Calendar.getInstance();
+                    long past = cal2.getTimeInMillis() / 1000;
 
-                if (((secondTime - past) % 3 < 1) && replaceInt > 1) {
-                    replaceInt--;
-                } else if (firstTime - secondTime < 3 && firstTime != secondTime) {
-                    replaceInt++;
+                    if (((secondTime - past) % 3 < 1) && replaceInt > 1) {
+                        replaceInt--;
+                        System.out.println("Current replaceInt:" + replaceInt);
+                    }
                 }
             }
         }
     }
+
     /**
      * Puts the new unaswered queries in the second hashmap that should be
      * handled by the second half of the realtime queue. Reduces how much the
      * waiting time for an answer might vary. Should not be called.
      */
-    public class Replace implements Runnable {
+    public class Replace extends Thread {
 
         @Override
         public void run() {

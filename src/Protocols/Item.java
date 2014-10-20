@@ -34,6 +34,12 @@ public class Item {
     public void create(String message, String address) {
         this.message = message;
         this.address = address;
+        if(message.contains("test")){
+            answered=true;
+        }
+        if (answered){
+            reply=message;
+        }
     }
 
     /**
