@@ -8,6 +8,7 @@ package Protocols;
 import java.io.FileInputStream;
 import java.net.InetAddress;
 import java.security.KeyStore;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.net.ssl.KeyManagerFactory;
@@ -75,7 +76,8 @@ public class Server extends Thread {
             }
             System.out.println("Server Socket created. Listening.");
             //Creates the que and listens to the socket.
-            WriteQueue que = new WriteQueue();
+            Calendar cal = Calendar.getInstance();
+            WriteQueue que = new WriteQueue(cal.getTimeInMillis());
             while (listening) {
                 new Communication((SSLSocket)sslserversocket.accept(), que).start();
             }

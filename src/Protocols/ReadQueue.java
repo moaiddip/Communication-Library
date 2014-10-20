@@ -25,7 +25,7 @@ public class ReadQueue {
      * The second hashmap is the one used to process queries.
      */
     public ReadQueue() {
-        WriteQueue que = new WriteQueue();
+        WriteQueue que = new WriteQueue(1);
         items = que.returnMap();
     }
     /**
