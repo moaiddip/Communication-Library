@@ -6,8 +6,10 @@
 package Protocols;
 
 /**
- * The serial class establishes a connection with the arduino and adds a listener to the serial port.
- * It is responsible for all the commands sent and received.
+ * The serial class establishes a connection with the arduino and adds a
+ * listener to the serial port. It is responsible for all the commands sent and
+ * received.
+ *
  * @author Sozos
  */
 import java.io.BufferedReader;
@@ -60,9 +62,9 @@ public class SerialClass implements SerialPortEventListener {
                     SerialPort.DATABITS_8,
                     SerialPort.STOPBITS_1,
                     SerialPort.PARITY_NONE);
-            serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN
-                    | SerialPort.FLOWCONTROL_RTSCTS_OUT);
-
+            /*serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN
+             | SerialPort.FLOWCONTROL_RTSCTS_OUT);
+             */
             // open the streams
             input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
             output = serialPort.getOutputStream();
@@ -87,8 +89,17 @@ public class SerialClass implements SerialPortEventListener {
     public synchronized void serialEvent(SerialPortEvent oEvent) {
         if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
             try {
-                   ArdConnector.setInputLine(input.readLine()); 
-                   ArdConnector.setWorking(false);
+                String inputz;
+                while ((inputz = input.readLine()) != null) {
+
+                    System.out.println("Received: " + inputz);
+
+                    ArdConnector.setInputLine(inputz);
+                    System.out.println(ArdConnector.getInputLine());
+                    if (inputz == ArdConnector.getCommand()) {
+                        ArdConnector.setWorking(false);
+                    }
+                }
             } catch (Exception e) {
                 System.err.println(e.toString());
             }
@@ -100,6 +111,7 @@ public class SerialClass implements SerialPortEventListener {
         System.out.println("Sent: " + data);
         try {
             output.write(data.getBytes());
+            //output.flush();
         } catch (Exception e) {
             System.out.println("could not write to port");
         }

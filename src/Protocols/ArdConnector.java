@@ -16,7 +16,7 @@ public class ArdConnector extends Thread {
     public static OutputStream output;
     public static String port = "COM3";
     private static String inputLine = null;
-    private static String command;
+    private static String command="nocommand";
     private final static AtomicBoolean query = new AtomicBoolean(false);
 
     private final AtomicBoolean quit = new AtomicBoolean(false);
@@ -86,7 +86,7 @@ public class ArdConnector extends Thread {
      * Returns the answer from the arduino.
      * @return A string with the answer.
      */
-    public String getInputLine() {
+    public static String getInputLine() {
         return inputLine;
     }
     /**
@@ -104,6 +104,9 @@ public class ArdConnector extends Thread {
     public void setCommand(String aCommand) {
         command = aCommand;
         query.compareAndSet(false, true);
+    }
+    public static String getCommand(){
+        return command;
     }
 
 }
