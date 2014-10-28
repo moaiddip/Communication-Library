@@ -99,6 +99,9 @@ public class SerialClass implements SerialPortEventListener {
                     if (inputz == ArdConnector.getCommand()) {
                         ArdConnector.setWorking(false);
                     }
+                    else{
+                        //Laying the groundwork.
+                    }
                 }
             } catch (Exception e) {
                 System.err.println(e.toString());
