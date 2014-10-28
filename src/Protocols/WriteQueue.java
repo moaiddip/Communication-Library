@@ -7,6 +7,7 @@ package Protocols;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Accessed by the Communication class to query a command. The first half of the
@@ -17,6 +18,20 @@ import java.util.HashMap;
  * @author Sozos Assias
  */
 public final class WriteQueue {
+
+    /**
+     * @return the hasAddedCommands
+     */
+    public static AtomicBoolean getHasAddedCommands() {
+        return hasAddedCommands;
+    }
+
+    /**
+     * @param aHasAddedCommands the hasAddedCommands to set
+     */
+    public static void setHasAddedCommands(AtomicBoolean aHasAddedCommands) {
+        hasAddedCommands = aHasAddedCommands;
+    }
 
     long firstTime;
     long secondTime;
@@ -33,6 +48,7 @@ public final class WriteQueue {
     int hashTail = 0;
     static HashMap<Integer, Item> items = new HashMap<>();
     static HashMap<Integer, Item> secondList = new HashMap<>();
+    private static AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
     int totalQueries = 0;
     Calendar cal;
 
@@ -164,6 +180,7 @@ public final class WriteQueue {
                                     }
                                 }
                             }
+                            getHasAddedCommands().set(true);
                             secondList.notify();
                         }
                     }

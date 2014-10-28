@@ -24,6 +24,9 @@ public class Item {
     String message;
     String reply;
     String address;
+    private byte[] sessionKey;
+    private int userPrio=-1;
+    private int priority=-1;
 
     //sets the query of a client and the clients ip address in the items instance
     /**
@@ -104,5 +107,50 @@ public class Item {
      */
     public String getAddress() {
         return address;
+    }
+
+    /**
+     * @return the sessionKey
+     */
+    public byte[] getSessionKey() {
+        return sessionKey;
+    }
+
+    /**
+     * I do this.
+     * @param sessionKey the sessionKey to set
+     */
+    public void setSessionKey(byte[] sessionKey) {
+        this.sessionKey = sessionKey;
+    }
+
+    /**
+     * @return the userPrio
+     */
+    public int getUserPrio() {
+        return userPrio;
+    }
+
+    /**
+     * I do this.
+     * @param userPrio the userPrio to set
+     */
+    public void setUserPrio(int userPrio) {
+        this.userPrio = userPrio;
+    }
+
+    /**
+     * @return the priority
+     */
+    public int getPriority() {
+        return priority;
+    }
+
+    /**
+     * 
+     * @param priority the priority to set
+     */
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 }
