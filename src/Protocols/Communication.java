@@ -14,19 +14,24 @@ import java.util.logging.Logger;
 import javax.net.ssl.SSLSocket;
 
 /**
- * This is the class used by the Server class to handle communication with each client.
+ * This is the class used by the Server class to handle communication with each
+ * client.
+ *
  * @author Sozos Assias
  */
 public class Communication extends Thread {
+
     String remoteSocketAddress;
     SSLSocket sslsocket;
     WriteQueue que;
-    byte[] sessionKey=null;
-    int userPrio=-1;
+    String user=null;
+    byte[] sessionKey = null;
+    int userPrio = -1;
 
     /**
-     * Handles communication with each client. It extends Thread.
-     * Implemented automatically in the Server class. Should not be called.
+     * Handles communication with each client. It extends Thread. Implemented
+     * automatically in the Server class. Should not be called.
+     *
      * @param sslsocket Requires an sslsocket with an established connection.
      * @param que Requires a shared instance of the WriteQueue class.
      */
@@ -34,6 +39,7 @@ public class Communication extends Thread {
         this.sslsocket = sslsocket;
         this.que = que;
     }
+
     @Override
     public void run() {
 
@@ -42,16 +48,15 @@ public class Communication extends Thread {
             //Gets the ip address of the client.
             remoteSocketAddress = sslsocket.getRemoteSocketAddress().toString();
             //Create I/O for the socket
-            System.out.println(remoteSocketAddress+" connected.");
+            System.out.println(remoteSocketAddress + " connected.");
             PrintWriter out
                     = new PrintWriter(sslsocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(sslsocket.getInputStream()));
             System.out.println("Initialized I/O.");
             String string;
-            
+
             //System.out.println(remoteSocketAddress);
-            
             //Listens in a loop until asked to exit
             while (listener) {
                 //Get string from the input stream
@@ -70,6 +75,12 @@ public class Communication extends Thread {
                         Item object;
                         synchronized (que) {
                             object = que.putMsg(string, remoteSocketAddress, userPrio);
+                            if(userPrio!=-1){
+                                synchronized(object){
+                                    object.setUser(user);
+                                    object.setUserPrio(userPrio);
+                                }
+                            }
                         }
                         synchronized (object) {
                             while (object.isAnswered() == false) {
@@ -79,8 +90,8 @@ public class Communication extends Thread {
                         System.out.println("Answer processed, preparing to reply.");
 
                         string = object.getReply();
-                        if (sessionKey==null){
-                            sessionKey = object.getSessionKey();
+                        if (user == null) {
+                            user = object.getUser();
                             userPrio = object.getUserPrio();
                         }
 
@@ -95,7 +106,14 @@ public class Communication extends Thread {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
-                que.putMsg("logout:"+sessionKey.toString()+":", remoteSocketAddress, userPrio);
+                Item object;
+                synchronized (que) {
+                    object = que.putMsg("logout:", remoteSocketAddress, userPrio);
+                    synchronized (object) {
+                        object.setUser(user);
+                    }
+                }
+
                 sslsocket.close();
             } catch (IOException ex) {
                 Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);

@@ -24,6 +24,7 @@ public class Item {
     String message;
     String reply;
     String address;
+    private String user=null;
     private byte[] sessionKey={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     private int userPrio=-1;
     private int priority=-1;
@@ -153,6 +154,20 @@ public class Item {
      */
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    /**
+     * @return the user
+     */
+    public String getUser() {
+        return user;
+    }
+
+    /**
+     * @param user the user to set
+     */
+    public void setUser(String user) {
+        this.user = user;
     }
 
     /**
