@@ -16,7 +16,7 @@ public class ArdConnector extends Thread {
     public static OutputStream output;
     public static String port = "COM3";
     private static String inputLine = null;
-    private static String command="nocommand";
+    private static String command="no_command";
     private final static AtomicBoolean query = new AtomicBoolean(false);
 
     private final AtomicBoolean quit = new AtomicBoolean(false);
@@ -109,7 +109,7 @@ public class ArdConnector extends Thread {
         return command;
     }
     public static void setCommandDefault() {
-        command = "nocommand";
+        command = "no_command";
     }
 
 }
