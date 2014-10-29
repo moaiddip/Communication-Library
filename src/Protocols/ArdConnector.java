@@ -6,6 +6,7 @@
 package Protocols;
 
 import java.io.OutputStream;
+import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * This is the arduino server that sends commands to the arduino and waits for a response.
@@ -16,7 +17,7 @@ public class ArdConnector extends Thread {
     public static OutputStream output;
     public static String port = "COM3";
     private static String inputLine = null;
-    private static String command="no_command";
+    private static String command="no_command!";
     private final static AtomicBoolean query = new AtomicBoolean(false);
 
     private final AtomicBoolean quit = new AtomicBoolean(false);
@@ -42,7 +43,18 @@ public class ArdConnector extends Thread {
                     changePhase(false);
                     setWorking(true);
                     obj.writeData(command);
-                    //this.sleep(2500);
+                    Calendar cal = Calendar.getInstance();
+                    long time = cal.getTimeInMillis()/1000;
+                    while((cal.getTimeInMillis()/1000)-time>3||!getWorking());
+                    if(getWorking()){
+                        obj.writeData(command);
+                    }
+                    time = cal.getTimeInMillis()/1000;
+                    while((cal.getTimeInMillis()/1000)-time>3||!getWorking());
+                    if(getWorking()){
+                        setInputLine("no_answer!");
+                        setWorking(false);
+                    }
                 }
             }
             obj.close();
@@ -87,7 +99,9 @@ public class ArdConnector extends Thread {
      * @return A string with the answer.
      */
     public static String getInputLine() {
-        return inputLine;
+        String reply=inputLine;
+        inputLine=null;
+        return reply;
     }
     /**
      * Sets the answer, used by the SerialClass to edit the answer when received from the arduino.
@@ -109,7 +123,7 @@ public class ArdConnector extends Thread {
         return command;
     }
     public static void setCommandDefault() {
-        command = "no_command";
+        command = "no_command!";
     }
 
 }
