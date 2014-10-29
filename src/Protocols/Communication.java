@@ -101,7 +101,7 @@ public class Communication extends Thread {
                 Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
+        this.interrupt();
     }
 
 }
