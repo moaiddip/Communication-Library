@@ -56,6 +56,7 @@ public class ArdConnector extends Thread {
                         setWorking(false);
                     }
                 }
+                
             }
             obj.close();
         } catch (Exception e) {
