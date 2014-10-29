@@ -17,18 +17,40 @@ import javax.net.ssl.TrustManagerFactory;
 
 /**
  * This is the class used to create an SSLSocket for the client.
+ *
  * @author Sozos Assias
  */
 public class Client {
+
+    int phone;
+    String url;
+    int port;
+    String truststore;
+    String trustpass;
+    InputStream trustStore;
+
+    public Client(String url, int port, String truststore, String trustpass) {
+        phone = 0;
+        this.url = url;
+        this.port = port;
+        this.truststore = truststore;
+        this.trustpass = trustpass;
+    }
+
+    public Client(String url, int port, InputStream truststore, String trustpass) {
+        phone = 1;
+        this.url = url;
+        this.port = port;
+        this.trustStore = truststore;
+        this.trustpass = trustpass;
+    }
+
     /**
      * Creates and returns an SSLSocket.
-     * @param url The string of the destination address' ip.
-     * @param port The destination's port.
-     * @param truststore A string indicating the path and name of the truststore.
-     * @param trustpass A string with the password to the truststore.
+     *
      * @return An SSLSocket or null in case of an error.
      */
-    public SSLSocket createSocket(String url, int port, String truststore, String trustpass) {
+    public SSLSocket createSocket() {
 
         String string;
         try {
@@ -45,9 +67,15 @@ public class Client {
             //keystore = KeyStore.getInstance("BKS");
             //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
             //InputStream trustStoreStream = context.getResources().openRawResource(R.raw.server);
-            keystore = KeyStore.getInstance("JKS");
+            if (phone == 0) {
+                keystore = KeyStore.getInstance("JKS");
+                keystore.load(new FileInputStream(truststore), passphrase);
+            } else {
+                keystore = KeyStore.getInstance("BKS");
+                keystore.load(trustStore, passphrase);
+            }
             //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
-            keystore.load(new FileInputStream(truststore), passphrase);
+            
             trustfactory.init(keystore);
             //initialize the context using the keys you got from TMF
             context.init(null, trustfactory.getTrustManagers(), null);
