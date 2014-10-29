@@ -22,7 +22,7 @@ import gnu.io.SerialPortEventListener;
 import java.util.Enumeration;
 
 public class SerialClass implements SerialPortEventListener {
-
+    Boolean autocheck = false;
     public SerialPort serialPort;
     public static BufferedReader input;
     public static OutputStream output;
@@ -92,15 +92,24 @@ public class SerialClass implements SerialPortEventListener {
                 ArdQueue ard =new ArdQueue();
                 String inputz;
                 while ((inputz = input.readLine()) != null) {
-
+                    
                     System.out.println("Received: " + inputz);
 
-                    
+                    String[] parts = inputz.split("_");
+                    String[] parts2 = ArdConnector.getCommand().split("_");
                     System.out.println(ArdConnector.getInputLine());
-                    if (inputz == ArdConnector.getCommand()) {
+                    if ("autochkstart!".equals(inputz)){
+                        autocheck=true;
+                    }
+                    else if ("eol!".equals(inputz)){
+                        autocheck=false;
+                    }
+                    else if (parts[0].equals(parts2[0]) && !autocheck) {
                         ArdConnector.setInputLine(inputz);
                         ArdConnector.setCommandDefault();
                         ArdConnector.setWorking(false);
+                    }else if(autocheck){
+                        ard.putMsg(inputz);
                     }
                     else{
                         ard.putMsg(inputz);
