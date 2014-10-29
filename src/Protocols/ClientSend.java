@@ -16,11 +16,11 @@ import javax.net.ssl.SSLSocket;
  * The class used by the client to send and receive messages.
  * @author Sozos Assias
  */
-public class Sender {
+public class ClientSend {
 
 
 
-    public Sender() {
+    public ClientSend() {
     }
 
     /**
