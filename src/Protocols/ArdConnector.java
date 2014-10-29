@@ -108,5 +108,8 @@ public class ArdConnector extends Thread {
     public static String getCommand(){
         return command;
     }
+    public static void setCommandDefault() {
+        command = "nocommand";
+    }
 
 }

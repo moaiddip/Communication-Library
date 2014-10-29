@@ -89,18 +89,21 @@ public class SerialClass implements SerialPortEventListener {
     public synchronized void serialEvent(SerialPortEvent oEvent) {
         if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
             try {
+                ArdQueue ard =new ArdQueue();
                 String inputz;
                 while ((inputz = input.readLine()) != null) {
 
                     System.out.println("Received: " + inputz);
 
-                    ArdConnector.setInputLine(inputz);
+                    
                     System.out.println(ArdConnector.getInputLine());
                     if (inputz == ArdConnector.getCommand()) {
+                        ArdConnector.setInputLine(inputz);
+                        ArdConnector.setCommandDefault();
                         ArdConnector.setWorking(false);
                     }
                     else{
-                        //Laying the groundwork.
+                        ard.putMsg(inputz);
                     }
                 }
             } catch (Exception e) {
