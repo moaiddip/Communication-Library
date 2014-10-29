@@ -18,9 +18,11 @@ import javax.net.ssl.SSLSocket;
  * @author Sozos Assias
  */
 public class Communication extends Thread {
-
+    String remoteSocketAddress;
     SSLSocket sslsocket;
     WriteQueue que;
+    byte[] sessionKey=null;
+    int userPrio=-1;
 
     /**
      * Handles communication with each client. It extends Thread.
@@ -38,7 +40,7 @@ public class Communication extends Thread {
         Boolean listener = true;
         try {
             //Gets the ip address of the client.
-            String remoteSocketAddress = sslsocket.getRemoteSocketAddress().toString();
+            remoteSocketAddress = sslsocket.getRemoteSocketAddress().toString();
             //Create I/O for the socket
             System.out.println(remoteSocketAddress+" connected.");
             PrintWriter out
@@ -67,7 +69,7 @@ public class Communication extends Thread {
                         System.out.println("Putting query in queue.");
                         Item object;
                         synchronized (que) {
-                            object = que.putMsg(string, remoteSocketAddress);
+                            object = que.putMsg(string, remoteSocketAddress, userPrio);
                         }
                         synchronized (object) {
                             while (object.isAnswered() == false) {
@@ -77,7 +79,10 @@ public class Communication extends Thread {
                         System.out.println("Answer processed, preparing to reply.");
 
                         string = object.getReply();
-                        
+                        if (sessionKey==null){
+                            sessionKey = object.getSessionKey();
+                            userPrio = object.getUserPrio();
+                        }
 
                         System.out.println("Replying.");
                         out.println(string);
@@ -90,6 +95,7 @@ public class Communication extends Thread {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
+                que.putMsg("logout:"+sessionKey.toString()+":", remoteSocketAddress, userPrio);
                 sslsocket.close();
             } catch (IOException ex) {
                 Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);

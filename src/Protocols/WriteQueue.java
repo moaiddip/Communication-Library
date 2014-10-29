@@ -65,7 +65,7 @@ public final class WriteQueue {
      * @param address The ip address of the client with the query.
      * @return Returns the instance of the Item class created.
      */
-    public Item putMsg(String message, String address) {
+    public Item putMsg(String message, String address, int userPrio) {
         //looks for an old message to replace
 
         synchronized (items) {
@@ -80,7 +80,7 @@ public final class WriteQueue {
             for (int i = 0; i < items.size(); i++) {
                 if (placed == 0) {
                     if (items.get(i).getState() == false) {
-                        items.get(i).create(message, address);
+                        items.get(i).create(message, address, userPrio);
                         totalQueries++;
                         placed = 1;
                         //prepareQueries();
@@ -92,7 +92,7 @@ public final class WriteQueue {
             }
             //creates new entry
             items.put(hashTail, new Item());
-            items.get(hashTail).create(message, address);
+            items.get(hashTail).create(message, address, userPrio);
             hashTail++;
             totalQueries++;
             //prepareQueries();

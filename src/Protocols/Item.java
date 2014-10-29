@@ -24,7 +24,7 @@ public class Item {
     String message;
     String reply;
     String address;
-    private byte[] sessionKey;
+    private byte[] sessionKey={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     private int userPrio=-1;
     private int priority=-1;
 
@@ -34,9 +34,10 @@ public class Item {
      * @param message Requires a String with the message.
      * @param address Requires a String with an ip address.
      */
-    public void create(String message, String address) {
+    public void create(String message, String address, int userPrio) {
         this.message = message;
         this.address = address;
+        this.userPrio=userPrio;
         if(message.contains("test")){
             answered=true;
         }
@@ -153,4 +154,8 @@ public class Item {
     public void setPriority(int priority) {
         this.priority = priority;
     }
+
+    /**
+     * @return the user
+     */
 }
