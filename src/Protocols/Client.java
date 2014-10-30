@@ -5,9 +5,9 @@
  */
 package Protocols;
 
-import static Protocols.SerialClass.input;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -27,14 +27,13 @@ import javax.net.ssl.TrustManagerFactory;
  */
 public class Client extends Thread {
 
-    
     int phone;
     String url;
     int port;
     String truststore;
     String trustpass;
     InputStream trustStore;
-    static String message="no_command";
+    static String message = "no_command";
     static String reply;
     private static AtomicBoolean query = new AtomicBoolean(false);
 
@@ -63,7 +62,7 @@ public class Client extends Thread {
      * @return An SSLSocket or null in case of an error.
      */
     @Override
-    public void run(){
+    public void run() {
         String string;
         try {
             System.out.println("Creating socket.");
@@ -87,7 +86,7 @@ public class Client extends Thread {
                 keystore.load(trustStore, passphrase);
             }
             //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
-            
+
             trustfactory.init(keystore);
             //initialize the context using the keys you got from TMF
             context.init(null, trustfactory.getTrustManagers(), null);
@@ -101,64 +100,75 @@ public class Client extends Thread {
                     new InputStreamReader(sslsocket.getInputStream()));
             new Reader(in).start();
             new Writer(out).start();
-            
+            //send(message, sslsocket);
+
         } catch (Exception ex) {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    
-    class Reader extends Thread{
-        BufferedReader in;
-        Reader(BufferedReader in){
-            this.in=in;
-        }
-        @Override
-        public void run(){
-            while(!getQuit().get()){
-                try {
-                ACQueue cQue =new ACQueue();
-                String inputz;
-                while ((inputz = input.readLine()) != null) {
-                    
-                    System.out.println("Received: " + inputz);
+    class Reader extends Thread {
 
-                    String[] parts = inputz.split("_");
-                    String[] parts2 = message.split("_");
-                    if ((parts[0].equals(parts2[0])|| parts[0].equals("error"))) {
-                        reply=inputz;
-                        message="no_command";
-                        setWorking(false);
+        BufferedReader in;
+
+        Reader(BufferedReader in) {
+            this.in = in;
+        }
+
+        @Override
+        public void run() {
+            while (!getQuit().get()) {
+                ACQueue cQue = new ACQueue();
+                String inputz;
+                try {
+                    while ((inputz = in.readLine()) != null) {
+
+                        System.out.println("Received: " + inputz);
+
+                        String[] parts = inputz.split("_");
+                        String[] parts2 = message.split("_");
+                        if ((parts[0].equals(parts2[0]) || parts[0].equals("error"))) {
+                            reply = inputz;
+
+                            message = "no_command";
+                            setWorking(false);
+                        } else {
+                            cQue.putMsg(inputz);
+                        }
                     }
-                    else{
-                        cQue.putMsg(inputz);
+                } catch (Exception ex) {
+                    System.out.println("Not ready.");
+                    try {
+                        this.sleep(1000);
+                    } catch (InterruptedException ex1) {
+                        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex1);
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             }
         }
     }
-    class Writer extends Thread{
+
+    class Writer extends Thread {
+
         PrintWriter out;
-        Writer(PrintWriter out){
-            this.out=out;
+
+        Writer(PrintWriter out) {
+            this.out = out;
         }
+
         @Override
-        public void run(){
-            while(!getQuit().get()){
-                if(query.get()){
-                    System.out.println(query.get());
+        public void run() {
+            while (!getQuit().get()) {
+                if (query.get()) {
                     setQuery(false);
-                    System.out.println(query.get());
                     setWorking(true);
                     out.println(message);
                 }
             }
-            
+
         }
     }
+
     public AtomicBoolean getQuit() {
         return quit;
     }
@@ -166,6 +176,7 @@ public class Client extends Thread {
     public void setQuit(Boolean aQuit) {
         quit.compareAndSet(!aQuit, aQuit);
     }
+
     public static AtomicBoolean getQuery() {
         return query;
     }
@@ -181,11 +192,39 @@ public class Client extends Thread {
     public static void setWorking(Boolean aWorking) {
         working.compareAndSet(!aWorking, aWorking);
     }
+
     public void setMessage(String aMessage) {
         message = aMessage;
         query.compareAndSet(false, true);
     }
-    public static String getMessage(){
+
+    public static String getMessage() {
         return message;
+    }
+
+    public String send(String message, SSLSocket sslsocket) {
+        try {
+            //Creates I/O
+            PrintWriter out
+                    = new PrintWriter(sslsocket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(sslsocket.getInputStream()));
+            System.out.println("Created I/O.");
+            System.out.println("Sending message.");
+            //Sends message
+            out.println(message);
+            System.out.println("Waiting for a reply.");
+            //Waits for a reply and returns it to the caller class
+            while ((message = in.readLine()) != null) {
+                System.out.println("Reply received.");
+                System.out.println(message);
+                return message;
+
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //If an error occurs it will return null.
+        return null;
     }
 }
