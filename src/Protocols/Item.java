@@ -25,7 +25,6 @@ public class Item {
     String reply;
     String address;
     private String user=null;
-    private byte[] sessionKey={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     private int userPrio=-1;
     private int priority=-1;
 
@@ -110,22 +109,6 @@ public class Item {
     public String getAddress() {
         return address;
     }
-
-    /**
-     * @return the sessionKey
-     */
-    public byte[] getSessionKey() {
-        return sessionKey;
-    }
-
-    /**
-     * I do this.
-     * @param sessionKey the sessionKey to set
-     */
-    public void setSessionKey(byte[] sessionKey) {
-        this.sessionKey = sessionKey;
-    }
-
     /**
      * @return the userPrio
      */

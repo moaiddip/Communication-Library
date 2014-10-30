@@ -89,7 +89,7 @@ public class SerialClass implements SerialPortEventListener {
     public synchronized void serialEvent(SerialPortEvent oEvent) {
         if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
             try {
-                ArdQueue ard =new ArdQueue();
+                ACQueue ard =new ACQueue();
                 String inputz;
                 while ((inputz = input.readLine()) != null) {
                     

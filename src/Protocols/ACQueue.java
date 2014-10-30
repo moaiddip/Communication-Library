@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Laying the groundwork
  * @author Sozos
  */
-public class ArdQueue {
+public class ACQueue {
 
     /**
      * @return the hasAddedCommands
