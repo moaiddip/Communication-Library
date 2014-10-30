@@ -69,7 +69,7 @@ public class Communication extends Thread {
                         //Puts message in queue and waits until the message is
                         //Answered, then it sends the answer back to the client
 
-                        System.out.println("Putting query in queue.");
+                        
                         Item object;
                         synchronized (que) {
                             object = que.putMsg(string, remoteSocketAddress, userPrio);

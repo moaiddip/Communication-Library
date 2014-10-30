@@ -67,7 +67,7 @@ public final class WriteQueue {
      */
     public Item putMsg(String message, String address, int userPrio) {
         //looks for an old message to replace
-
+        System.out.println("Putting command in queue: " + message+" from: "+address+" with prio: "+userPrio);
         synchronized (items) {
             cal = Calendar.getInstance();
             firstTime = secondTime;
@@ -83,7 +83,7 @@ public final class WriteQueue {
                         items.get(i).create(message, address, userPrio);
                         totalQueries++;
                         placed = 1;
-                        System.out.println("Total queries: "+totalQueries);
+                        System.out.println("Total queries: " + totalQueries);
                         return items.get(i);
                     }
                 }
@@ -93,8 +93,8 @@ public final class WriteQueue {
             items.put(hashTail, new Item());
             items.get(hashTail).create(message, address, userPrio);
             hashTail++;
-            System.out.println("Total queries: "+totalQueries);
             totalQueries++;
+            System.out.println("Total queries: " + totalQueries);
             return items.get(hashTail - 1);
         }
     }
