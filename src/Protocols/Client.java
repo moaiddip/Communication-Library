@@ -135,7 +135,7 @@ public class Client extends Thread {
                     }
                 }
             } catch (Exception e) {
-                System.err.println(e.toString());
+                e.printStackTrace();
             }
             }
         }
@@ -149,7 +149,9 @@ public class Client extends Thread {
         public void run(){
             while(!getQuit().get()){
                 if(query.get()){
+                    System.out.println(query.get());
                     setQuery(false);
+                    System.out.println(query.get());
                     setWorking(true);
                     out.println(message);
                 }
@@ -161,8 +163,8 @@ public class Client extends Thread {
         return quit;
     }
 
-    public void setQuit(Boolean quit) {
-        query.compareAndSet(!quit, quit);
+    public void setQuit(Boolean aQuit) {
+        quit.compareAndSet(!aQuit, aQuit);
     }
     public static AtomicBoolean getQuery() {
         return query;
@@ -177,7 +179,7 @@ public class Client extends Thread {
     }
 
     public static void setWorking(Boolean aWorking) {
-        query.compareAndSet(!aWorking, aWorking);
+        working.compareAndSet(!aWorking, aWorking);
     }
     public void setMessage(String aMessage) {
         message = aMessage;
