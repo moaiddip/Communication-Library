@@ -34,7 +34,7 @@ public class Client extends Thread {
     String truststore;
     String trustpass;
     InputStream trustStore;
-    static String message;
+    static String message="no_command";
     static String reply;
     private static AtomicBoolean query = new AtomicBoolean(false);
 
@@ -178,5 +178,12 @@ public class Client extends Thread {
 
     public static void setWorking(Boolean aWorking) {
         query.compareAndSet(!aWorking, aWorking);
+    }
+    public void setMessage(String aMessage) {
+        message = aMessage;
+        query.compareAndSet(false, true);
+    }
+    public static String getMessage(){
+        return message;
     }
 }
