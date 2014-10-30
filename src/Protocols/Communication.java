@@ -27,7 +27,6 @@ public class Communication extends Thread {
     SSLSocket sslsocket;
     WriteQueue que;
     private String user = null;
-    byte[] sessionKey = null;
     int userPrio = -1;
 
     /**
@@ -55,7 +54,6 @@ public class Communication extends Thread {
             in = new BufferedReader(new InputStreamReader(sslsocket.getInputStream()));
             System.out.println("Initialized I/O.");
             String string;
-
             //System.out.println(remoteSocketAddress);
             //Listens in a loop until asked to exit
             while (listener) {
@@ -108,7 +106,7 @@ public class Communication extends Thread {
             try {
                 Item object;
                 synchronized (que) {
-                    object = que.putMsg("logout:", remoteSocketAddress, userPrio);
+                    object = que.putMsg("logout!", remoteSocketAddress, userPrio);
                     synchronized (object) {
                         object.setUser(getUser());
                     }
@@ -130,7 +128,7 @@ public class Communication extends Thread {
     }
     public void sendUpdate(String status){
         out.println(status);
-        System.out.println("Sent status update: "+status);
+        System.out.println("Sending status update: "+status);
     }
 
 }

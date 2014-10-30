@@ -6,8 +6,14 @@
 package Protocols;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.InetAddress;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -111,7 +117,7 @@ public class Server extends Thread {
                     }
                 }
             }
-        } catch (Exception ex) {
+        } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException | KeyManagementException ex) {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
         }
 

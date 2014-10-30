@@ -5,7 +5,6 @@
  */
 package Protocols;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -38,7 +37,6 @@ public class ACQueue {
     int hashTail = 0;
     private static HashMap<Integer, String> items = new HashMap<>();
     private static AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
-    int totalQueries = 0;
     public String putMsg(String message) {
         //looks for an old message to replace
         synchronized (getItems()) {
@@ -47,9 +45,8 @@ public class ACQueue {
                 if (placed == 0) {
                     if (getItems().get(i)== null) {
                         getItems().replace(i, message);
-                        totalQueries++;
                         placed = 1;
-                        System.out.println(i);
+                        System.out.println("Replacing command in the Arduino/Client queue");
                         getHasAddedCommands().set(true);
                         return getItems().get(i);
                     }
@@ -59,7 +56,7 @@ public class ACQueue {
             //creates new entry
             getItems().put(hashTail, message);
             hashTail++;
-            totalQueries++;
+            System.out.println("Putting new command in the Arduino/Client queue");
             getHasAddedCommands().set(true);
             return getItems().get(hashTail - 1);
         }

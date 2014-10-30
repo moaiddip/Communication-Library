@@ -16,10 +16,16 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import gnu.io.CommPortIdentifier;
+import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
+import gnu.io.UnsupportedCommOperationException;
+import java.io.IOException;
 import java.util.Enumeration;
+import java.util.TooManyListenersException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SerialClass implements SerialPortEventListener {
     Boolean autocheck = false;
@@ -74,8 +80,9 @@ public class SerialClass implements SerialPortEventListener {
             // add event listeners
             serialPort.addEventListener(this);
             serialPort.notifyOnDataAvailable(true);
-        } catch (Exception e) {
-            System.err.println(e.toString());
+            System.out.println("Done initializing connection to the Arduino at port: "+port);
+        } catch (PortInUseException | UnsupportedCommOperationException | IOException | TooManyListenersException e) {
+            Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -86,6 +93,7 @@ public class SerialClass implements SerialPortEventListener {
         }
     }
 
+    @Override
     public synchronized void serialEvent(SerialPortEvent oEvent) {
         if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
             try {
@@ -117,7 +125,7 @@ public class SerialClass implements SerialPortEventListener {
                     }
                 }
             } catch (Exception e) {
-                System.err.println(e.toString());
+                Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, e);
             }
         }
 
@@ -129,7 +137,7 @@ public class SerialClass implements SerialPortEventListener {
             output.write(data.getBytes());
             //output.flush();
         } catch (Exception e) {
-            System.out.println("could not write to port");
+            System.out.println("Could not write to port.");
         }
     }
 }

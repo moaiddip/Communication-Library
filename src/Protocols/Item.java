@@ -33,6 +33,7 @@ public class Item {
      * Sets the query and ip address of an Item instance. Should be used when the instance is first created.
      * @param message Requires a String with the message.
      * @param address Requires a String with an ip address.
+     * @param userPrio
      */
     public void create(String message, String address, int userPrio) {
         this.message = message;
@@ -152,8 +153,4 @@ public class Item {
     public void setUser(String user) {
         this.user = user;
     }
-
-    /**
-     * @return the user
-     */
 }

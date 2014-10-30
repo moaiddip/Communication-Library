@@ -8,6 +8,8 @@ package Protocols;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  * This is the arduino server that sends commands to the arduino and waits for a response.
  * @author Sozos Assias
@@ -19,7 +21,6 @@ public class ArdConnector extends Thread {
     private static String inputLine = null;
     private static String command="no_command!";
     private final static AtomicBoolean query = new AtomicBoolean(false);
-
     private final AtomicBoolean quit = new AtomicBoolean(false);
     private final static AtomicBoolean working = new AtomicBoolean(false);
     private static AtomicBoolean finished = new AtomicBoolean(false);
@@ -49,11 +50,13 @@ public class ArdConnector extends Thread {
                     long time = cal.getTimeInMillis()/1000;
                     while((cal.getTimeInMillis()/1000)-time>3||!getWorking());
                     if(getWorking()){
+                        System.out.println("Did not receive an answer from the arduino, trying again.");
                         obj.writeData(command);
                     }
                     time = cal.getTimeInMillis()/1000;
                     while((cal.getTimeInMillis()/1000)-time>3||!getWorking());
                     if(getWorking()){
+                        System.out.println("Did not receive an answer from the arduino, stopping.");
                         setInputLine("no_answer!");
                         setWorking(false);
                     }
@@ -62,7 +65,7 @@ public class ArdConnector extends Thread {
             }
             obj.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, e);
         }
     }
     /**

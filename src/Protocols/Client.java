@@ -7,7 +7,6 @@ package Protocols;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -101,7 +100,7 @@ public class Client extends Thread {
                     new InputStreamReader(sslsocket.getInputStream()));
             new Reader(in).start();
             new Writer(out).start();
-            //send(message, sslsocket);
+            System.out.println("Created I/O stream threads.");
 
         } catch (Exception ex) {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
@@ -164,6 +163,7 @@ public class Client extends Thread {
                     setQuery(false);
                     setWorking(true);
                     setFinished(false);
+                    System.out.println("Sending command to the server.");
                     out.println(message);
                 }
             }
@@ -208,31 +208,5 @@ public class Client extends Thread {
     }
     public static void setFinished(Boolean aFinished){
         finished.compareAndSet(!aFinished, aFinished);
-    }
-
-    public String send(String message, SSLSocket sslsocket) {
-        try {
-            //Creates I/O
-            PrintWriter out
-                    = new PrintWriter(sslsocket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(sslsocket.getInputStream()));
-            System.out.println("Created I/O.");
-            System.out.println("Sending message.");
-            //Sends message
-            out.println(message);
-            System.out.println("Waiting for a reply.");
-            //Waits for a reply and returns it to the caller class
-            while ((message = in.readLine()) != null) {
-                System.out.println("Reply received.");
-                System.out.println(message);
-                return message;
-
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        //If an error occurs it will return null.
-        return null;
     }
 }

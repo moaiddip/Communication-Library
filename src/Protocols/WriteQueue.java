@@ -83,8 +83,7 @@ public final class WriteQueue {
                         items.get(i).create(message, address, userPrio);
                         totalQueries++;
                         placed = 1;
-                        //prepareQueries();
-                        System.out.println(i);
+                        System.out.println("Total queries: "+totalQueries);
                         return items.get(i);
                     }
                 }
@@ -94,8 +93,8 @@ public final class WriteQueue {
             items.put(hashTail, new Item());
             items.get(hashTail).create(message, address, userPrio);
             hashTail++;
+            System.out.println("Total queries: "+totalQueries);
             totalQueries++;
-            //prepareQueries();
             return items.get(hashTail - 1);
         }
     }
@@ -159,7 +158,7 @@ public final class WriteQueue {
             while (true) {
                 synchronized (items) {
                     if (totalQueries == replaceInt) {
-                        System.out.println("Preparing queries to be processed.");
+                        System.out.println("Putting commands in the ReadQueue.");
                         totalQueries = 0;
                         synchronized (secondList) {
                             for (int i = 0; i < items.size(); i++) {
