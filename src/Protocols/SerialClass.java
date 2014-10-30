@@ -108,6 +108,7 @@ public class SerialClass implements SerialPortEventListener {
                         ArdConnector.setInputLine(inputz);
                         ArdConnector.setCommandDefault();
                         ArdConnector.setWorking(false);
+                        ArdConnector.setFinished(true);
                     }else if(autocheck){
                         ard.putMsg(inputz);
                     }

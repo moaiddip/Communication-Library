@@ -39,6 +39,7 @@ public class Client extends Thread {
 
     private AtomicBoolean quit = new AtomicBoolean(false);
     private static AtomicBoolean working = new AtomicBoolean(false);
+    private static AtomicBoolean finished = new AtomicBoolean(false);
 
     public Client(String url, int port, String truststore, String trustpass) {
         phone = 0;
@@ -129,8 +130,8 @@ public class Client extends Thread {
                         String[] parts2 = message.split("_");
                         if ((parts[0].equals(parts2[0]) || parts[0].equals("error"))) {
                             reply = inputz;
-
                             message = "no_command";
+                            setFinished(true);
                             setWorking(false);
                         } else {
                             cQue.putMsg(inputz);
@@ -162,6 +163,7 @@ public class Client extends Thread {
                 if (query.get()) {
                     setQuery(false);
                     setWorking(true);
+                    setFinished(false);
                     out.println(message);
                 }
             }
@@ -200,6 +202,12 @@ public class Client extends Thread {
 
     public static String getMessage() {
         return message;
+    }
+    public static AtomicBoolean getFinished(){
+        return finished;
+    }
+    public static void setFinished(Boolean aFinished){
+        finished.compareAndSet(!aFinished, aFinished);
     }
 
     public String send(String message, SSLSocket sslsocket) {

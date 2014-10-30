@@ -22,6 +22,7 @@ public class ArdConnector extends Thread {
 
     private final AtomicBoolean quit = new AtomicBoolean(false);
     private final static AtomicBoolean working = new AtomicBoolean(false);
+    private static AtomicBoolean finished = new AtomicBoolean(false);
     /**
      * Sets the port that the software will communicate with.
      * @param port The port name as a string. eg. "COM3" (which is the default on my pc)
@@ -42,6 +43,7 @@ public class ArdConnector extends Thread {
                 if (query.get()) {
                     changePhase(false);
                     setWorking(true);
+                    setFinished(false);
                     obj.writeData(command);
                     Calendar cal = Calendar.getInstance();
                     long time = cal.getTimeInMillis()/1000;
@@ -125,6 +127,12 @@ public class ArdConnector extends Thread {
     }
     public static void setCommandDefault() {
         command = "no_command!";
+    }
+    public static AtomicBoolean getFinished(){
+        return finished;
+    }
+    public static void setFinished(Boolean aFinished){
+        finished.compareAndSet(!aFinished, aFinished);
     }
 
 }
