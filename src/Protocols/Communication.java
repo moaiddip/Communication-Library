@@ -69,7 +69,6 @@ public class Communication extends Thread {
                         //Puts message in queue and waits until the message is
                         //Answered, then it sends the answer back to the client
 
-                        
                         Item object;
                         synchronized (que) {
                             object = que.putMsg(string, remoteSocketAddress, userPrio);
@@ -105,10 +104,12 @@ public class Communication extends Thread {
         } finally {
             try {
                 Item object;
-                synchronized (que) {
-                    object = que.putMsg("logout!", remoteSocketAddress, userPrio);
-                    synchronized (object) {
-                        object.setUser(getUser());
+                if (user != null) {
+                    synchronized (que) {
+                        object = que.putMsg("logout!", remoteSocketAddress, userPrio);
+                        synchronized (object) {
+                            object.setUser(getUser());
+                        }
                     }
                 }
 
@@ -126,9 +127,10 @@ public class Communication extends Thread {
     public String getUser() {
         return user;
     }
-    public void sendUpdate(String status){
+
+    public void sendUpdate(String status) {
         out.println(status);
-        System.out.println("Sending status update: "+status);
+        System.out.println("Sending status update: " + status);
     }
 
 }
