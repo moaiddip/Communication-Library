@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.net.InetAddress;
 import java.security.KeyStore;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.net.ssl.KeyManagerFactory;
@@ -18,32 +19,48 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 
 /**
- * The class used to create an SSLServerSocket and listen to connection requests.
- * This is the server.
+ * The class used to create an SSLServerSocket and listen to connection
+ * requests. This is the server.
+ *
  * @author Sozos Assias
  */
 public class Server extends Thread {
 
+    private static HashMap<Integer, Communication> threads = new HashMap<>();
+
+    /**
+     * @return the threads
+     */
+    public HashMap<Integer, Communication> getThreads() {
+        synchronized (this) {
+            return threads;
+        }
+    }
     int port;
-    int locality=0;
+    int locality = 0;
     String keystore;
     String keystorePass;
     String keypass;
+    int hashTail = 0;
+
     /**
-     * Creates an SSLServerSocket and then it creates a loop that creates new threads
-     * of the Communication class, every time a new connection is established.
+     * Creates an SSLServerSocket and then it creates a loop that creates new
+     * threads of the Communication class, every time a new connection is
+     * established.
+     *
      * @param port The port that the server should listen to, as an int.
-     * @param locality An int, either 0 or 1, indicating if the server should run remotely and locally or only locally respectively.
+     * @param locality An int, either 0 or 1, indicating if the server should
+     * run remotely and locally or only locally respectively.
      * @param keystore The path to and the name of a keystore.
      * @param keystorePass The password of the keystore.
      * @param keypass The password of the private key in the keystore.
      */
     public Server(int port, int locality, String keystore, String keystorePass, String keypass) {
         this.port = port;
-        this.locality=locality;
-        this.keypass=keypass;
-        this.keystore=keystore;
-        this.keystorePass=keystorePass;
+        this.locality = locality;
+        this.keypass = keypass;
+        this.keystore = keystore;
+        this.keystorePass = keystorePass;
     }
 
     @Override
@@ -64,26 +81,39 @@ public class Server extends Thread {
             SSLContext context = SSLContext.getInstance("TLS");
             context.init(factory.getKeyManagers(), null, null);
             //Create a socket factory and then create a socket using the factory
-            SSLServerSocketFactory socketfactory = context.getServerSocketFactory();   
+            SSLServerSocketFactory socketfactory = context.getServerSocketFactory();
             SSLServerSocket sslserversocket;
-            if (locality==0){
-            sslserversocket
-                    = (SSLServerSocket) socketfactory.createServerSocket(port);
-            }
-            else{
+            if (locality == 0) {
                 sslserversocket
-                    = (SSLServerSocket) socketfactory.createServerSocket(port,0, InetAddress.getByName(null));
+                        = (SSLServerSocket) socketfactory.createServerSocket(port, 100);
+            } else {
+                sslserversocket
+                        = (SSLServerSocket) socketfactory.createServerSocket(port, 100, InetAddress.getByName(null));
             }
             System.out.println("Server Socket created. Listening.");
             //Creates the que and listens to the socket.
             Calendar cal = Calendar.getInstance();
             WriteQueue que = new WriteQueue(cal.getTimeInMillis());
             while (listening) {
-                new Communication((SSLSocket)sslserversocket.accept(), que).start();
+                int placed = 0;
+                synchronized (this) {
+                    for (int i = 0; i < threads.size(); i++) {
+                        if (getThreads().get(i).isInterrupted() && placed == 0) {
+                            getThreads().put(i, new Communication((SSLSocket) sslserversocket.accept(), que));
+                            getThreads().get(i).start();
+                            placed=1;
+                        }
+                    }
+                    if (placed==0){
+                        getThreads().put(hashTail, new Communication((SSLSocket) sslserversocket.accept(), que));
+                        getThreads().get(hashTail).start();
+                        hashTail++;
+                    }
+                }
             }
         } catch (Exception ex) {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 }

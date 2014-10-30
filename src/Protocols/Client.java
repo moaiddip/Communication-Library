@@ -20,7 +20,7 @@ import javax.net.ssl.TrustManagerFactory;
  *
  * @author Sozos Assias
  */
-public class Client {
+public class Client extends Thread {
 
     int phone;
     String url;
@@ -89,5 +89,43 @@ public class Client {
         }
         //If an error occurs, it returns null
         return null;
+    }
+    @Override
+    public void run(){
+        String string;
+        try {
+            System.out.println("Creating socket.");
+            SSLContext context;
+            KeyStore keystore;
+            //Passphrase = the password to the truststore
+            char[] passphrase = trustpass.toCharArray();
+            //Get TrustManagerFactory
+            TrustManagerFactory trustfactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            //Set security to TLS
+            context = SSLContext.getInstance("TLS");
+            //Get the keystore
+            //keystore = KeyStore.getInstance("BKS");
+            //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
+            //InputStream trustStoreStream = context.getResources().openRawResource(R.raw.server);
+            if (phone == 0) {
+                keystore = KeyStore.getInstance("JKS");
+                keystore.load(new FileInputStream(truststore), passphrase);
+            } else {
+                keystore = KeyStore.getInstance("BKS");
+                keystore.load(trustStore, passphrase);
+            }
+            //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
+            
+            trustfactory.init(keystore);
+            //initialize the context using the keys you got from TMF
+            context.init(null, trustfactory.getTrustManagers(), null);
+            //create the factory and then use the factory to create the socket
+            SSLSocketFactory factory = context.getSocketFactory();
+            SSLSocket sslsocket = (SSLSocket) factory.createSocket(url, port);
+            System.out.println("Socket created.");
+            
+        } catch (Exception ex) {
+            Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

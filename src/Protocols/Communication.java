@@ -21,10 +21,12 @@ import javax.net.ssl.SSLSocket;
  */
 public class Communication extends Thread {
 
+    BufferedReader in;
+    PrintWriter out;
     String remoteSocketAddress;
     SSLSocket sslsocket;
     WriteQueue que;
-    String user=null;
+    private String user = null;
     byte[] sessionKey = null;
     int userPrio = -1;
 
@@ -49,10 +51,8 @@ public class Communication extends Thread {
             remoteSocketAddress = sslsocket.getRemoteSocketAddress().toString();
             //Create I/O for the socket
             System.out.println(remoteSocketAddress + " connected.");
-            PrintWriter out
-                    = new PrintWriter(sslsocket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(sslsocket.getInputStream()));
+            out = new PrintWriter(sslsocket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(sslsocket.getInputStream()));
             System.out.println("Initialized I/O.");
             String string;
 
@@ -75,9 +75,9 @@ public class Communication extends Thread {
                         Item object;
                         synchronized (que) {
                             object = que.putMsg(string, remoteSocketAddress, userPrio);
-                            if(userPrio!=-1){
-                                synchronized(object){
-                                    object.setUser(user);
+                            if (userPrio != -1) {
+                                synchronized (object) {
+                                    object.setUser(getUser());
                                     object.setUserPrio(userPrio);
                                 }
                             }
@@ -90,7 +90,7 @@ public class Communication extends Thread {
                         System.out.println("Answer processed, preparing to reply.");
 
                         string = object.getReply();
-                        if (user == null) {
+                        if (getUser() == null) {
                             user = object.getUser();
                             userPrio = object.getUserPrio();
                         }
@@ -110,7 +110,7 @@ public class Communication extends Thread {
                 synchronized (que) {
                     object = que.putMsg("logout:", remoteSocketAddress, userPrio);
                     synchronized (object) {
-                        object.setUser(user);
+                        object.setUser(getUser());
                     }
                 }
 
@@ -120,6 +120,17 @@ public class Communication extends Thread {
             }
         }
         this.interrupt();
+    }
+
+    /**
+     * @return the user
+     */
+    public String getUser() {
+        return user;
+    }
+    public void sendUpdate(String status){
+        out.println(status);
+        System.out.println("Sent status update: "+status);
     }
 
 }
