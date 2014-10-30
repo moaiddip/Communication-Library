@@ -3,6 +3,7 @@ ComProt
 
 This is the communication protocol library developped for HKR's last year's first semester project named Smart House.
 Our job is to be able to transmit the messages in a secure and somewhat efficient way between the arduino-server-clients and prepare a medium for the other groups to be able to access the messages sent. 
+The library's purpose is to keep things simple by not getting the rest of the groups involved with more code and to provide simple methods for them to use instead.
 
 TODO: Use JSon (instead of Strings) and jSSC (instead of RXTX). Maybe: Implement an algorithm that receives feedback from the server on the processing time and calculate the average and use it with the algorithm implemented in v.0.5 to get more precise results. 
 
