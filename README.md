@@ -7,6 +7,11 @@ The library's purpose is to keep things simple by not getting the rest of the gr
 
 TODO: Use JSon (instead of Strings) and jSSC (instead of RXTX). Maybe: Implement an algorithm that receives feedback from the server on the processing time and calculate the average and use it with the algorithm implemented in v.0.5 to get more precise results. 
 
+What is next:
+Make the server automatically detect when an arduino is disconnected and look for it.
+Use NIO instead of IO streams.
+Perhaps, softcode some of the restricted commands (Could make implementation a lot more complicated)
+
 Version 0.8: Added a queue to the client side for messages pushed by the server and updates that are not requested by the client explicitly.
 
 Version 0.7: Changed the way threads are handled, threads are now saved in a hashmap. Added Multicast support using a username to find the thread you want to send a message to.
