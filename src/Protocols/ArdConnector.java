@@ -123,7 +123,7 @@ public class ArdConnector extends Thread {
      *
      * @return A string with the answer.
      */
-    public static String getInputLine() {
+    public String getInputLine() {
         String reply = inputLine;
         inputLine = null;
         return reply;
@@ -167,7 +167,7 @@ public class ArdConnector extends Thread {
      * Returns a boolean showing if a task has finished.
      * @return 
      */
-    public static AtomicBoolean getFinished() {
+    public AtomicBoolean getFinished() {
         return finished;
     }
     

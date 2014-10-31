@@ -108,7 +108,6 @@ public class SerialClass implements SerialPortEventListener {
 
                     String[] parts = inputz.split("_");
                     String[] parts2 = ArdConnector.getCommand().split("_");
-                    System.out.println(ArdConnector.getInputLine());
                     if ("autochkstart!".equals(inputz)){
                         autocheck=true;
                     }
