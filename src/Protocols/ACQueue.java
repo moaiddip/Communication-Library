@@ -20,7 +20,7 @@ public class ACQueue {
      * Returns a boolean showing whether a new command was added to the queue.
      * @return the hasAddedCommands
      */
-    public static AtomicBoolean getHasAddedCommands() {
+    public AtomicBoolean getHasAddedCommands() {
         return hasAddedCommands;
     }
 
@@ -28,7 +28,7 @@ public class ACQueue {
      * Sets the boolean showing whether a new command was added to the queue.
      * @param aHasAddedCommands the hasAddedCommands to set
      */
-    public static void setHasAddedCommands(Boolean aHasAddedCommands) {
+    public void setHasAddedCommands(Boolean aHasAddedCommands) {
         getHasAddedCommands().compareAndSet(!aHasAddedCommands, aHasAddedCommands);
     }
 
@@ -36,7 +36,7 @@ public class ACQueue {
      * Returns the list with all the commands queued by the arduino to the server or by the server to the client.
      * @return the items
      */
-    public static HashMap<Integer, String> getItems() {
+    public HashMap<Integer, String> getItems() {
         return items;
     }
     int hashTail = 0;

@@ -221,7 +221,7 @@ public class Client extends Thread {
      * If this is true then a command was sent and is being processed.
      * @return an atomic boolean
      */
-    public static AtomicBoolean getWorking() {
+    public AtomicBoolean getWorking() {
         return working;
     }
     /**
@@ -243,14 +243,14 @@ public class Client extends Thread {
      * Gets the message to be sent.
      * @return The message as a string.
      */
-    public static String getMessage() {
+    public String getMessage() {
         return message;
     }
     /**
      * Gets an atomic boolean indicating if a command or message has been answered.
      * @return An atomic boolean. True means it has been asnwered.
      */
-    public static AtomicBoolean getFinished(){
+    public AtomicBoolean getFinished(){
         return finished;
     }
     /**
@@ -261,5 +261,12 @@ public class Client extends Thread {
         if (!finished.get() == false && !aFinished == false) {
             finished.compareAndSet(!aFinished, aFinished);
         }
+    }
+    /**
+     * Returns the reply to a message.
+     * @return The reply as a string.
+     */
+    public String getReply(){
+        return reply;
     }
 }
