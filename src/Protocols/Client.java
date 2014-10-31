@@ -207,6 +207,8 @@ public class Client extends Thread {
         return finished;
     }
     public static void setFinished(Boolean aFinished){
-        finished.compareAndSet(!aFinished, aFinished);
+        if (!finished.get() == false && !aFinished == false) {
+            finished.compareAndSet(!aFinished, aFinished);
+        }
     }
 }
