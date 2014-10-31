@@ -122,12 +122,16 @@ public class Communication extends Thread {
     }
 
     /**
-     * @return the user
+     * Returns the user that occupies this thread.
+     * @return the user as a string. If it's null then there is no user logged in.
      */
     public String getUser() {
         return user;
     }
-
+    /**
+     * Sends a status update to this client.
+     * @param status The status update as a string.
+     */
     public void sendUpdate(String status) {
         out.println(status);
         System.out.println("Sending status update: " + status);

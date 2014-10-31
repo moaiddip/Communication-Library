@@ -111,6 +111,7 @@ public class Item {
         return address;
     }
     /**
+     * Returns the priority of the user.
      * @return the userPrio
      */
     public int getUserPrio() {
@@ -118,7 +119,8 @@ public class Item {
     }
 
     /**
-     * I do this.
+     * Sets the priority of a user.
+     * User priority needs to be set by the server when a user logs in.
      * @param userPrio the userPrio to set
      */
     public void setUserPrio(int userPrio) {
@@ -126,6 +128,7 @@ public class Item {
     }
 
     /**
+     * Returns the priority of the command.
      * @return the priority
      */
     public int getPriority() {
@@ -133,7 +136,7 @@ public class Item {
     }
 
     /**
-     * 
+     * Sets the priority of the command.
      * @param priority the priority to set
      */
     public void setPriority(int priority) {
@@ -141,6 +144,7 @@ public class Item {
     }
 
     /**
+     * Returns the user that issued this command.
      * @return the user
      */
     public String getUser() {
@@ -148,6 +152,8 @@ public class Item {
     }
 
     /**
+     * Sets the user that issued this command.
+     * User needs to be set by the server when a user logs in.
      * @param user the user to set
      */
     public void setUser(String user) {

@@ -21,7 +21,7 @@ import javax.net.ssl.TrustManagerFactory;
 
 /**
  * This is the class used to create an SSLSocket for the client.
- *
+ * It is a thread.
  * @author Sozos Assias
  */
 public class Client extends Thread {
@@ -39,7 +39,13 @@ public class Client extends Thread {
     private AtomicBoolean quit = new AtomicBoolean(false);
     private static AtomicBoolean working = new AtomicBoolean(false);
     private static AtomicBoolean finished = new AtomicBoolean(false);
-
+    /**
+     * The first constructor for computers.
+     * @param url The ip address of the server
+     * @param port The port of the server
+     * @param truststore The truststore location and name. eg. "c:\blabla\keystore.jks"
+     * @param trustpass The truststore pass.
+     */
     public Client(String url, int port, String truststore, String trustpass) {
         phone = 0;
         this.url = url;
@@ -47,7 +53,13 @@ public class Client extends Thread {
         this.truststore = truststore;
         this.trustpass = trustpass;
     }
-
+    /**
+     * The constructor for android phones.
+     * @param url The ip address of the server
+     * @param port The port of the server
+     * @param truststore The input stream of the truststore.
+     * @param trustpass The truststore pass.
+     */
     public Client(String url, int port, InputStream truststore, String trustpass) {
         phone = 1;
         this.url = url;
@@ -57,9 +69,9 @@ public class Client extends Thread {
     }
 
     /**
-     * Creates and returns an SSLSocket.
+     * Creates an SSLSocket and creates 2 threads to send and receive commands.
+     * 
      *
-     * @return An SSLSocket or null in case of an error.
      */
     @Override
     public void run() {
@@ -106,7 +118,10 @@ public class Client extends Thread {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    /**
+     * The reader thread.
+     * Reads everything sent from the server and decides whether they go in the queue or set as the answer to a command previously sent.
+     */
     class Reader extends Thread {
 
         BufferedReader in;
@@ -147,7 +162,10 @@ public class Client extends Thread {
             }
         }
     }
-
+    /**
+     * The writer thread.
+     * Sends commands to the server, one at a time and lets the reader thread know that a command was sent.
+     */
     class Writer extends Thread {
 
         PrintWriter out;
@@ -170,42 +188,75 @@ public class Client extends Thread {
 
         }
     }
-
+    
+    /**
+     * Gets the state of the boolean quit, quit is used to stop the threads.
+     * @return An atomic boolean.
+     */
     public AtomicBoolean getQuit() {
         return quit;
     }
-
+    /**
+     * Sets the atomic boolean that is responsible for keeping the threads alive.
+     * @param aQuit True kills the threads.
+     */
     public void setQuit(Boolean aQuit) {
         quit.compareAndSet(!aQuit, aQuit);
     }
-
+    /**
+     * If this is true then a command is about to be sent to the server.
+     * @return an atomic boolean.
+     */
     public static AtomicBoolean getQuery() {
         return query;
     }
-
+    /**
+     * Sets the atomic boolean stating whether a command is about to be sent.
+     * @param aQuery 
+     */
     public static void setQuery(Boolean aQuery) {
         query.compareAndSet(!aQuery, aQuery);
     }
-
+    /**
+     * If this is true then a command was sent and is being processed.
+     * @return an atomic boolean
+     */
     public static AtomicBoolean getWorking() {
         return working;
     }
-
+    /**
+     * Sets the atomic boolean that states whether a command is being processed.
+     * @param aWorking 
+     */
     public static void setWorking(Boolean aWorking) {
         working.compareAndSet(!aWorking, aWorking);
     }
-
+    /**
+     * Sets the next message to be sent and sets the query atomic boolean to true if false.
+     * @param aMessage The message to be sent.
+     */
     public void setMessage(String aMessage) {
         message = aMessage;
         query.compareAndSet(false, true);
     }
-
+    /**
+     * Gets the message to be sent.
+     * @return The message as a string.
+     */
     public static String getMessage() {
         return message;
     }
+    /**
+     * Gets an atomic boolean indicating if a command or message has been answered.
+     * @return An atomic boolean. True means it has been asnwered.
+     */
     public static AtomicBoolean getFinished(){
         return finished;
     }
+    /**
+     * Sets the atomic boolean indicating if a command or message has been answered.
+     * @param aFinished The state as a boolean. True: finished
+     */
     public static void setFinished(Boolean aFinished){
         if (!finished.get() == false && !aFinished == false) {
             finished.compareAndSet(!aFinished, aFinished);

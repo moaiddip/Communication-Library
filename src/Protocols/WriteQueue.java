@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class WriteQueue {
 
     /**
+     * Returns an atomic boolean responsible to show if a new command was added.
      * @return the hasAddedCommands
      */
     public static AtomicBoolean getHasAddedCommands() {
@@ -27,10 +28,11 @@ public final class WriteQueue {
     }
 
     /**
+     * Sets the atomic boolean.
      * @param aHasAddedCommands the hasAddedCommands to set
      */
-    public static void setHasAddedCommands(AtomicBoolean aHasAddedCommands) {
-        hasAddedCommands = aHasAddedCommands;
+    public static void setHasAddedCommands(Boolean aHasAddedCommands) {
+        getHasAddedCommands().compareAndSet(!aHasAddedCommands, aHasAddedCommands);
     }
 
     long firstTime;
@@ -56,13 +58,11 @@ public final class WriteQueue {
     /**
      * Creates an instance of the Item class, puts the message and ip address of
      * the client that queried the message in the instance created, then it puts
-     * the instance in a hashmap. When 5 (NOT FINAL, NEEDS STRESS TESTING) Item
-     * class instances are created, the entries are copied into another hashmap
-     * to be used by the Server team to process the queries. Implemented
-     * automatically, should NOT be called.
+     * the instance in a hashmap. 
      *
      * @param message The query in a string.
      * @param address The ip address of the client with the query.
+     * @param userPrio The priority of the user who issued the command.
      * @return Returns the instance of the Item class created.
      */
     public Item putMsg(String message, String address, int userPrio) {

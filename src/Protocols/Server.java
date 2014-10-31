@@ -35,6 +35,8 @@ public class Server extends Thread {
     private static HashMap<Integer, Communication> threads = new HashMap<>();
 
     /**
+     * 
+     * Returns a hashmap with all the server-client threads.
      * @return the threads
      */
     public HashMap<Integer, Communication> getThreads() {

@@ -37,7 +37,11 @@ public class ArdConnector extends Thread {
     public ArdConnector(String port) {
         this.port = port;
     }
-
+    /**
+     * Initializes the connection and waits for a command, sends the command and waits for an answer.
+     * If there is no answer, it sends the command once again.
+     * If there is no answer again, it sets the response to no_answer.
+     */
     @Override
     public void run() {
         try {
@@ -93,9 +97,9 @@ public class ArdConnector extends Thread {
     }
 
     /**
-     * Changes the status of a command to "being processed" and "done"/"not
-     * processing". Used when a command is sent to indicate if the command has
-     * been processed by the arduino.
+     * Changes the status of a command to "being processed" and "not
+     * processing". Used when a command is sent to indicate if the command is
+     * being processed by the arduino.
      *
      * @param newValue The value of the working boolean. True=processing.
      * False=done/not processing.
@@ -145,19 +149,32 @@ public class ArdConnector extends Thread {
         command = aCommand;
         query.compareAndSet(false, true);
     }
-
+    /**
+     * Gets the command set by the server.
+     * @return The command.
+     */
     public static String getCommand() {
         return command;
     }
-
+    /**
+     * Sets the command variable to the default command.
+     * Default command = no_command!
+     */
     public static void setCommandDefault() {
         command = "no_command!";
     }
-
+    /**
+     * Returns a boolean showing if a task has finished.
+     * @return 
+     */
     public static AtomicBoolean getFinished() {
         return finished;
     }
-
+    
+    /**
+     * Sets the boolean that shows if a task is finished.
+     * @param aFinished True: finished False: not finished.
+     */
     public static void setFinished(Boolean aFinished) {
         if (!finished.get() == false && !aFinished == false) {
             finished.compareAndSet(!aFinished, aFinished);

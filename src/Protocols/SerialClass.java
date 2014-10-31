@@ -92,7 +92,10 @@ public class SerialClass implements SerialPortEventListener {
             serialPort.close();
         }
     }
-
+    /**
+     * Handles the information received from the arduino and decides whether they need to go to a queue or set as a specific reply to a command.
+     * 
+     */
     @Override
     public synchronized void serialEvent(SerialPortEvent oEvent) {
         if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
