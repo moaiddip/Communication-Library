@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SerialClass implements SerialPortEventListener {
+
     Boolean autocheck = false;
     public SerialPort serialPort;
     public BufferedReader input;
@@ -43,25 +44,9 @@ public class SerialClass implements SerialPortEventListener {
      */
     public final int DATA_RATE = 115200;
 
-    public void initialize(ArdConnector ard, ACQueue ac) {
-        this.ard=ard;
-        this.ac=ac;
-        String port = this.ard.port;
-        CommPortIdentifier portId = null;
-        Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
-        while (portEnum.hasMoreElements()) {
-            CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
-            if (currPortId.getName().equals(port)) {
-                portId = currPortId;
-                break;
-            }
-
-        }
-        if (portId == null) {
-            System.out.println("Could not find COM port.");
-            return;
-        }
-
+    public void initialize(ArdConnector ard, ACQueue ac, CommPortIdentifier portId) {
+        this.ard = ard;
+        this.ac = ac;
         try {
             // open serial port, and use class name for the appName.
             serialPort = (SerialPort) portId.open(this.getClass().getName(),
@@ -84,7 +69,7 @@ public class SerialClass implements SerialPortEventListener {
             // add event listeners
             serialPort.addEventListener(this);
             serialPort.notifyOnDataAvailable(true);
-            System.out.println("Done initializing connection to the Arduino at port: "+port);
+            System.out.println("Done initializing connection to the Arduino at port: " + portId.getName());
         } catch (PortInUseException | UnsupportedCommOperationException | IOException | TooManyListenersException e) {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, e);
         }
@@ -96,9 +81,11 @@ public class SerialClass implements SerialPortEventListener {
             serialPort.close();
         }
     }
+
     /**
-     * Handles the information received from the arduino and decides whether they need to go to a queue or set as a specific reply to a command.
-     * 
+     * Handles the information received from the arduino and decides whether
+     * they need to go to a queue or set as a specific reply to a command.
+     *
      */
     @Override
     public synchronized void serialEvent(SerialPortEvent oEvent) {
@@ -107,26 +94,23 @@ public class SerialClass implements SerialPortEventListener {
                 //ACQueue ard =new ACQueue();
                 String inputz;
                 while ((inputz = input.readLine()) != null) {
-                    
+
                     System.out.println("Received: " + inputz);
 
                     String[] parts = inputz.split("_");
                     String[] parts2 = ard.getCommand().split("_");
-                    if ("autochkstart!".equals(inputz)){
-                        autocheck=true;
-                    }
-                    else if ("eol!".equals(inputz)){
-                        autocheck=false;
-                    }
-                    else if ((parts[0].equals(parts2[0])|| parts[0].equals("error")) && !autocheck) {
+                    if ("autochkstart!".equals(inputz)) {
+                        autocheck = true;
+                    } else if ("eol!".equals(inputz)) {
+                        autocheck = false;
+                    } else if ((parts[0].equals(parts2[0]) || parts[0].equals("error")) && !autocheck) {
                         ard.setInputLine(inputz);
                         ard.setCommandDefault();
                         ard.setWorking(false);
                         ard.setFinished(true);
-                    }else if(autocheck){
+                    } else if (autocheck) {
                         ac.putMsg(inputz);
-                    }
-                    else{
+                    } else {
                         ac.putMsg(inputz);
                     }
                 }
