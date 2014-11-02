@@ -32,8 +32,8 @@ import javax.net.ssl.SSLSocket;
  */
 public class Server extends Thread {
 
-    private static HashMap<Integer, Communication> threads = new HashMap<>();
-
+    private HashMap<Integer, Communication> threads = new HashMap<>();
+    WriteQueue que;
     /**
      * 
      * Returns a hashmap with all the server-client threads.
@@ -101,7 +101,7 @@ public class Server extends Thread {
             System.out.println("Server Socket created. Listening.");
             //Creates the que and listens to the socket.
             Calendar cal = Calendar.getInstance();
-            WriteQueue que = new WriteQueue(cal.getTimeInMillis());
+            que = new WriteQueue(cal.getTimeInMillis());
             while (listening) {
                 int placed = 0;
                 synchronized (this) {
@@ -123,5 +123,8 @@ public class Server extends Thread {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+    public WriteQueue getTheQueue(){
+        return que;
     }
 }

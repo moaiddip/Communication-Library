@@ -23,16 +23,16 @@ public final class WriteQueue {
      * Returns an atomic boolean responsible to show if a new command was added.
      * @return the hasAddedCommands
      */
-    public static AtomicBoolean getHasAddedCommands() {
-        return hasAddedCommands;
+    public Boolean getHasAddedCommands() {
+        return hasAddedCommands.get();
     }
 
     /**
      * Sets the atomic boolean.
      * @param aHasAddedCommands the hasAddedCommands to set
      */
-    public static void setHasAddedCommands(Boolean aHasAddedCommands) {
-        getHasAddedCommands().compareAndSet(!aHasAddedCommands, aHasAddedCommands);
+    public void setHasAddedCommands(Boolean aHasAddedCommands) {
+        hasAddedCommands.compareAndSet(!aHasAddedCommands, aHasAddedCommands);
     }
 
     long firstTime;
@@ -48,9 +48,9 @@ public final class WriteQueue {
         replace.start();
     }
     int hashTail = 0;
-    static HashMap<Integer, Item> items = new HashMap<>();
-    static HashMap<Integer, Item> secondList = new HashMap<>();
-    private static AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
+    HashMap<Integer, Item> items = new HashMap<>();
+    HashMap<Integer, Item> secondList = new HashMap<>();
+    private AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
     int totalQueries = 0;
     Calendar cal;
 
@@ -179,7 +179,7 @@ public final class WriteQueue {
                                     }
                                 }
                             }
-                            getHasAddedCommands().set(true);
+                            hasAddedCommands.set(true);
                             secondList.notify();
                         }
                     }

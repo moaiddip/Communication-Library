@@ -34,11 +34,11 @@ public class Client extends Thread {
     InputStream trustStore;
     static String message = "no_command";
     static String reply;
-    private static AtomicBoolean query = new AtomicBoolean(false);
-
+    private AtomicBoolean query = new AtomicBoolean(false);
+    ACQueue cQue;
     private AtomicBoolean quit = new AtomicBoolean(false);
-    private static AtomicBoolean working = new AtomicBoolean(false);
-    private static AtomicBoolean finished = new AtomicBoolean(false);
+    private AtomicBoolean working = new AtomicBoolean(false);
+    private AtomicBoolean finished = new AtomicBoolean(false);
     /**
      * The first constructor for computers.
      * @param url The ip address of the server
@@ -110,6 +110,7 @@ public class Client extends Thread {
                     = new PrintWriter(sslsocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(sslsocket.getInputStream()));
+            cQue = new ACQueue();
             new Reader(in).start();
             new Writer(out).start();
             System.out.println("Created I/O stream threads.");
@@ -133,7 +134,7 @@ public class Client extends Thread {
         @Override
         public void run() {
             while (!getQuit().get()) {
-                ACQueue cQue = new ACQueue();
+                
                 String inputz;
                 try {
                     while ((inputz = in.readLine()) != null) {
@@ -207,28 +208,28 @@ public class Client extends Thread {
      * If this is true then a command is about to be sent to the server.
      * @return an atomic boolean.
      */
-    public static AtomicBoolean getQuery() {
-        return query;
+    public Boolean getQuery() {
+        return query.get();
     }
     /**
      * Sets the atomic boolean stating whether a command is about to be sent.
      * @param aQuery 
      */
-    public static void setQuery(Boolean aQuery) {
+    public void setQuery(Boolean aQuery) {
         query.compareAndSet(!aQuery, aQuery);
     }
     /**
      * If this is true then a command was sent and is being processed.
      * @return an atomic boolean
      */
-    public AtomicBoolean getWorking() {
-        return working;
+    public Boolean getWorking() {
+        return working.get();
     }
     /**
      * Sets the atomic boolean that states whether a command is being processed.
      * @param aWorking 
      */
-    public static void setWorking(Boolean aWorking) {
+    public void setWorking(Boolean aWorking) {
         working.compareAndSet(!aWorking, aWorking);
     }
     /**
@@ -250,14 +251,14 @@ public class Client extends Thread {
      * Gets an atomic boolean indicating if a command or message has been answered.
      * @return An atomic boolean. True means it has been asnwered.
      */
-    public AtomicBoolean getFinished(){
-        return finished;
+    public Boolean getFinished(){
+        return finished.get();
     }
     /**
      * Sets the atomic boolean indicating if a command or message has been answered.
      * @param aFinished The state as a boolean. True: finished
      */
-    public static void setFinished(Boolean aFinished){
+    public void setFinished(Boolean aFinished){
         if (!finished.get() == false && !aFinished == false) {
             finished.compareAndSet(!aFinished, aFinished);
         }
@@ -268,5 +269,8 @@ public class Client extends Thread {
      */
     public String getReply(){
         return reply;
+    }
+    public ACQueue getClientQueue(){
+        return cQue;
     }
 }
