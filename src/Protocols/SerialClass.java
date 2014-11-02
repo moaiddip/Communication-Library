@@ -30,8 +30,10 @@ import java.util.logging.Logger;
 public class SerialClass implements SerialPortEventListener {
     Boolean autocheck = false;
     public SerialPort serialPort;
-    public static BufferedReader input;
-    public static OutputStream output;
+    public BufferedReader input;
+    public OutputStream output;
+    ArdConnector ard;
+    ACQueue ac;
     /**
      * Milliseconds to block while waiting for port open
      */
@@ -41,8 +43,10 @@ public class SerialClass implements SerialPortEventListener {
      */
     public static final int DATA_RATE = 115200;
 
-    public void initialize() {
-        String port = ArdConnector.port;
+    public void initialize(ArdConnector ard, ACQueue ac) {
+        this.ard=ard;
+        this.ac=ac;
+        String port = this.ard.port;
         CommPortIdentifier portId = null;
         Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
         while (portEnum.hasMoreElements()) {
@@ -100,14 +104,14 @@ public class SerialClass implements SerialPortEventListener {
     public synchronized void serialEvent(SerialPortEvent oEvent) {
         if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
             try {
-                ACQueue ard =new ACQueue();
+                //ACQueue ard =new ACQueue();
                 String inputz;
                 while ((inputz = input.readLine()) != null) {
                     
                     System.out.println("Received: " + inputz);
 
                     String[] parts = inputz.split("_");
-                    String[] parts2 = ArdConnector.getCommand().split("_");
+                    String[] parts2 = ard.getCommand().split("_");
                     if ("autochkstart!".equals(inputz)){
                         autocheck=true;
                     }
@@ -115,15 +119,15 @@ public class SerialClass implements SerialPortEventListener {
                         autocheck=false;
                     }
                     else if ((parts[0].equals(parts2[0])|| parts[0].equals("error")) && !autocheck) {
-                        ArdConnector.setInputLine(inputz);
-                        ArdConnector.setCommandDefault();
-                        ArdConnector.setWorking(false);
-                        ArdConnector.setFinished(true);
+                        ard.setInputLine(inputz);
+                        ard.setCommandDefault();
+                        ard.setWorking(false);
+                        ard.setFinished(true);
                     }else if(autocheck){
-                        ard.putMsg(inputz);
+                        ac.putMsg(inputz);
                     }
                     else{
-                        ard.putMsg(inputz);
+                        ac.putMsg(inputz);
                     }
                 }
             } catch (Exception e) {
@@ -133,7 +137,7 @@ public class SerialClass implements SerialPortEventListener {
 
     }
 
-    public static synchronized void writeData(String data) {
+    public synchronized void writeData(String data) {
         System.out.println("Sent: " + data);
         try {
             output.write(data.getBytes());

@@ -19,14 +19,15 @@ import java.util.logging.Logger;
  */
 public class ArdConnector extends Thread {
 
-    public static OutputStream output;
-    public static String port = "COM3";
-    private static String inputLine = null;
-    private static String command = "no_command!";
-    private final static AtomicBoolean query = new AtomicBoolean(false);
+    //public OutputStream output;
+    ACQueue ac;
+    public String port = "COM3";
+    private String inputLine = null;
+    private String command = "no_command!";
+    private final AtomicBoolean query = new AtomicBoolean(false);
     private final AtomicBoolean quit = new AtomicBoolean(false);
-    private final static AtomicBoolean working = new AtomicBoolean(false);
-    private static AtomicBoolean finished = new AtomicBoolean(false);
+    private final AtomicBoolean working = new AtomicBoolean(false);
+    private final AtomicBoolean finished = new AtomicBoolean(false);
 
     /**
      * Sets the port that the software will communicate with.
@@ -46,9 +47,10 @@ public class ArdConnector extends Thread {
     public void run() {
         try {
             SerialClass obj = new SerialClass();
-            obj.initialize();
+            ac =new ACQueue();
+            obj.initialize(this, ac);
             this.sleep(2000);
-            output = SerialClass.output;
+            //output = SerialClass.output;
 
             while (!quit.get()) {
                 if (query.get()) {
@@ -104,7 +106,7 @@ public class ArdConnector extends Thread {
      * @param newValue The value of the working boolean. True=processing.
      * False=done/not processing.
      */
-    public static void setWorking(Boolean newValue) {
+    public void setWorking(Boolean newValue) {
         working.compareAndSet(!newValue, newValue);
     }
 
@@ -135,7 +137,7 @@ public class ArdConnector extends Thread {
      *
      * @param aInputLine The answer received from the arduino.
      */
-    public static void setInputLine(String aInputLine) {
+    public void setInputLine(String aInputLine) {
         inputLine = aInputLine;
     }
 
@@ -153,14 +155,14 @@ public class ArdConnector extends Thread {
      * Gets the command set by the server.
      * @return The command.
      */
-    public static String getCommand() {
+    public String getCommand() {
         return command;
     }
     /**
      * Sets the command variable to the default command.
      * Default command = no_command!
      */
-    public static void setCommandDefault() {
+    public void setCommandDefault() {
         command = "no_command!";
     }
     /**
@@ -175,10 +177,13 @@ public class ArdConnector extends Thread {
      * Sets the boolean that shows if a task is finished.
      * @param aFinished True: finished False: not finished.
      */
-    public static void setFinished(Boolean aFinished) {
+    public void setFinished(Boolean aFinished) {
         if (!finished.get() == false && !aFinished == false) {
             finished.compareAndSet(!aFinished, aFinished);
         }
+    }
+    public ACQueue getArduinoQueue(){
+        return ac;
     }
 
 }

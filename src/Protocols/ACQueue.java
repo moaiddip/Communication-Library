@@ -22,8 +22,8 @@ public class ACQueue {
      *
      * @return the hasAddedCommands
      */
-    public AtomicBoolean getHasAddedCommands() {
-        return hasAddedCommands;
+    public Boolean getHasAddedCommands() {
+        return hasAddedCommands.get();
     }
 
     /**
@@ -32,7 +32,7 @@ public class ACQueue {
      * @param aHasAddedCommands the hasAddedCommands to set
      */
     public void setHasAddedCommands(Boolean aHasAddedCommands) {
-        getHasAddedCommands().compareAndSet(!aHasAddedCommands, aHasAddedCommands);
+        hasAddedCommands.compareAndSet(!aHasAddedCommands, aHasAddedCommands);
     }
 
     /**
@@ -47,8 +47,8 @@ public class ACQueue {
         }
     }
     int hashTail = 0;
-    private static HashMap<Integer, String> items = new HashMap<>();
-    private static AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
+    private HashMap<Integer, String> items = new HashMap<>();
+    private AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
 
     /**
      * Puts a message in the queue.
@@ -66,7 +66,7 @@ public class ACQueue {
                         getItems().replace(i, message);
                         placed = 1;
                         System.out.println("Replacing command in the Arduino/Client queue");
-                        getHasAddedCommands().set(true);
+                        hasAddedCommands.set(true);
                         return getItems().get(i);
                     }
                 }
@@ -76,7 +76,7 @@ public class ACQueue {
             getItems().put(hashTail, message);
             hashTail++;
             System.out.println("Putting new command in the Arduino/Client queue");
-            getHasAddedCommands().set(true);
+            hasAddedCommands.set(true);
             return getItems().get(hashTail - 1);
         }
     }
