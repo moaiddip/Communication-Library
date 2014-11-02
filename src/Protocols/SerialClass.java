@@ -37,11 +37,11 @@ public class SerialClass implements SerialPortEventListener {
     /**
      * Milliseconds to block while waiting for port open
      */
-    public static final int TIME_OUT = 2000;
+    public final int TIME_OUT = 2000;
     /**
      * Default bits per second for COM port.
      */
-    public static final int DATA_RATE = 115200;
+    public final int DATA_RATE = 115200;
 
     public void initialize(ArdConnector ard, ACQueue ac) {
         this.ard=ard;
