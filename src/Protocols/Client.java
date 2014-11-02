@@ -7,10 +7,15 @@ package Protocols;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,11 +39,11 @@ public class Client extends Thread {
     InputStream trustStore;
     static String message = "no_command";
     static String reply;
-    private AtomicBoolean query = new AtomicBoolean(false);
+    private final AtomicBoolean query = new AtomicBoolean(false);
     ACQueue cQue;
-    private AtomicBoolean quit = new AtomicBoolean(false);
-    private AtomicBoolean working = new AtomicBoolean(false);
-    private AtomicBoolean finished = new AtomicBoolean(false);
+    private final AtomicBoolean quit = new AtomicBoolean(false);
+    private final AtomicBoolean working = new AtomicBoolean(false);
+    private final AtomicBoolean finished = new AtomicBoolean(false);
     /**
      * The first constructor for computers.
      * @param url The ip address of the server
@@ -115,7 +120,7 @@ public class Client extends Thread {
             new Writer(out).start();
             System.out.println("Created I/O stream threads.");
 
-        } catch (Exception ex) {
+        } catch (NoSuchAlgorithmException | KeyStoreException | IOException | CertificateException | KeyManagementException ex) {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

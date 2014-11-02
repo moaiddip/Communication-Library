@@ -39,10 +39,8 @@ public class Server extends Thread {
      * Returns a hashmap with all the server-client threads.
      * @return the threads
      */
-    public HashMap<Integer, Communication> getThreads() {
-        synchronized (this) {
+    public synchronized HashMap<Integer, Communication> getThreads() {
             return threads;
-        }
     }
     int port;
     int locality = 0;

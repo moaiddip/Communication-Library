@@ -70,14 +70,10 @@ public class Communication extends Thread {
                         //Answered, then it sends the answer back to the client
 
                         Item object;
-                        synchronized (que) {
-                            object = que.putMsg(string, remoteSocketAddress, userPrio);
-                            if (userPrio != -1) {
-                                synchronized (object) {
-                                    object.setUser(getUser());
-                                    object.setUserPrio(userPrio);
-                                }
-                            }
+                        object = que.putMsg(string, remoteSocketAddress, userPrio);
+                        if (userPrio != -1) {
+                            object.setUser(getUser());
+                            object.setUserPrio(userPrio);
                         }
                         synchronized (object) {
                             while (object.isAnswered() == false) {
@@ -99,18 +95,14 @@ public class Communication extends Thread {
 
                 }
             }
-        } catch (Exception ex) {
+        } catch (IOException | InterruptedException ex) {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 Item object;
                 if (user != null) {
-                    synchronized (que) {
-                        object = que.putMsg("logout!", remoteSocketAddress, userPrio);
-                        synchronized (object) {
-                            object.setUser(getUser());
-                        }
-                    }
+                    object = que.putMsg("logout!", remoteSocketAddress, userPrio);
+                    object.setUser(getUser());
                 }
 
                 sslsocket.close();
@@ -123,13 +115,17 @@ public class Communication extends Thread {
 
     /**
      * Returns the user that occupies this thread.
-     * @return the user as a string. If it's null then there is no user logged in.
+     *
+     * @return the user as a string. If it's null then there is no user logged
+     * in.
      */
-    public String getUser() {
-        return user;
+    public synchronized String getUser() {
+        return user; //Sync problem.
     }
+
     /**
      * Sends a status update to this client.
+     *
      * @param status The status update as a string.
      */
     public void sendUpdate(String status) {

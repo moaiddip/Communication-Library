@@ -21,6 +21,7 @@ public final class WriteQueue {
 
     /**
      * Returns an atomic boolean responsible to show if a new command was added.
+     *
      * @return the hasAddedCommands
      */
     public Boolean getHasAddedCommands() {
@@ -29,6 +30,7 @@ public final class WriteQueue {
 
     /**
      * Sets the atomic boolean.
+     *
      * @param aHasAddedCommands the hasAddedCommands to set
      */
     public void setHasAddedCommands(Boolean aHasAddedCommands) {
@@ -42,61 +44,60 @@ public final class WriteQueue {
     public WriteQueue(long curTime) {
         this.firstTime = curTime / 1000;
         secondTime = firstTime;
+        initialize();
+    }
+    int hashTail = 0;
+    HashMap<Integer, Item> items = new HashMap<>();
+    HashMap<Integer, Item> secondList = new HashMap<>();
+    private final AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
+    int totalQueries = 0;
+    Calendar cal;
+
+    public void initialize() {
         CalculateTime time = new CalculateTime();
         time.start();
         Replace replace = new Replace();
         replace.start();
     }
-    int hashTail = 0;
-    HashMap<Integer, Item> items = new HashMap<>();
-    HashMap<Integer, Item> secondList = new HashMap<>();
-    private AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
-    int totalQueries = 0;
-    Calendar cal;
 
     //puts a new message in the queue
+
     /**
      * Creates an instance of the Item class, puts the message and ip address of
      * the client that queried the message in the instance created, then it puts
-     * the instance in a hashmap. 
+     * the instance in a hashmap.
      *
      * @param message The query in a string.
      * @param address The ip address of the client with the query.
      * @param userPrio The priority of the user who issued the command.
      * @return Returns the instance of the Item class created.
      */
-    public Item putMsg(String message, String address, int userPrio) {
-        //looks for an old message to replace
-        System.out.println("Putting command in queue: " + message+" from: "+address+" with prio: "+userPrio);
-        synchronized (items) {
-            cal = Calendar.getInstance();
-            firstTime = secondTime;
-            secondTime = cal.getTimeInMillis() / 1000;
-            int placed = 0;
-            if (firstTime - secondTime < 3 && firstTime != secondTime) {
-                replaceInt++;
-                System.out.println("Current replaceInt:" + replaceInt);
-            }
-            for (int i = 0; i < items.size(); i++) {
-                if (placed == 0) {
-                    if (items.get(i).getState() == false) {
-                        items.get(i).create(message, address, userPrio);
-                        totalQueries++;
-                        placed = 1;
-                        System.out.println("Total queries: " + totalQueries);
-                        return items.get(i);
-                    }
-                }
 
-            }
-            //creates new entry
-            items.put(hashTail, new Item());
-            items.get(hashTail).create(message, address, userPrio);
-            hashTail++;
-            totalQueries++;
-            System.out.println("Total queries: " + totalQueries);
-            return items.get(hashTail - 1);
+    public synchronized Item putMsg(String message, String address, int userPrio) {
+        //looks for an old message to replace
+        System.out.println("Putting command in queue: " + message + " from: " + address + " with prio: " + userPrio);
+        cal = Calendar.getInstance();
+        firstTime = secondTime;
+        secondTime = cal.getTimeInMillis() / 1000;
+        if (firstTime - secondTime < 3 && firstTime != secondTime) {
+            replaceInt++;
+            System.out.println("Current replaceInt:" + replaceInt);
         }
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).getState() == false) {
+                items.get(i).create(message, address, userPrio);
+                totalQueries++;
+                System.out.println("Total queries: " + totalQueries);
+                return items.get(i);
+            }
+        }
+        //creates new entry
+        items.put(hashTail, new Item());
+        items.get(hashTail).create(message, address, userPrio);
+        hashTail++;
+        totalQueries++;
+        System.out.println("Total queries: " + totalQueries);
+        return items.get(hashTail - 1);
     }
 
     /**
@@ -118,10 +119,8 @@ public final class WriteQueue {
      *
      * @return A hashmap(Integer, Item).
      */
-    public HashMap returnMap() {
-        synchronized (secondList) {
-            return secondList;
-        }
+    public synchronized HashMap returnMap() {
+        return secondList;
     }
 
     /**
@@ -131,16 +130,14 @@ public final class WriteQueue {
     public class CalculateTime extends Thread {
 
         @Override
-        public void run() {
+        public synchronized void run() {
             while (true) {
-                synchronized (items) {
-                    Calendar cal2 = Calendar.getInstance();
-                    long past = cal2.getTimeInMillis() / 1000;
+                Calendar cal2 = Calendar.getInstance();
+                long past = cal2.getTimeInMillis() / 1000;
 
-                    if (((secondTime - past) % 3 < 1) && replaceInt > 1) {
-                        replaceInt--;
-                        System.out.println("Current replaceInt:" + replaceInt);
-                    }
+                if (((secondTime - past) % 3 < 1) && replaceInt > 1) {
+                    replaceInt--;
+                    System.out.println("Current replaceInt:" + replaceInt);
                 }
             }
         }
@@ -154,35 +151,30 @@ public final class WriteQueue {
     public class Replace extends Thread {
 
         @Override
-        public void run() {
+        public synchronized void run() {
             while (true) {
-                synchronized (items) {
-                    if (totalQueries == replaceInt) {
-                        System.out.println("Putting commands in the ReadQueue.");
-                        totalQueries = 0;
-                        synchronized (secondList) {
-                            for (int i = 0; i < items.size(); i++) {
-                                if (secondList.isEmpty()) {
-                                    secondList.put(secondList.size() + 1, items.get(i));
-                                } else {
-                                    int placed = 0;
-                                    for (int j = 0; j < items.size(); j++) {
-                                        if (placed == 0) {
-                                            if (items.get(i).getState() == false) {
-                                                secondList.replace(j, items.get(i));
-                                                placed = 1;
-                                            }
-                                        }
-                                    }
-                                    if (placed == 0) {
-                                        secondList.put(secondList.size() + 1, items.get(i));
+                if (totalQueries == replaceInt) {
+                    System.out.println("Putting commands in the ReadQueue.");
+                    totalQueries = 0;
+                    for (int i = 0; i < items.size(); i++) {
+                        if (secondList.isEmpty()) {
+                            secondList.put(secondList.size() + 1, items.get(i));
+                        } else {
+                            int placed = 0;
+                            for (int j = 0; j < items.size(); j++) {
+                                if (placed == 0) {
+                                    if (items.get(i).getState() == false) {
+                                        secondList.replace(j, items.get(i));
+                                        placed = 1;
                                     }
                                 }
                             }
-                            hasAddedCommands.set(true);
-                            secondList.notify();
+                            if (placed == 0) {
+                                secondList.put(secondList.size() + 1, items.get(i));
+                            }
                         }
                     }
+                    hasAddedCommands.set(true);
                 }
             }
         }

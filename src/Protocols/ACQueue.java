@@ -41,14 +41,12 @@ public class ACQueue {
      *
      * @return the items
      */
-    public HashMap<Integer, String> getItems() {
-        synchronized (items) {
+    public synchronized HashMap<Integer, String> getItems() {
             return items;
-        }
     }
     int hashTail = 0;
-    private HashMap<Integer, String> items = new HashMap<>();
-    private AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
+    private final HashMap<Integer, String> items = new HashMap<>();
+    private final AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
 
     /**
      * Puts a message in the queue.
@@ -56,9 +54,8 @@ public class ACQueue {
      * @param message The message you want to put.
      * @return Returns the message (optional).
      */
-    public String putMsg(String message) {
+    public synchronized String putMsg(String message) {
         //looks for an old message to replace
-        synchronized (getItems()) {
             int placed = 0;
             for (int i = 0; i < getItems().size(); i++) {
                 if (placed == 0) {
@@ -78,6 +75,5 @@ public class ACQueue {
             System.out.println("Putting new command in the Arduino/Client queue");
             hasAddedCommands.set(true);
             return getItems().get(hashTail - 1);
-        }
     }
 }
