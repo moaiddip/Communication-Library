@@ -20,7 +20,7 @@ Perhaps, softcode some of the restricted commands (Could make implementation a l
 Version Revisions:
 -------------------
 
-Version 0.9: Made the classes more expandable, got rid of a lot of static classes/methods/objects. The arduino connector can now be instantiated twice from the same server, which means you can have multiple arduinos inside the same house. The client can also be connected to multiple servers/houses.
+Version 0.9: Made the classes more expandable, got rid of a lot of static classes/methods/objects. The arduino connector can now be instantiated multiple times from the same server, which means you can have multiple arduinos inside the same house. The client can also be connected to multiple servers/houses.
 
 Version 0.8: Added a queue to the client side for messages pushed by the server and updates that are not requested by the client explicitly.
 
