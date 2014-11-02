@@ -5,12 +5,14 @@ This is the communication protocol library developped for HKR's last year's firs
 Our job is to be able to transmit the messages in a secure and somewhat efficient way between the arduino-server-clients and prepare a medium for the other groups to be able to access the messages sent. 
 The library's purpose is to keep things simple by not getting the rest of the groups involved with more code and to provide simple methods for them to use instead.
 
-TODO: Use JSon (instead of Strings) and jSSC (instead of RXTX). Maybe: Implement an algorithm that receives feedback from the server on the processing time and calculate the average and use it with the algorithm implemented in v.0.5 to get more precise results. 
-
 What is next:
 Make the server automatically detect when an arduino is disconnected and look for it.
 Use NIO instead of IO streams.
+Switch from RXTX to jSSC.
+Send JSON objects instead of strings.
 Perhaps, softcode some of the restricted commands (Could make implementation a lot more complicated)
+
+Version 0.9: Made the classes more expandable, got rid of a lot of static classes/methods/objects. The arduino connector can now be instantiated twice from the same server, which means you can have multiple arduinos inside the same house. The client can also be connected to multiple servers/houses.
 
 Version 0.8: Added a queue to the client side for messages pushed by the server and updates that are not requested by the client explicitly.
 
