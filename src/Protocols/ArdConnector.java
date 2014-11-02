@@ -6,7 +6,6 @@
 package Protocols;
 
 import gnu.io.CommPortIdentifier;
-import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.concurrent.atomic.AtomicBoolean;
