@@ -7,7 +7,6 @@ The library's purpose is to keep things simple by not getting the rest of the gr
 
 What is next:
 --------------
-Make the server automatically detect when an arduino is disconnected and look for it.
 
 Use NIO instead of IO streams.
 
@@ -19,6 +18,7 @@ Perhaps, softcode some of the restricted commands (Could make implementation a l
 
 Version Revisions:
 -------------------
+Version 1.0: Made the server automatically detect when an arduino has disconnected and look for it. Cleaned up the code, adjusted the synchronized methods.
 
 Version 0.9: Made the classes more expandable, got rid of a lot of static classes/methods/objects. The arduino connector can now be instantiated multiple times from the same server, which means you can have multiple arduinos inside the same house. The client can also be connected to multiple servers/houses.
 
