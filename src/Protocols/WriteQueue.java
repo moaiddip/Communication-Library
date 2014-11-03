@@ -8,6 +8,8 @@ package Protocols;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Accessed by the Communication class to query a command. The first half of the
@@ -54,14 +56,14 @@ public final class WriteQueue {
     Calendar cal;
 
     public void initialize() {
-        CalculateTime time = new CalculateTime();
-        time.start();
         Replace replace = new Replace();
         replace.start();
+        CalculateTime time = new CalculateTime();
+        time.start();
+        
     }
 
     //puts a new message in the queue
-
     /**
      * Creates an instance of the Item class, puts the message and ip address of
      * the client that queried the message in the instance created, then it puts
@@ -72,7 +74,6 @@ public final class WriteQueue {
      * @param userPrio The priority of the user who issued the command.
      * @return Returns the instance of the Item class created.
      */
-
     public synchronized Item putMsg(String message, String address, int userPrio) {
         //looks for an old message to replace
         System.out.println("Putting command in queue: " + message + " from: " + address + " with prio: " + userPrio);
@@ -138,7 +139,7 @@ public final class WriteQueue {
                 if (((secondTime - past) % 3 < 1) && replaceInt > 1) {
                     replaceInt--;
                     System.out.println("Current replaceInt:" + replaceInt);
-                }
+                }                
             }
         }
     }
@@ -153,12 +154,18 @@ public final class WriteQueue {
         @Override
         public synchronized void run() {
             while (true) {
+                
+                try {
+                    this.sleep(3000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(WriteQueue.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 if (totalQueries == replaceInt) {
                     System.out.println("Putting commands in the ReadQueue.");
                     totalQueries = 0;
                     for (int i = 0; i < items.size(); i++) {
                         if (secondList.isEmpty()) {
-                            secondList.put(secondList.size() + 1, items.get(i));
+                            secondList.put(0, items.get(i));
                         } else {
                             int placed = 0;
                             for (int j = 0; j < items.size(); j++) {
