@@ -40,7 +40,7 @@ public class Client extends Thread {
     static String message = "no_command";
     static String reply;
     private final AtomicBoolean query = new AtomicBoolean(false);
-    ACQueue cQue;
+    ACQueue cQue = new ACQueue();
     private final AtomicBoolean quit = new AtomicBoolean(false);
     private final AtomicBoolean working = new AtomicBoolean(false);
     private final AtomicBoolean finished = new AtomicBoolean(false);
@@ -115,7 +115,7 @@ public class Client extends Thread {
                     = new PrintWriter(sslsocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(sslsocket.getInputStream()));
-            cQue = new ACQueue();
+            
             new Reader(in).start();
             new Writer(out).start();
             System.out.println("Created I/O stream threads.");

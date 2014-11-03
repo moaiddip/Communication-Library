@@ -32,15 +32,18 @@ import javax.net.ssl.SSLSocket;
  */
 public class Server extends Thread {
 
-    private HashMap<Integer, Communication> threads = new HashMap<>();
+    private final HashMap<Integer, Communication> threads = new HashMap<>();
+
     WriteQueue que;
+
     /**
-     * 
+     *
      * Returns a hashmap with all the server-client threads.
+     *
      * @return the threads
      */
     public synchronized HashMap<Integer, Communication> getThreads() {
-            return threads;
+        return threads;
     }
     int port;
     int locality = 0;
@@ -67,12 +70,16 @@ public class Server extends Thread {
         this.keypass = keypass;
         this.keystore = keystore;
         this.keystorePass = keystorePass;
+        Calendar cal = Calendar.getInstance();
+        que = new WriteQueue(cal.getTimeInMillis());
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         boolean listening = true;
         try {
+//            Calendar cal = Calendar.getInstance();
+//            que = new WriteQueue(cal.getTimeInMillis());
             System.out.println("Creating Server Socket.");
             //Password to the keystore
             char[] passphrase = keystorePass.toCharArray();
@@ -98,23 +105,20 @@ public class Server extends Thread {
             }
             System.out.println("Server Socket created. Listening.");
             //Creates the que and listens to the socket.
-            Calendar cal = Calendar.getInstance();
-            que = new WriteQueue(cal.getTimeInMillis());
+
             while (listening) {
                 int placed = 0;
-                synchronized (this) {
-                    for (int i = 0; i < threads.size(); i++) {
-                        if (getThreads().get(i).isInterrupted() && placed == 0) {
-                            getThreads().put(i, new Communication((SSLSocket) sslserversocket.accept(), que));
-                            getThreads().get(i).start();
-                            placed=1;
-                        }
+                for (int i = 0; i < threads.size(); i++) {
+                    if (getThreads().get(i).isInterrupted() && placed == 0) {
+                        getThreads().put(i, new Communication((SSLSocket) sslserversocket.accept(), que));
+                        getThreads().get(i).start();
+                        placed = 1;
                     }
-                    if (placed==0){
-                        getThreads().put(hashTail, new Communication((SSLSocket) sslserversocket.accept(), que));
-                        getThreads().get(hashTail).start();
-                        hashTail++;
-                    }
+                }
+                if (placed == 0) {
+                    getThreads().put(hashTail, new Communication((SSLSocket) sslserversocket.accept(), que));
+                    getThreads().get(hashTail).start();
+                    hashTail++;
                 }
             }
         } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException | KeyManagementException ex) {
@@ -122,7 +126,8 @@ public class Server extends Thread {
         }
 
     }
-    public WriteQueue getTheQueue(){
+
+    public WriteQueue getTheQueue() {
         return que;
     }
 }

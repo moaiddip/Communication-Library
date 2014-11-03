@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  */
 public class ArdConnector extends Thread {
 
-    ACQueue ac;
+    ACQueue ac = new ACQueue();
     public String port = "COM3";
     private String inputLine = null;
     private String command = "no_command!";
@@ -48,7 +48,7 @@ public class ArdConnector extends Thread {
     public void run() {
         try {
             SerialClass obj = new SerialClass();
-            ac = new ACQueue();
+            
 
             while (!quit.get()) {
                 CommPortIdentifier portId = null;
