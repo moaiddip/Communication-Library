@@ -68,13 +68,12 @@ public class Communication extends Thread {
                     } else {
                         //Puts message in queue and waits until the message is
                         //Answered, then it sends the answer back to the client
-
                         Item object;
                         object = que.putMsg(string, remoteSocketAddress, userPrio);
                         if (userPrio != -1) {
                             object.setUser(getUser());
                             object.setUserPrio(userPrio);
-                        }
+                        }                       
                         synchronized (object) {
                             while (object.isAnswered() == false) {
                                 object.wait();

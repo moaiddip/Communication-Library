@@ -86,8 +86,10 @@ public final class WriteQueue {
         }
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i).getState() == false) {
+                items.put(i, new Item());
                 items.get(i).create(message, address, userPrio);
                 totalQueries++;
+                System.out.println("A command was replaced at position:"+i);
                 System.out.println("Total queries: " + totalQueries);
                 return items.get(i);
             }
@@ -95,6 +97,7 @@ public final class WriteQueue {
         //creates new entry
         items.put(hashTail, new Item());
         items.get(hashTail).create(message, address, userPrio);
+        System.out.println("A command was added at position:"+hashTail);
         hashTail++;
         totalQueries++;
         System.out.println("Total queries: " + totalQueries);
@@ -166,12 +169,15 @@ public final class WriteQueue {
                     for (int i = 0; i < items.size(); i++) {
                         if (secondList.isEmpty()) {
                             secondList.put(0, items.get(i));
+                            System.out.println("Added in ReadQueue at: "+0);
                         } else {
                             int placed = 0;
-                            for (int j = 0; j < items.size(); j++) {
+                            for (int j = 0; j < secondList.size(); j++) {
                                 if (placed == 0) {
-                                    if (items.get(i).getState() == false) {
-                                        secondList.replace(j, items.get(i));
+                                    if (secondList.get(i).getState() == false) {
+                                        System.out.println("Item number: "+i+" is false.");
+                                        System.out.println("Replaced in ReadQueue at: "+i);
+                                        secondList.put(j, items.get(i));
                                         placed = 1;
                                     }
                                 }

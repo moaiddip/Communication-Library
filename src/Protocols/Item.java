@@ -42,6 +42,7 @@ public class Item {
         this.message = message;
         this.address = address;
         this.userPrio = userPrio;
+        System.out.println(message+" received in the Item class.");
         if (message.contains("test")) {
             answered = true;
         }
@@ -97,6 +98,7 @@ public class Item {
     public synchronized void setReply(String message) {
             reply = message;
             answered = true;
+            notify();
     }
 
     /**
