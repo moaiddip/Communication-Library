@@ -140,9 +140,9 @@ public class ArdConnector extends Thread {
      * @return A string with the answer.
      */
     public String getInputLine() {
+        finished.compareAndSet(true, false);
         String reply = inputLine;
         inputLine = null;
-        finished.set(false);
         return reply;
     }
 
