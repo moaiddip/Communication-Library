@@ -74,14 +74,14 @@ public class ArdConnector extends Thread {
                     obj.writeData(command);
                     Calendar cal = Calendar.getInstance();
                     long time = cal.getTimeInMillis() / 1000;
-                    while ((cal.getTimeInMillis() / 1000) - time > 5 || !getWorking());
-                    if (getWorking()) {
+                    while ((cal.getTimeInMillis() / 1000) - time > 3 || !getWorking());
+                    if (!getWorking()) {
                         System.out.println("Did not receive an answer from the arduino, trying again.");
                         obj.writeData(command);
                     }
                     time = cal.getTimeInMillis() / 1000;
-                    while ((cal.getTimeInMillis() / 1000) - time > 5 || !getWorking());
-                    if (getWorking()) {
+                    while ((cal.getTimeInMillis() / 1000) - time > 3 || !getWorking());
+                    if (!getWorking()) {
                         System.out.println("Did not receive an answer from the arduino, stopping.");
                         setInputLine("no_answer!");
                         setWorking(false);
@@ -99,7 +99,7 @@ public class ArdConnector extends Thread {
      * This method stops the listening loops, which ultimately shuts it down.
      */
     public void quitCommunication() {
-        quit.compareAndSet(false, true);
+        quit.set(true);
     }
 
     /**
@@ -109,7 +109,7 @@ public class ArdConnector extends Thread {
      * @param newValue The new value for the phase.
      */
     public void changePhase(Boolean newValue) {
-        query.compareAndSet(!newValue, newValue);
+        query.set(newValue);
     }
 
     /**
@@ -121,7 +121,7 @@ public class ArdConnector extends Thread {
      * False=done/not processing.
      */
     public void setWorking(Boolean newValue) {
-        working.compareAndSet(!newValue, newValue);
+        working.set(newValue);
     }
 
     /**
@@ -140,7 +140,8 @@ public class ArdConnector extends Thread {
      * @return A string with the answer.
      */
     public String getInputLine() {
-        finished.compareAndSet(true, false);
+        while(!finished.get());
+        finished.set(false);
         String reply = inputLine;
         inputLine = null;
         return reply;
@@ -163,8 +164,9 @@ public class ArdConnector extends Thread {
      * @param aCommand The command to be processed by the arduino.
      */
     public void setCommand(String aCommand) {
+        while(query.get());
         command = aCommand;
-        query.compareAndSet(false, true);
+        query.set(true);
     }
 
     /**
@@ -199,9 +201,7 @@ public class ArdConnector extends Thread {
      * @param aFinished True: finished False: not finished.
      */
     public void setFinished(Boolean aFinished) {
-        if (!finished.get() == false && !aFinished == false) {
-            finished.compareAndSet(!aFinished, aFinished);
-        }
+            finished.set(aFinished);
     }
 
     public ACQueue getArduinoQueue() {

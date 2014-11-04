@@ -207,7 +207,7 @@ public class Client extends Thread {
      * @param aQuit True kills the threads.
      */
     public void setQuit(Boolean aQuit) {
-        quit.compareAndSet(!aQuit, aQuit);
+        quit.set(aQuit);
     }
     /**
      * If this is true then a command is about to be sent to the server.
@@ -221,7 +221,7 @@ public class Client extends Thread {
      * @param aQuery 
      */
     public void setQuery(Boolean aQuery) {
-        query.compareAndSet(!aQuery, aQuery);
+        query.set(aQuery);
     }
     /**
      * If this is true then a command was sent and is being processed.
@@ -235,15 +235,16 @@ public class Client extends Thread {
      * @param aWorking 
      */
     public void setWorking(Boolean aWorking) {
-        working.compareAndSet(!aWorking, aWorking);
+        working.set(aWorking);
     }
     /**
      * Sets the next message to be sent and sets the query atomic boolean to true if false.
      * @param aMessage The message to be sent.
      */
     public void setMessage(String aMessage) {
+        while(query.get());
         message = aMessage;
-        query.compareAndSet(false, true);
+        query.set( true);
     }
     /**
      * Gets the message to be sent.
@@ -264,16 +265,18 @@ public class Client extends Thread {
      * @param aFinished The state as a boolean. True: finished
      */
     public void setFinished(Boolean aFinished){
-        if (!finished.get() == false && !aFinished == false) {
-            finished.compareAndSet(!aFinished, aFinished);
-        }
+        finished.set(aFinished);
     }
     /**
      * Returns the reply to a message.
      * @return The reply as a string.
      */
     public String getReply(){
-        return reply;
+        while(!finished.get());
+        finished.set(false);
+        String respond = reply;
+        reply=null;
+        return respond;
     }
     public ACQueue getClientQueue(){
         return cQue;
