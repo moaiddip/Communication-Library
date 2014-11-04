@@ -38,7 +38,7 @@ public class Client extends Thread {
     String trustpass;
     InputStream trustStore;
     static String message = "no_command";
-    static String reply;
+    static String reply = null;
     private final AtomicBoolean query = new AtomicBoolean(false);
     ACQueue cQue = new ACQueue();
     private final AtomicBoolean quit = new AtomicBoolean(false);
