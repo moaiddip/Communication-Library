@@ -74,17 +74,18 @@ public class ArdConnector extends Thread {
                     obj.writeData(command);
                     Calendar cal = Calendar.getInstance();
                     long time = cal.getTimeInMillis() / 1000;
-                    while ((cal.getTimeInMillis() / 1000) - time > 3 || !getWorking());
+                    while ((cal.getTimeInMillis() / 1000) - time > 5 || !getWorking());
                     if (getWorking()) {
                         System.out.println("Did not receive an answer from the arduino, trying again.");
                         obj.writeData(command);
                     }
                     time = cal.getTimeInMillis() / 1000;
-                    while ((cal.getTimeInMillis() / 1000) - time > 3 || !getWorking());
+                    while ((cal.getTimeInMillis() / 1000) - time > 5 || !getWorking());
                     if (getWorking()) {
                         System.out.println("Did not receive an answer from the arduino, stopping.");
                         setInputLine("no_answer!");
                         setWorking(false);
+                        setFinished(true);
                     }
                 }
             }
@@ -141,6 +142,7 @@ public class ArdConnector extends Thread {
     public String getInputLine() {
         String reply = inputLine;
         inputLine = null;
+        finished.set(false);
         return reply;
     }
 
@@ -187,8 +189,8 @@ public class ArdConnector extends Thread {
      *
      * @return
      */
-    public AtomicBoolean getFinished() {
-        return finished;
+    public Boolean getFinished() {
+        return finished.get();
     }
 
     /**
