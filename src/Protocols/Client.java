@@ -148,6 +148,7 @@ public class Client extends Thread {
 
                         String[] parts = inputz.split("_");
                         String[] parts2 = message.split("_");
+                        System.out.println(parts[0]+"\n"+parts2[0]);
                         if ((parts[0].equals(parts2[0]) || parts[0].equals("error"))) {
                             reply = inputz;
                             message = "no_command";
