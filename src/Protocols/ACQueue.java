@@ -42,7 +42,7 @@ public class ACQueue {
      * @return the items
      */
     public synchronized HashMap<Integer, String> getItems() {
-            return items;
+        return items;
     }
     int hashTail = 0;
     private final HashMap<Integer, String> items = new HashMap<>();
@@ -56,24 +56,19 @@ public class ACQueue {
      */
     public synchronized String putMsg(String message) {
         //looks for an old message to replace
-            int placed = 0;
-            for (int i = 0; i < getItems().size(); i++) {
-                if (placed == 0) {
-                    if (getItems().get(i) == null) {
-                        getItems().replace(i, message);
-                        placed = 1;
-                        System.out.println("Replacing command in the Arduino/Client queue");
-                        hasAddedCommands.set(true);
-                        return getItems().get(i);
-                    }
-                }
-
+        for (int i = 0; i < getItems().size(); i++) {
+            if (getItems().get(i) == null) {
+                getItems().replace(i, message);
+                System.out.println("Replacing command in the Arduino/Client queue");
+                hasAddedCommands.set(true);
+                return getItems().get(i);
             }
-            //creates new entry
-            getItems().put(hashTail, message);
-            hashTail++;
-            System.out.println("Putting new command in the Arduino/Client queue");
-            hasAddedCommands.set(true);
-            return getItems().get(hashTail - 1);
+        }
+        //creates new entry
+        getItems().put(hashTail, message);
+        hashTail++;
+        System.out.println("Putting new command in the Arduino/Client queue");
+        hasAddedCommands.set(true);
+        return getItems().get(hashTail - 1);
     }
 }
