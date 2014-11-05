@@ -151,7 +151,7 @@ public class Client extends Thread {
                         //System.out.println(parts[0]+"\n"+parts2[0]);
                         if ((parts[0].equals(parts2[0]) || parts[0].equals("error"))) {
                             reply = inputz;
-                            command = "no_command";
+                            command = "no_command!";
                             setFinished(true);
                             setWorking(false);
                         } else {
