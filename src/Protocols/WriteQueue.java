@@ -36,7 +36,7 @@ public final class WriteQueue {
      * @param aHasAddedCommands the hasAddedCommands to set
      */
     public void setHasAddedCommands(Boolean aHasAddedCommands) {
-        hasAddedCommands.compareAndSet(!aHasAddedCommands, aHasAddedCommands);
+        hasAddedCommands.set(aHasAddedCommands);
     }
 
     long firstTime;
