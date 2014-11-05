@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+//1.8
 package Protocols;
 
 import java.util.HashMap;
@@ -58,7 +59,7 @@ public class ACQueue {
         //looks for an old message to replace
         for (int i = 0; i < getItems().size(); i++) {
             if (getItems().get(i) == null) {
-                getItems().replace(i, message);
+                getItems().put(i, message);
                 System.out.println("Replacing command in the Arduino/Client queue");
                 hasAddedCommands.set(true);
                 return getItems().get(i);
