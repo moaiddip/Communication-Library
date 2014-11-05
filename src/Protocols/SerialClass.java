@@ -87,6 +87,7 @@ public class SerialClass implements SerialPortEventListener {
      * Handles the information received from the arduino and decides whether
      * they need to go to a queue or set as a specific reply to a command.
      *
+     * @param oEvent Arduino Event
      */
     @Override
     public synchronized void serialEvent(SerialPortEvent oEvent) {
