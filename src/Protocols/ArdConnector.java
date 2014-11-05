@@ -151,7 +151,7 @@ public class ArdConnector extends Thread {
      * Sets the answer, used by the SerialClass to edit the answer when received
      * from the arduino.
      *
-     * @param aInputLine The answer received from the arduino.
+     * @param aReply The answer received from the arduino. 
      */
     public void setReply(String aReply) {
         reply = aReply;
