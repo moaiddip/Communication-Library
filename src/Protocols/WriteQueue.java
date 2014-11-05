@@ -65,18 +65,18 @@ public final class WriteQueue {
 
     //puts a new message in the queue
     /**
-     * Creates an instance of the Item class, puts the message and ip address of
-     * the client that queried the message in the instance created, then it puts
-     * the instance in a hashmap.
+     * Creates an instance of the Item class, puts the command and ip address of
+ the client that queried the command in the instance created, then it puts
+ the instance in a hashmap.
      *
-     * @param message The query in a string.
+     * @param command The query in a string.
      * @param address The ip address of the client with the query.
      * @param userPrio The priority of the user who issued the command.
      * @return Returns the instance of the Item class created.
      */
-    public synchronized Item putMsg(String message, String address, int userPrio) {
-        //looks for an old message to replace
-        System.out.println("Putting command in queue: " + message + " from: " + address + " with prio: " + userPrio);
+    public synchronized Item putCmd(String command, String address, int userPrio) {
+        //looks for an old command to replace
+        System.out.println("Putting command in queue: " + command + " from: " + address + " with prio: " + userPrio);
         cal = Calendar.getInstance();
         firstTime = secondTime;
         secondTime = cal.getTimeInMillis() / 1000;
@@ -87,7 +87,7 @@ public final class WriteQueue {
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i).getState() == false) {
                 items.put(i, new Item());
-                items.get(i).create(message, address, userPrio);
+                items.get(i).create(command, address, userPrio);
                 totalQueries++;
                 System.out.println("A command was replaced at position:"+i);
                 System.out.println("Total queries: " + totalQueries);
@@ -96,7 +96,7 @@ public final class WriteQueue {
         }
         //creates new entry
         items.put(hashTail, new Item());
-        items.get(hashTail).create(message, address, userPrio);
+        items.get(hashTail).create(command, address, userPrio);
         System.out.println("A command was added at position:"+hashTail);
         hashTail++;
         totalQueries++;
@@ -123,7 +123,7 @@ public final class WriteQueue {
      *
      * @return A hashmap(Integer, Item).
      */
-    public synchronized HashMap returnMap() {
+    public synchronized HashMap getMap() {
         return secondList;
     }
 

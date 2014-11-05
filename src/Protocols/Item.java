@@ -15,14 +15,14 @@ public class Item {
     /**
      *
      * newOrOld: a boolean to keep track of if the query is new or old. new =
-     * true(default) answered: a boolean to keep track of if the query is
-     * answered. not answered=false (default) message: the query reply: the
-     * answer to the query synchronized methods are read/written by different
-     * threads
+ true(default) answered: a boolean to keep track of if the query is
+ answered. not answered=false (default) command: the query reply: the
+ answer to the query synchronized methods are read/written by different
+ threads
      */
     boolean newOrOld = true;
     boolean answered = false;//testing: true, default: false
-    String message;
+    String command;
     String reply;
     String address;
     private String user = null;
@@ -34,20 +34,18 @@ public class Item {
      * Sets the query and ip address of an Item instance. Should be used when
      * the instance is first created.
      *
-     * @param message Requires a String with the message.
+     * @param command Requires a String with the command.
      * @param address Requires a String with an ip address.
      * @param userPrio
      */
-    public void create(String message, String address, int userPrio) {
-        this.message = message;
+    public void create(String command, String address, int userPrio) {
+        this.command = command;
         this.address = address;
         this.userPrio = userPrio;
-        System.out.println(message+" received in the Item class.");
-        if (message.contains("test")) {
+        System.out.println(command+" received in the Item class.");
+        if (command.contains("test")) {
             answered = true;
-        }
-        if (answered) {
-            reply = message;
+            reply = command;
         }
     }
 
@@ -62,13 +60,13 @@ public class Item {
     }
 
     /**
-     * Returns the message/query from an item instance. Synchronization not
+     * Returns the command/query from an item instance. Synchronization not
      * required.
      *
-     * @return A string with a message. (Presumably from a client)
+     * @return A string with a command. (Presumably from a client)
      */
-    public String getMsg() {
-        return message;
+    public String getCmd() {
+        return command;
     }
 
     /**
@@ -102,8 +100,8 @@ public class Item {
     }
 
     /**
-     * Returns a boolean indicating if a query is old or new. A message is only
-     * set to old once the reply has been sent to the client.
+     * Returns a boolean indicating if a query is old or new. A command is only
+ set to old once the reply has been sent to the client.
      *
      * @return A boolean, false = old; true = new;
      */

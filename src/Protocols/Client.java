@@ -37,7 +37,7 @@ public class Client extends Thread {
     String truststore;
     String trustpass;
     InputStream trustStore;
-    static String message = "no_command";
+    static String command = "no_command!";
     static String reply = null;
     private final AtomicBoolean query = new AtomicBoolean(false);
     ACQueue cQue = new ACQueue();
@@ -138,7 +138,7 @@ public class Client extends Thread {
 
         @Override
         public void run() {
-            while (!getQuit().get()) {
+            while (!quit.get()) {
                 
                 String inputz;
                 try {
@@ -147,19 +147,19 @@ public class Client extends Thread {
                         System.out.println("Received: " + inputz);
 
                         String[] parts = inputz.split("_");
-                        String[] parts2 = message.split("_");
-                        System.out.println(parts[0]+"\n"+parts2[0]);
+                        String[] parts2 = command.split("_");
+                        //System.out.println(parts[0]+"\n"+parts2[0]);
                         if ((parts[0].equals(parts2[0]) || parts[0].equals("error"))) {
                             reply = inputz;
-                            message = "no_command";
+                            command = "no_command";
                             setFinished(true);
                             setWorking(false);
                         } else {
-                            cQue.putMsg(inputz);
+                            cQue.putCmd(inputz);
                         }
                     }
                 } catch (Exception ex) {
-                    System.out.println("Not ready.");
+                    System.out.println("No input received from the server yet.");
                     try {
                         this.sleep(1000);
                     } catch (InterruptedException ex1) {
@@ -183,38 +183,29 @@ public class Client extends Thread {
 
         @Override
         public void run() {
-            while (!getQuit().get()) {
+            while (!quit.get()) {
                 if (query.get()) {
                     setQuery(false);
                     setWorking(true);
                     setFinished(false);
                     System.out.println("Sending command to the server.");
-                    out.println(message);
+                    out.println(command);
                 }
             }
 
         }
     }
-    
-    /**
-     * Gets the state of the boolean quit, quit is used to stop the threads.
-     * @return An atomic boolean.
-     */
-    public AtomicBoolean getQuit() {
-        return quit;
-    }
     /**
      * Sets the atomic boolean that is responsible for keeping the threads alive.
-     * @param aQuit True kills the threads.
      */
-    public void setQuit(Boolean aQuit) {
-        quit.set(aQuit);
+    public void quitCommunication() {
+        quit.set(true);
     }
     /**
      * If this is true then a command is about to be sent to the server.
      * @return an atomic boolean.
      */
-    public Boolean getQuery() {
+    public Boolean hasQuery() {
         return query.get();
     }
     /**
@@ -228,7 +219,7 @@ public class Client extends Thread {
      * If this is true then a command was sent and is being processed.
      * @return an atomic boolean
      */
-    public Boolean getWorking() {
+    public Boolean isWorking() {
         return working.get();
     }
     /**
@@ -240,25 +231,25 @@ public class Client extends Thread {
     }
     /**
      * Sets the next message to be sent and sets the query atomic boolean to true if false.
-     * @param aMessage The message to be sent.
+     * @param aCommand The command you wish to send.
      */
-    public void setMessage(String aMessage) {
+    public void setCommand(String aCommand) {
         while(query.get());
-        message = aMessage;
+        command = aCommand;
         query.set( true);
     }
     /**
      * Gets the message to be sent.
      * @return The message as a string.
      */
-    public String getMessage() {
-        return message;
+    public String getCommand() {
+        return command;
     }
     /**
      * Gets an atomic boolean indicating if a command or message has been answered.
      * @return An atomic boolean. True means it has been asnwered.
      */
-    public Boolean getFinished(){
+    public Boolean isFinished(){
         return finished.get();
     }
     /**

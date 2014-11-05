@@ -69,7 +69,7 @@ public class Communication extends Thread {
                         //Puts message in queue and waits until the message is
                         //Answered, then it sends the answer back to the client
                         Item object;
-                        object = que.putMsg(string, remoteSocketAddress, userPrio);
+                        object = que.putCmd(string, remoteSocketAddress, userPrio);
                         if (userPrio != -1) {
                             object.setUser(getUser());
                             object.setUserPrio(userPrio);
@@ -100,7 +100,7 @@ public class Communication extends Thread {
             try {
                 Item object;
                 if (user != null) {
-                    object = que.putMsg("logout!", remoteSocketAddress, userPrio);
+                    object = que.putCmd("logout!", remoteSocketAddress, userPrio);
                     object.setUser(getUser());
                 }
 

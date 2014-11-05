@@ -22,7 +22,7 @@ public class ArdConnector extends Thread {
 
     ACQueue ac = new ACQueue();
     public String port = "COM3";
-    private String inputLine = null;
+    private String reply = null;
     private String command = "no_command!";
     private final AtomicBoolean query = new AtomicBoolean(false);
     private final AtomicBoolean quit = new AtomicBoolean(false);
@@ -74,14 +74,14 @@ public class ArdConnector extends Thread {
                     obj.writeData(command);
                     Calendar cal = Calendar.getInstance();
                     long time = cal.getTimeInMillis() / 1000;
-                    while ((cal.getTimeInMillis() / 1000) - time > 3 || !getWorking());
-                    if (!getWorking()) {
+                    while ((cal.getTimeInMillis() / 1000) - time > 3 || !isWorking());
+                    if (!isWorking()) {
                         System.out.println("Did not receive an answer from the arduino, trying again.");
                         obj.writeData(command);
                     }
                     time = cal.getTimeInMillis() / 1000;
-                    while ((cal.getTimeInMillis() / 1000) - time > 3 || !getWorking());
-                    if (!getWorking()) {
+                    while ((cal.getTimeInMillis() / 1000) - time > 3 || !isWorking());
+                    if (!isWorking()) {
                         System.out.println("Did not receive an answer from the arduino, stopping.");
                         setInputLine("no_answer!");
                         setWorking(false);
@@ -130,7 +130,7 @@ public class ArdConnector extends Thread {
      *
      * @return A boolean indicating the state.
      */
-    public Boolean getWorking() {
+    public Boolean isWorking() {
         return working.get();
     }
 
@@ -139,12 +139,12 @@ public class ArdConnector extends Thread {
      *
      * @return A string with the answer.
      */
-    public String getInputLine() {
+    public String getReply() {
         while(!finished.get());
         finished.set(false);
-        String reply = inputLine;
-        inputLine = null;
-        return reply;
+        String answer = this.reply;
+        this.reply = null;
+        return answer;
     }
 
     /**
@@ -154,7 +154,7 @@ public class ArdConnector extends Thread {
      * @param aInputLine The answer received from the arduino.
      */
     public void setInputLine(String aInputLine) {
-        inputLine = aInputLine;
+        reply = aInputLine;
     }
 
     /**
@@ -191,7 +191,7 @@ public class ArdConnector extends Thread {
      *
      * @return
      */
-    public Boolean getFinished() {
+    public Boolean isFinished() {
         return finished.get();
     }
 

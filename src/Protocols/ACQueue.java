@@ -52,21 +52,21 @@ public class ACQueue {
     /**
      * Puts a message in the queue.
      *
-     * @param message The message you want to put.
+     * @param command The message you want to put.
      * @return Returns the message (optional).
      */
-    public synchronized String putMsg(String message) {
+    public synchronized String putCmd(String command) {
         //looks for an old message to replace
         for (int i = 0; i < getItems().size(); i++) {
             if (getItems().get(i) == null) {
-                getItems().put(i, message);
+                getItems().put(i, command);
                 System.out.println("Replacing command in the Arduino/Client queue");
                 hasAddedCommands.set(true);
                 return getItems().get(i);
             }
         }
         //creates new entry
-        getItems().put(hashTail, message);
+        getItems().put(hashTail, command);
         hashTail++;
         System.out.println("Putting new command in the Arduino/Client queue");
         hasAddedCommands.set(true);

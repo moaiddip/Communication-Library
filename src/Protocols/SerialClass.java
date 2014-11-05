@@ -34,6 +34,8 @@ public class SerialClass implements SerialPortEventListener {
     public OutputStream output;
     ArdConnector ard;
     ACQueue ac;
+    String[] parts;
+    String[] parts2;
     /**
      * Milliseconds to block while waiting for port open
      */
@@ -95,9 +97,8 @@ public class SerialClass implements SerialPortEventListener {
                 while ((inputz = input.readLine()) != null) {
 
                     System.out.println("Received: " + inputz);
-
-                    String[] parts = inputz.split("_");
-                    String[] parts2 = ard.getCommand().split("_");
+                    parts = inputz.split("_");
+                    parts2 = ard.getCommand().split("_");
                     if ("autochkstart!".equals(inputz)) {
                         autocheck = true;
                     } else if ("eol!".equals(inputz)) {
@@ -108,9 +109,9 @@ public class SerialClass implements SerialPortEventListener {
                         ard.setWorking(false);
                         ard.setFinished(true);
                     } else if (autocheck) {
-                        ac.putMsg(inputz);
+                        ac.putCmd(inputz);
                     } else {
-                        ac.putMsg(inputz);
+                        ac.putCmd(inputz);
                     }
                 }
             } catch (Exception e) {
