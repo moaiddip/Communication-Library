@@ -83,7 +83,7 @@ public class ArdConnector extends Thread {
                     while ((cal.getTimeInMillis() / 1000) - time > 3 || !isWorking());
                     if (!isWorking()) {
                         System.out.println("Did not receive an answer from the arduino, stopping.");
-                        setInputLine("no_answer!");
+                        setReply("no_answer!");
                         setWorking(false);
                         setFinished(true);
                     }
@@ -153,8 +153,8 @@ public class ArdConnector extends Thread {
      *
      * @param aInputLine The answer received from the arduino.
      */
-    public void setInputLine(String aInputLine) {
-        reply = aInputLine;
+    public void setReply(String aReply) {
+        reply = aReply;
     }
 
     /**

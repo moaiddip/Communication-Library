@@ -104,7 +104,7 @@ public class SerialClass implements SerialPortEventListener {
                     } else if ("eol!".equals(inputz)) {
                         autocheck = false;
                     } else if ((parts[0].equals(parts2[0]) || parts[0].equals("error")) && !autocheck) {
-                        ard.setInputLine(inputz);
+                        ard.setReply(inputz);
                         ard.setCommandDefault();
                         ard.setWorking(false);
                         ard.setFinished(true);
