@@ -126,7 +126,7 @@ public class SerialClass implements SerialPortEventListener {
         System.out.println("Sent: " + data);
         try {
             output.write(data.getBytes());
-            //output.flush();
+            output.flush();
         } catch (Exception e) {
             System.out.println("Could not write to port.");
         }
