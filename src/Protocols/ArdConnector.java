@@ -68,7 +68,7 @@ public class ArdConnector extends Thread {
 
                 }
                 if (query.get()&&!problem) {
-                    changePhase(false);
+                    setQuery(false);
                     setWorking(true);
                     setFinished(false);
                     obj.writeData(command);
@@ -108,7 +108,7 @@ public class ArdConnector extends Thread {
      *
      * @param newValue The new value for the phase.
      */
-    public void changePhase(Boolean newValue) {
+    public void setQuery(Boolean newValue) {
         query.set(newValue);
     }
 
@@ -164,7 +164,7 @@ public class ArdConnector extends Thread {
      * @param aCommand The command to be processed by the arduino.
      */
     public void setCommand(String aCommand) {
-        while(query.get());
+        while(query.get() || working.get());
         command = aCommand;
         query.set(true);
     }

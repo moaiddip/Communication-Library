@@ -32,7 +32,7 @@ import javax.net.ssl.SSLSocket;
  */
 public class Server extends Thread {
 
-    private final HashMap<Integer, Communication> threads = new HashMap<>();
+    private final HashMap<Integer, Communication> threads = new HashMap<Integer, Communication>();
 
     WriteQueue que;
 
@@ -45,6 +45,7 @@ public class Server extends Thread {
     public synchronized HashMap<Integer, Communication> getThreads() {
         return threads;
     }
+    
     int port;
     int locality = 0;
     String keystore;
@@ -66,7 +67,7 @@ public class Server extends Thread {
      */
     public Server(int port, int locality, String keystore, String keystorePass, String keypass) {
         this.port = port;
-        this.locality = locality;
+        this.locality = locality; //if 1 server is local, 0 means remote
         this.keypass = keypass;
         this.keystore = keystore;
         this.keystorePass = keystorePass;
@@ -98,7 +99,7 @@ public class Server extends Thread {
             SSLServerSocket sslserversocket;
             if (locality == 0) {
                 sslserversocket
-                        = (SSLServerSocket) socketfactory.createServerSocket(port, 100);
+                        = (SSLServerSocket) socketfactory.createServerSocket(port, 100); //port, no of max clients
             } else {
                 sslserversocket
                         = (SSLServerSocket) socketfactory.createServerSocket(port, 100, InetAddress.getByName(null));
@@ -107,7 +108,7 @@ public class Server extends Thread {
             //Creates the que and listens to the socket.
 
             while (listening) {
-                int placed = 0;
+                int placed = 0; //0 means communication thread cannot find place in hashmap, 1 means it can
                 for (int i = 0; i < threads.size(); i++) {
                     if (getThreads().get(i).isInterrupted() && placed == 0) {
                         getThreads().put(i, new Communication((SSLSocket) sslserversocket.accept(), que));

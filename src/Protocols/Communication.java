@@ -68,28 +68,28 @@ public class Communication extends Thread {
                     } else {
                         //Puts message in queue and waits until the message is
                         //Answered, then it sends the answer back to the client
-                        Item object;
-                        object = que.putCmd(string, remoteSocketAddress, userPrio);
+                        Item item;
+                        item = que.putCmd(string, remoteSocketAddress, userPrio);
                         if (userPrio != -1) {
-                            object.setUser(getUser());
-                            object.setUserPrio(userPrio);
+                            item.setUser(getUser());
+                            item.setUserPrio(userPrio);
                         }                       
-                        synchronized (object) {
-                            while (object.isAnswered() == false) {
-                                object.wait();
+                        synchronized (item) {
+                            while (item.isAnswered() == false) {
+                                item.wait();
                             }
                         }
                         System.out.println("Answer processed, preparing to reply.");
 
-                        string = object.getReply();
+                        string = item.getReply();
                         if (getUser() == null) {
-                            user = object.getUser();
-                            userPrio = object.getUserPrio();
+                            user = item.getUser();
+                            userPrio = item.getUserPrio();
                         }
 
                         System.out.println("Replying.");
                         out.println(string);
-                        object.makeOld();
+                        item.makeOld();
                     }
 
                 }
@@ -98,10 +98,10 @@ public class Communication extends Thread {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
-                Item object;
+                Item item;
                 if (user != null) {
-                    object = que.putCmd("logout!", remoteSocketAddress, userPrio);
-                    object.setUser(getUser());
+                    item = que.putCmd("logout!", remoteSocketAddress, userPrio);
+                    item.setUser(getUser());
                 }
 
                 sslsocket.close();

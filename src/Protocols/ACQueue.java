@@ -45,6 +45,7 @@ public class ACQueue {
     public synchronized HashMap<Integer, String> getItems() {
         return items;
     }
+    
     int hashTail = 0;
     private final HashMap<Integer, String> items = new HashMap<Integer, String>();
     private final AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
