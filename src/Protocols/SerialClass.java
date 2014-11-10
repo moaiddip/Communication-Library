@@ -43,7 +43,7 @@ public class SerialClass implements SerialPortEventListener {
     /**
      * Default bits per second for COM port.
      */
-    public final int DATA_RATE = 115200;
+    public final int DATA_RATE = 38400;
 
     public void initialize(ArdConnector ard, ACQueue ac, CommPortIdentifier portId) {
         this.ard = ard;
