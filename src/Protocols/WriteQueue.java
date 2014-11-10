@@ -49,8 +49,8 @@ public final class WriteQueue {
         initialize();
     }
     int hashTail = 0;
-    HashMap<Integer, Item> items = new HashMap<>();
-    HashMap<Integer, Item> secondList = new HashMap<>();
+    HashMap<Integer, Item> items = new HashMap<Integer, Item>();
+    HashMap<Integer, Item> secondList = new HashMap<Integer, Item>();
     private final AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
     int totalQueries = 0;
     Calendar cal;
