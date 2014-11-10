@@ -46,7 +46,7 @@ public class ACQueue {
         return items;
     }
     int hashTail = 0;
-    private final HashMap<Integer, String> items = new HashMap<>();
+    private final HashMap<Integer, String> items = new HashMap<Integer, String>();
     private final AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
 
     /**
@@ -58,7 +58,7 @@ public class ACQueue {
     public synchronized String putCmd(String command) {
         //looks for an old message to replace
         for (int i = 0; i < getItems().size(); i++) {
-            if (getItems().get(i) == null) {
+            if (getItems().get(i) == null) { //all "empty" entries should be null
                 getItems().put(i, command);
                 System.out.println("Replacing command in the Arduino/Client queue");
                 hasAddedCommands.set(true);

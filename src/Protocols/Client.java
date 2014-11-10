@@ -31,16 +31,16 @@ import javax.net.ssl.TrustManagerFactory;
  */
 public class Client extends Thread {
 
-    int phone;
-    String url;
+    int device; // holds 0 or 1: 1 for android device, 0 for computer
+    String url; // holds ip address
     int port;
-    String truststore;
-    String trustpass;
-    InputStream trustStore;
-    static String command = "no_command!";
+    String truststore; //Location of keystore
+    String trustpass; // keystore password
+    InputStream trustStoreStream;
+    static String command = "no_command!"; // default command
     static String reply = null;
     private final AtomicBoolean query = new AtomicBoolean(false);
-    ACQueue cQue = new ACQueue();
+    ACQueue cQue = new ACQueue(); //arduino client queue
     private final AtomicBoolean quit = new AtomicBoolean(false);
     private final AtomicBoolean working = new AtomicBoolean(false);
     private final AtomicBoolean finished = new AtomicBoolean(false);
@@ -52,24 +52,24 @@ public class Client extends Thread {
      * @param trustpass The truststore pass.
      */
     public Client(String url, int port, String truststore, String trustpass) {
-        phone = 0;
+        device = 0;
         this.url = url;
         this.port = port;
         this.truststore = truststore;
         this.trustpass = trustpass;
     }
     /**
-     * The constructor for android phones.
+     * The constructor for android devices.
      * @param url The ip address of the server
      * @param port The port of the server
      * @param truststore The input stream of the truststore.
      * @param trustpass The truststore pass.
      */
     public Client(String url, int port, InputStream truststore, String trustpass) {
-        phone = 1;
+        device = 1;
         this.url = url;
         this.port = port;
-        this.trustStore = truststore;
+        this.trustStoreStream = truststore;
         this.trustpass = trustpass;
     }
 
@@ -95,14 +95,14 @@ public class Client extends Thread {
             //keystore = KeyStore.getInstance("BKS");
             //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
             //InputStream trustStoreStream = context.getResources().openRawResource(R.raw.server);
-            if (phone == 0) {
+            if (device == 0) {
                 keystore = KeyStore.getInstance("JKS");
                 keystore.load(new FileInputStream(truststore), passphrase);
             } else {
-                keystore = KeyStore.getInstance("BKS");
-                keystore.load(trustStore, passphrase);
+                keystore = KeyStore.getInstance("BKS"); //bouncy castle security library for android
+                keystore.load(trustStoreStream, passphrase);
             }
-            //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
+                //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
 
             trustfactory.init(keystore);
             //initialize the context using the keys you got from TMF
@@ -120,7 +120,7 @@ public class Client extends Thread {
             new Writer(out).start();
             System.out.println("Created I/O stream threads.");
 
-        } catch (NoSuchAlgorithmException | KeyStoreException | IOException | CertificateException | KeyManagementException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -140,24 +140,25 @@ public class Client extends Thread {
         public void run() {
             while (!quit.get()) {
                 
-                String inputz;
+                String input;
                 try {
-                    while ((inputz = in.readLine()) != null) {
+                    while ((input = in.readLine()) != null) {
 
-                        System.out.println("Received: " + inputz);
-
-                        String[] parts = inputz.split("_");
+                        System.out.println("Received: " + input);
+                        //split finds a character, and creates an array of strings with parts before and after character
+                        String[] parts = input.split("_"); 
                         String[] parts2 = command.split("_");
                         //System.out.println(parts[0]+"\n"+parts2[0]);
                         if ((parts[0].equals(parts2[0]) || parts[0].equals("error"))) {
-                            reply = inputz;
+                            reply = input;
                             command = "no_command!";
                             setFinished(true);
                             setWorking(false);
                         } else {
-                            cQue.putCmd(inputz);
+                            cQue.putCmd(input);
                         }
                     }
+                    
                 } catch (Exception ex) {
                     System.out.println("No input received from the server yet.");
                     try {
@@ -165,6 +166,11 @@ public class Client extends Thread {
                     } catch (InterruptedException ex1) {
                         Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex1);
                     }
+                }
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -192,6 +198,7 @@ public class Client extends Thread {
                     out.println(command);
                 }
             }
+            out.close();
 
         }
     }
@@ -234,9 +241,9 @@ public class Client extends Thread {
      * @param aCommand The command you wish to send.
      */
     public void setCommand(String aCommand) {
-        while(query.get());
+        while(query.get() || working.get());
         command = aCommand;
-        query.set( true);
+        query.set(true);
     }
     /**
      * Gets the message to be sent.
