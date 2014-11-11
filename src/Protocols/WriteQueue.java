@@ -163,7 +163,7 @@ public final class WriteQueue {
                 } catch (InterruptedException ex) {
                     Logger.getLogger(WriteQueue.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                if (totalQueries == replaceInt) {
+                if (totalQueries >= replaceInt) {
                     System.out.println("Putting commands in the ReadQueue.");
                     totalQueries = 0;
                     for (int i = 0; i < items.size(); i++) {
