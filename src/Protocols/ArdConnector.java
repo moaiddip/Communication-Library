@@ -64,6 +64,7 @@ public class ArdConnector extends Thread {
                         break;
                     }else{
                         problem=true;
+                        obj.close();
                     }
 
                 }
