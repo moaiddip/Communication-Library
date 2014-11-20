@@ -32,6 +32,7 @@ public class SerialClass implements SerialPortEventListener {
     ACQueue ac;
     String[] parts;
     String[] parts2;
+    String divider; 
     /**
      * Milliseconds to block while waiting for port open
      */
@@ -41,9 +42,10 @@ public class SerialClass implements SerialPortEventListener {
      */
     public final int DATA_RATE = 38400;
 
-    public void initialize(ArdConnector ard, ACQueue ac, CommPortIdentifier portId) {
+    public void initialize(ArdConnector ard, ACQueue ac, CommPortIdentifier portId, String divider) {
         this.ard = ard;
         this.ac = ac;
+        this.divider = divider;
         try {
             // open serial port, and use class name for the appName.
             serialPort = (SerialPort) portId.open(this.getClass().getName(),
@@ -94,7 +96,7 @@ public class SerialClass implements SerialPortEventListener {
                 while ((inputz = input.readLine()) != null) {
 
                     System.out.println("Received: " + inputz);
-                    parts = inputz.split("_");
+                    parts = inputz.split(divider);
                     parts2 = ard.getCommand().split("_");
                     if ("autochkstart!".equals(inputz)) {
                         autocheck = true;

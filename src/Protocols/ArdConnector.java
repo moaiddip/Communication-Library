@@ -29,7 +29,7 @@ public class ArdConnector extends Thread {
     private final AtomicBoolean working = new AtomicBoolean(false);
     private final AtomicBoolean finished = new AtomicBoolean(false);
     private boolean problem=true;
-    private char divider= '_';
+    private String divider = "_";
     private String defaultCommand = "no_command!";
     /**
      * Sets the port that the software will communicate with.
@@ -37,7 +37,7 @@ public class ArdConnector extends Thread {
      * @param port The port name as a string. eg. "COM3" (which is the default
      * on my pc)
      */
-    public ArdConnector(String port, char divider, String defaultCommand){
+    public ArdConnector(String port, String divider, String defaultCommand){
         this.port = port;
         this.divider = divider;
         this.defaultCommand = defaultCommand;
