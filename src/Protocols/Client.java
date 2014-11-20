@@ -40,6 +40,8 @@ public class Client extends Thread {
     private final AtomicBoolean quit = new AtomicBoolean(false);
     private final AtomicBoolean working = new AtomicBoolean(false);
     private final AtomicBoolean finished = new AtomicBoolean(false);
+    String divider;
+    String defaultCommand;
     /**
      * The first constructor for computers.
      * @param url The ip address of the server
@@ -47,12 +49,13 @@ public class Client extends Thread {
      * @param truststore The truststore location and name. eg. "c:\blabla\keystore.jks"
      * @param trustpass The truststore pass.
      */
-    public Client(String url, int port, String truststore, String trustpass) {
+    public Client(String url, int port, String truststore, String trustpass, String divider) {
         device = 0;
         this.url = url;
         this.port = port;
         this.truststore = truststore;
         this.trustpass = trustpass;
+        this.divider = divider;
     }
     /**
      * The constructor for android devices.
@@ -61,12 +64,13 @@ public class Client extends Thread {
      * @param truststore The input stream of the truststore.
      * @param trustpass The truststore pass.
      */
-    public Client(String url, int port, InputStream truststore, String trustpass) {
+    public Client(String url, int port, InputStream truststore, String trustpass, String divider) {
         device = 1;
         this.url = url;
         this.port = port;
         this.trustStoreStream = truststore;
         this.trustpass = trustpass;
+        this.divider = divider;
     }
 
     /**
@@ -142,12 +146,12 @@ public class Client extends Thread {
 
                         System.out.println("Received: " + input);
                         //split finds a character, and creates an array of strings with parts before and after character
-                        String[] parts = input.split("_"); 
-                        String[] parts2 = command.split("_");
+                        String[] parts = input.split(divider); 
+                        String[] parts2 = command.split(divider);
                         //System.out.println(parts[0]+"\n"+parts2[0]);
                         if ((parts[0].equals(parts2[0]) || parts[0].equals("error"))) {
                             reply = input;
-                            command = "no_command!";
+                            command = defaultCommand;
                             setFinished(true);
                             setWorking(false);
                         } else {
