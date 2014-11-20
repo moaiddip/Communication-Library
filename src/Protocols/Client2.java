@@ -47,13 +47,7 @@ public class Client2 extends Thread {
     //General arduino field
     ACQueue ac = new ACQueue();
     public String ardPort = "COM3";
-//    private String reply = null;                                  //DUPLICATE
-//    private String command = "no_command!";                       //DUPLICATE
-//    private final AtomicBoolean query = new AtomicBoolean(false); //DUPLICATE
-//    private final AtomicBoolean quit = new AtomicBoolean(false);  //DUPLICATE
-//    private final AtomicBoolean working = new AtomicBoolean(false); //DUPLICATE
-//    private final AtomicBoolean finished = new AtomicBoolean(false); //DUPLICATE
-    private boolean problem = true;                                 //arduino, used for reconnecting
+    private boolean problem = true; //arduino, used for reconnecting
 
     /**
      * The first constructor for computers.
@@ -161,7 +155,7 @@ public class Client2 extends Thread {
                     CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
                     if (currPortId.getName().equals(port)) {
                         if(problem){                            
-                            obj.initialize(this, ac, currPortId);
+                            obj.initialize(this, ac, currPortId); //Need to change Serial Class to accept "Client" instances
                             this.sleep(2000);
                         }
                         problem=false;
@@ -188,7 +182,7 @@ public class Client2 extends Thread {
                     while ((cal.getTimeInMillis() / 1000) - time > 3 || !isWorking());
                     if (!isWorking()) {
                         System.out.println("Did not receive an answer from the arduino, stopping.");
-                        setReply("no_answer!");
+                        setReply("no_answer!"); //"PROBABLY NOT USED" 
                         setWorking(false);
                         setFinished(true);
                     }
@@ -199,10 +193,6 @@ public class Client2 extends Thread {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, e);
         }
     }
-
-    }
-
-
 
     /**
      * The reader thread. Reads everything sent from the server and decides
@@ -382,8 +372,20 @@ public class Client2 extends Thread {
         reply = null;
         return respond;
     }
+    
+    public void setReply(String aReply) {
+        reply = aReply;
+    }
 
     public ACQueue getClientQueue() {
         return cQue;
+    }
+    
+    public ACQueue getArduinoQueue() {
+        return ac;
+    }
+    
+    public void setCommandDefault() {
+        command = "no_command!";
     }
 }
