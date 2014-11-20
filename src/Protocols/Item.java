@@ -27,7 +27,7 @@ public class Item {
     String address;
     private String user = null;
     private int userPrio = -1;
-    private int priority = -1;
+    private int priority = 0;
     private String authsessionkey;
     private String sessionkey;
 
