@@ -122,7 +122,7 @@ public class Server extends Thread {
                     hashTail++;
                 }
             }
-        } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException | KeyManagementException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
         }
 

@@ -71,7 +71,7 @@ public class SerialClass implements SerialPortEventListener {
             serialPort.addEventListener(this);
             serialPort.notifyOnDataAvailable(true);
             System.out.println("Done initializing connection to the Arduino at port: " + portId.getName());
-        } catch (PortInUseException | UnsupportedCommOperationException | IOException | TooManyListenersException e) {
+        } catch (Exception e) {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, e);
         }
     }

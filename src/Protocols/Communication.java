@@ -94,7 +94,7 @@ public class Communication extends Thread {
 
                 }
             }
-        } catch (IOException | InterruptedException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
