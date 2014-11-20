@@ -28,6 +28,8 @@ public class Item {
     private String user = null;
     private int userPrio = -1;
     private int priority = -1;
+    private String authsessionkey;
+    private String sessionkey;
 
     //sets the query of a client and the clients ip address in the items instance
     /**
@@ -42,6 +44,7 @@ public class Item {
         this.command = command;
         this.address = address;
         this.userPrio = userPrio;
+//       
         System.out.println(command+" received in the Item class.");
         if (command.contains("test")) {
             answered = true;
@@ -172,5 +175,24 @@ public class Item {
      */
     public synchronized void setUser(String user) {
             this.user = user;
+    }
+    
+    
+    public synchronized void setAuthSessionKey(String authsessionkey) {
+            this.authsessionkey = authsessionkey;
+    }
+    
+    
+   public synchronized String getAuthSessionKey() {
+            return authsessionkey;
+    }
+   
+   public synchronized void setSessionKey(String sessionkey) {
+            this.sessionkey = sessionkey;
+    }
+    
+    
+   public synchronized String getSessionKey() {
+            return sessionkey;
     }
 }
