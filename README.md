@@ -14,7 +14,7 @@ Switch from RXTX to jSSC.
 
 Send JSON objects instead of strings.
 
-Perhaps, softcode some of the restricted commands (Could make implementation a lot more complicated)
+Perhaps, softcode some of the restricted commands (Could make implementation a lot more complicated).
 
 Version Revisions:
 -------------------
