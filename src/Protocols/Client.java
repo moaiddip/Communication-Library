@@ -49,13 +49,14 @@ public class Client extends Thread {
      * @param truststore The truststore location and name. eg. "c:\blabla\keystore.jks"
      * @param trustpass The truststore pass.
      */
-    public Client(String url, int port, String truststore, String trustpass, String divider) {
+    public Client(String url, int port, String truststore, String trustpass, String divider, String defaultCommand) {
         device = 0;
         this.url = url;
         this.port = port;
         this.truststore = truststore;
         this.trustpass = trustpass;
         this.divider = divider;
+        this.defaultCommand = defaultCommand;
     }
     /**
      * The constructor for android devices.
@@ -64,13 +65,14 @@ public class Client extends Thread {
      * @param truststore The input stream of the truststore.
      * @param trustpass The truststore pass.
      */
-    public Client(String url, int port, InputStream truststore, String trustpass, String divider) {
+    public Client(String url, int port, InputStream truststore, String trustpass, String divider, String defaultCommand) {
         device = 1;
         this.url = url;
         this.port = port;
         this.trustStoreStream = truststore;
         this.trustpass = trustpass;
         this.divider = divider;
+        this.defaultCommand = defaultCommand;
     }
 
     /**
