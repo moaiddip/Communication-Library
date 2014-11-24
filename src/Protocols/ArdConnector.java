@@ -36,6 +36,8 @@ public class ArdConnector extends Thread {
      *
      * @param port The port name as a string. eg. "COM3" (which is the default
      * on my pc)
+     * @param divider Used for syntax
+     * @param defaultCommand Restricted command
      */
     public ArdConnector(String port, String divider, String defaultCommand){
         this.port = port;

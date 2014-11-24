@@ -48,6 +48,8 @@ public class Client extends Thread {
      * @param port The port of the server
      * @param truststore The truststore location and name. eg. "c:\blabla\keystore.jks"
      * @param trustpass The truststore pass.
+     * @param divider Used for syntax
+     * @param defaultCommand Restricted command
      */
     public Client(String url, int port, String truststore, String trustpass, String divider, String defaultCommand) {
         device = 0;
@@ -64,6 +66,8 @@ public class Client extends Thread {
      * @param port The port of the server
      * @param truststore The input stream of the truststore.
      * @param trustpass The truststore pass.
+     * @param divider Used for syntax
+     * @param defaultCommand Restricted command
      */
     public Client(String url, int port, InputStream truststore, String trustpass, String divider, String defaultCommand) {
         device = 1;
