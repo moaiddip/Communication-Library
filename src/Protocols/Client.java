@@ -168,7 +168,7 @@ public class Client extends Thread {
                 } catch (Exception ex) {
                     System.out.println("No input received from the server yet.");
                     try {
-                        this.sleep(1000);
+                        Reader.sleep(1000);
                     } catch (InterruptedException ex1) {
                         Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex1);
                     }
