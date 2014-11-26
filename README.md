@@ -14,10 +14,13 @@ Switch from RXTX to jSSC.
 
 Send JSON objects instead of strings.
 
-Perhaps, softcode some of the restricted commands (Could make implementation a lot more complicated).
+
 
 Version Revisions:
 -------------------
+
+Version 1.0b: Softcoded some restricted commands. Syntax can now be more freely chosen.
+
 Version 1.0: Made the server automatically detect when an arduino has disconnected and look for it. Cleaned up the code, adjusted the synchronized methods.
 
 Version 0.9: Made the classes more expandable, got rid of a lot of static classes/methods/objects. The arduino connector can now be instantiated multiple times from the same server, which means you can have multiple arduinos inside the same house. The client can also be connected to multiple servers/houses.
