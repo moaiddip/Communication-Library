@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Protocols;
+package Client;
 
+import Queue.ACQueue;
+import Server.ConnectionHandler;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -127,7 +129,7 @@ public class Client extends Thread {
             System.out.println("Created I/O stream threads.");
 
         } catch (Exception ex) {
-            Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     /**

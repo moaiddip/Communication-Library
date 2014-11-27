@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Protocols;
+package Server;
 
+import Queue.Item;
+import Queue.WriteQueue;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,7 +21,7 @@ import javax.net.ssl.SSLSocket;
  *
  * @author Sozos Assias
  */
-public class Communication extends Thread {
+public class ConnectionHandler extends Thread {
 
     BufferedReader in;
     PrintWriter out;
@@ -36,7 +38,7 @@ public class Communication extends Thread {
      * @param sslsocket Requires an sslsocket with an established connection.
      * @param que Requires a shared instance of the WriteQueue class.
      */
-    public Communication(SSLSocket sslsocket, WriteQueue que) {
+    public ConnectionHandler(SSLSocket sslsocket, WriteQueue que) {
         this.sslsocket = sslsocket;
         this.que = que;
     }
@@ -95,7 +97,7 @@ public class Communication extends Thread {
                 }
             }
         } catch (Exception ex) {
-            Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 Item item;
@@ -106,7 +108,7 @@ public class Communication extends Thread {
 
                 sslsocket.close();
             } catch (IOException ex) {
-                Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         this.interrupt();

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Protocols;
+package Arduino;
 
 /**
  * The serial class establishes a connection with the arduino and adds a
@@ -12,6 +12,9 @@ package Protocols;
  *
  * @author Sozos
  */
+import Arduino.ArdConnector;
+import Server.ConnectionHandler;
+import Queue.ACQueue;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -70,7 +73,7 @@ public class SerialClass implements SerialPortEventListener {
             serialPort.notifyOnDataAvailable(true);
             System.out.println("Done initializing connection to the Arduino at port: " + portId.getName());
         } catch (Exception e) {
-            Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -114,7 +117,7 @@ public class SerialClass implements SerialPortEventListener {
                     }
                 }
             } catch (Exception e) {
-                Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, e);
+                Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, e);
             }
         }
 

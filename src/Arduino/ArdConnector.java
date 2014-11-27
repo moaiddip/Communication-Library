@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Protocols;
+package Arduino;
 
+import Server.ConnectionHandler;
+import Queue.ACQueue;
 import gnu.io.CommPortIdentifier;
 import java.util.Calendar;
 import java.util.Enumeration;
@@ -100,7 +102,7 @@ public class ArdConnector extends Thread {
             }
             obj.close();
         } catch (Exception e) {
-            Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 

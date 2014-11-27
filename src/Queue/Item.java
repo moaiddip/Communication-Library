@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Protocols;
+package Queue;
 
 /**
  * Holds all the relevant information in regards to a query.

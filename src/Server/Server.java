@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Protocols;
+package Server;
 
+import Queue.WriteQueue;
 import java.io.FileInputStream;
 import java.net.InetAddress;
 import java.security.KeyStore;
@@ -26,7 +27,7 @@ import javax.net.ssl.SSLSocket;
  */
 public class Server extends Thread {
 
-    private final HashMap<Integer, Communication> threads = new HashMap<Integer, Communication>();
+    private final HashMap<Integer, ConnectionHandler> threads = new HashMap<Integer, ConnectionHandler>();
 
     WriteQueue que;
 
@@ -36,7 +37,7 @@ public class Server extends Thread {
      *
      * @return the threads
      */
-    public synchronized HashMap<Integer, Communication> getThreads() {
+    public synchronized HashMap<Integer, ConnectionHandler> getThreads() {
         return threads;
     }
     
@@ -105,19 +106,19 @@ public class Server extends Thread {
                 int placed = 0; //0 means communication thread cannot find place in hashmap, 1 means it can
                 for (int i = 0; i < threads.size(); i++) {
                     if (getThreads().get(i).isInterrupted() && placed == 0) {
-                        getThreads().put(i, new Communication((SSLSocket) sslserversocket.accept(), que));
+                        getThreads().put(i, new ConnectionHandler((SSLSocket) sslserversocket.accept(), que));
                         getThreads().get(i).start();
                         placed = 1;
                     }
                 }
                 if (placed == 0) {
-                    getThreads().put(hashTail, new Communication((SSLSocket) sslserversocket.accept(), que));
+                    getThreads().put(hashTail, new ConnectionHandler((SSLSocket) sslserversocket.accept(), que));
                     getThreads().get(hashTail).start();
                     hashTail++;
                 }
             }
         } catch (Exception ex) {
-            Logger.getLogger(Communication.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

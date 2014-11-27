@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 //1.8
-package Protocols;
+package Queue;
 
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
