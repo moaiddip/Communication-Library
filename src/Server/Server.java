@@ -29,7 +29,7 @@ public class Server extends Thread {
 
     private final HashMap<Integer, ConnectionHandler> threads = new HashMap<Integer, ConnectionHandler>();
 
-    WriteQueue que;
+    private final WriteQueue que;
 
     /**
      *
