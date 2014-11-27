@@ -66,7 +66,8 @@ public class ArdConnector extends Thread {
                 while (portEnum.hasMoreElements()) {
                     CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
                     if (currPortId.getName().equals(port)) {
-                        if(problem){                            
+                        if(problem){
+                            obj.close();
                             obj.initialize(this, ac, currPortId, divider);
                             ArdConnector.sleep(2000);
                         }
@@ -74,7 +75,6 @@ public class ArdConnector extends Thread {
                         break;
                     }else{
                         problem=true;
-                        obj.close();
                     }
 
                 }
@@ -221,5 +221,6 @@ public class ArdConnector extends Thread {
     }
     public synchronized void setPort(String port){
         this.port=port;
+        problem=true;
     }
 }
