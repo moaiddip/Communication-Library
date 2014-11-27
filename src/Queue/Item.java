@@ -20,11 +20,11 @@ public class Item {
  answer to the query synchronized methods are read/written by different
  threads
      */
-    boolean newOrOld = true;
-    boolean answered = false;//testing: true, default: false
-    String command;
-    String reply;
-    String address;
+    private boolean newOrOld = true;
+    private boolean answered = false;//testing: true, default: false
+    private String command;
+    private String reply;
+    private String address;
     private String user = null;
     private int userPrio = -1;
     private int priority = 0;

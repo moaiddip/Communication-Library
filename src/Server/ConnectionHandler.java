@@ -23,13 +23,14 @@ import javax.net.ssl.SSLSocket;
  */
 public class ConnectionHandler extends Thread {
 
-    BufferedReader in;
-    PrintWriter out;
-    String remoteSocketAddress;
-    SSLSocket sslsocket;
-    WriteQueue que;
+    private BufferedReader in;
+    private PrintWriter out;
+    private String remoteSocketAddress;
+    private final SSLSocket sslsocket;
+    private final WriteQueue que;
     private String user = null;
-    int userPrio = -1;
+    private int userPrio = -1;
+    private String logoutCmd = null;
 
     /**
      * Handles communication with each client. It extends Thread. Implemented
@@ -37,10 +38,12 @@ public class ConnectionHandler extends Thread {
      *
      * @param sslsocket Requires an sslsocket with an established connection.
      * @param que Requires a shared instance of the WriteQueue class.
+     * @param logoutCmd The default logout command, if null it will not attempt to logout
      */
-    public ConnectionHandler(SSLSocket sslsocket, WriteQueue que) {
+    public ConnectionHandler(SSLSocket sslsocket, WriteQueue que, String logoutCmd) {
         this.sslsocket = sslsocket;
         this.que = que;
+        this.logoutCmd=logoutCmd;
     }
 
     @Override
@@ -101,8 +104,8 @@ public class ConnectionHandler extends Thread {
         } finally {
             try {
                 Item item;
-                if (user != null) {
-                    item = que.putCmd("logout!", remoteSocketAddress, userPrio);
+                if (user != null && logoutCmd != null) {
+                    item = que.putCmd(logoutCmd, remoteSocketAddress, userPrio);
                     item.setUser(getUser());
                 }
 

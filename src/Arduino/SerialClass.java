@@ -12,7 +12,6 @@ package Arduino;
  *
  * @author Sozos
  */
-import Arduino.ArdConnector;
 import Server.ConnectionHandler;
 import Queue.ACQueue;
 import java.io.BufferedReader;
@@ -27,15 +26,15 @@ import java.util.logging.Logger;
 
 public class SerialClass implements SerialPortEventListener {
 
-    Boolean autocheck = false;
+    private Boolean autocheck = false;
     public SerialPort serialPort;
     public BufferedReader input;
     public OutputStream output;
-    ArdConnector ard;
-    ACQueue ac;
-    String[] parts;
-    String[] parts2;
-    String divider; 
+    private ArdConnector ard;
+    private ACQueue ac;
+    private String[] parts;
+    private String[] parts2;
+    private String divider; 
     /**
      * Milliseconds to block while waiting for port open
      */

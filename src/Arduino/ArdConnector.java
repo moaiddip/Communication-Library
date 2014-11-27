@@ -22,8 +22,8 @@ import java.util.logging.Logger;
  */
 public class ArdConnector extends Thread {
 
-    ACQueue ac = new ACQueue();
-    public String port = "COM3";
+    private final ACQueue ac = new ACQueue();
+    private String port = "COM3";
     private String reply = null;
     private String command = "no_command!";
     private final AtomicBoolean query = new AtomicBoolean(false);
@@ -219,5 +219,7 @@ public class ArdConnector extends Thread {
     public ACQueue getArduinoQueue() {
         return ac;
     }
-
+    public synchronized void setPort(String port){
+        this.port=port;
+    }
 }

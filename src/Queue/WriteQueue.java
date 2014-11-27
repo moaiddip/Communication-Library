@@ -39,21 +39,21 @@ public final class WriteQueue {
         hasAddedCommands.set(aHasAddedCommands);
     }
 
-    long firstTime;
-    long secondTime;
-    int replaceInt = 1;
+    private long firstTime;
+    private long secondTime;
+    private int replaceInt = 1;
 
     public WriteQueue(long curTime) {
         this.firstTime = curTime / 1000;
         secondTime = firstTime;
         initialize();
     }
-    int hashTail = 0;
-    HashMap<Integer, Item> items = new HashMap<Integer, Item>();
-    HashMap<Integer, Item> secondList = new HashMap<Integer, Item>();
+    private int hashTail = 0;
+    private final HashMap<Integer, Item> items = new HashMap<Integer, Item>();
+    private final HashMap<Integer, Item> secondList = new HashMap<Integer, Item>();
     private final AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
-    int totalQueries = 0;
-    Calendar cal;
+    private int totalQueries = 0;
+    private Calendar cal;
 
     public void initialize() {
         Replace replace = new Replace();

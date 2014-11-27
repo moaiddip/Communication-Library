@@ -46,7 +46,7 @@ public class ACQueue {
         return items;
     }
     
-    int hashTail = 0;
+    private int hashTail = 0;
     private final HashMap<Integer, String> items = new HashMap<Integer, String>();
     private final AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
 

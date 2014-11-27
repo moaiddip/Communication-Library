@@ -29,21 +29,21 @@ import javax.net.ssl.TrustManagerFactory;
  */
 public class Client extends Thread {
 
-    int device; // holds 0 or 1: 1 for android device, 0 for computer
-    String url; // holds ip address
-    int port;
-    String truststore; //Location of keystore
-    String trustpass; // keystore password
-    InputStream trustStoreStream;
-    static String command = "no_command!"; // default command
-    static String reply = null;
+    private final int device; // holds 0 or 1: 1 for android device, 0 for computer
+    private final String url; // holds ip address
+    private final int port;
+    private String truststore; //Location of keystore
+    private final String trustpass; // keystore password
+    private InputStream trustStoreStream;
+    private String command = "no_command!"; // default command
+    private String reply = null;
     private final AtomicBoolean query = new AtomicBoolean(false);
-    ACQueue cQue = new ACQueue(); //arduino client queue
+    private final ACQueue cQue = new ACQueue(); //arduino client queue
     private final AtomicBoolean quit = new AtomicBoolean(false);
     private final AtomicBoolean working = new AtomicBoolean(false);
     private final AtomicBoolean finished = new AtomicBoolean(false);
-    String divider;
-    String defaultCommand;
+    private final String divider;
+    private final String defaultCommand;
     /**
      * The first constructor for computers.
      * @param url The ip address of the server
