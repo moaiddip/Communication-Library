@@ -174,7 +174,7 @@ public class ArdConnector extends Thread {
      *
      * @param aCommand The command to be processed by the arduino.
      */
-    public void setCommand(String aCommand) {
+    public synchronized void setCommand(String aCommand) {
         while(query.get() || working.get());
         command = aCommand;
         query.set(true);
