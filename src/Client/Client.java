@@ -157,7 +157,7 @@ public class Client extends Thread {
                         String[] parts = input.split(divider); 
                         String[] parts2 = command.split(divider);
                         //System.out.println(parts[0]+"\n"+parts2[0]);
-                        if ((parts[0].equals(parts2[0]) || parts[0].equals("error"))) {
+                        if ((parts[0].equals(parts2[0]) || parts[0].equals(errCmd))) {
                             reply = input;
                             command = defaultCommand;
                             setFinished(true);
