@@ -35,7 +35,7 @@ public class Client extends Thread {
     private String truststore; //Location of keystore
     private final String trustpass; // keystore password
     private InputStream trustStoreStream;
-    private String command = "no_command!"; // default command
+    private String command; // default command
     private String reply = null;
     private final AtomicBoolean query = new AtomicBoolean(false);
     private final ACQueue cQue = new ACQueue(); //arduino client queue
@@ -59,9 +59,10 @@ public class Client extends Thread {
         this.port = port;
         this.truststore = truststore;
         this.trustpass = trustpass;
-        this.divider = rCmds[0];
-        this.defaultCommand = rCmds[1];
-        this.errCmd = rCmds[2];
+        divider = rCmds[0];
+        defaultCommand = rCmds[1];
+        errCmd = rCmds[2];
+        command = defaultCommand;
     }
     /**
      * The constructor for android devices.
@@ -77,9 +78,10 @@ public class Client extends Thread {
         this.port = port;
         this.trustStoreStream = truststore;
         this.trustpass = trustpass;
-        this.divider = rCmds[0];
-        this.defaultCommand = rCmds[1];
-        this.errCmd = rCmds[2];
+        divider = rCmds[0];
+        defaultCommand = rCmds[1];
+        errCmd = rCmds[2];
+        command = defaultCommand;
     }
 
     /**

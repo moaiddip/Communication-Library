@@ -48,6 +48,7 @@ public class Server extends Thread {
     private final String keypass;
     private int hashTail = 0;
     private final String logoutCmd;
+    private final String exitCmd;
 
     /**
      * Creates an SSLServerSocket and then it creates a loop that creates new
@@ -63,7 +64,7 @@ public class Server extends Thread {
      * @param logoutCmd The logout command. If null the server will not attempt
      * to logout automatically.
      */
-    public Server(int port, int locality, String keystore, String keystorePass, String keypass, String logoutCmd) {
+    public Server(int port, int locality, String keystore, String keystorePass, String keypass, String logoutCmd, String exitCmd) {
         this.port = port;
         this.locality = locality; //if 1 server is local, 0 means remote
         this.keypass = keypass;
@@ -72,6 +73,7 @@ public class Server extends Thread {
         Calendar cal = Calendar.getInstance();
         que = new WriteQueue(cal.getTimeInMillis());
         this.logoutCmd = logoutCmd;
+        this.exitCmd=exitCmd;
     }
 
     @Override
@@ -123,13 +125,13 @@ public class Server extends Thread {
         int placed = 0; //0 means communication thread cannot find place in hashmap, 1 means it can
         for (int i = 0; i < threads.size(); i++) {
             if (getThreads().get(i).isInterrupted() && placed == 0) {
-                getThreads().put(i, new ConnectionHandler(socket, que, logoutCmd));
+                getThreads().put(i, new ConnectionHandler(socket, que, logoutCmd, exitCmd));
                 getThreads().get(i).start();
                 placed = 1;
             }
         }
         if (placed == 0) {
-            getThreads().put(hashTail, new ConnectionHandler(socket, que, logoutCmd));
+            getThreads().put(hashTail, new ConnectionHandler(socket, que, logoutCmd, exitCmd));
             getThreads().get(hashTail).start();
             hashTail++;
         }

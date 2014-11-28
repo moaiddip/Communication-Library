@@ -30,7 +30,8 @@ public class ConnectionHandler extends Thread {
     private final WriteQueue que;
     private String user = null;
     private int userPrio = -1;
-    private String logoutCmd = null;
+    private String logoutCmd;
+    private String exitCmd;
 
     /**
      * Handles communication with each client. It extends Thread. Implemented
@@ -40,10 +41,11 @@ public class ConnectionHandler extends Thread {
      * @param que Requires a shared instance of the WriteQueue class.
      * @param logoutCmd The default logout command, if null it will not attempt to logout
      */
-    public ConnectionHandler(SSLSocket sslsocket, WriteQueue que, String logoutCmd) {
+    public ConnectionHandler(SSLSocket sslsocket, WriteQueue que, String logoutCmd, String exitCmd) {
         this.sslsocket = sslsocket;
         this.que = que;
         this.logoutCmd=logoutCmd;
+        this.exitCmd=exitCmd;
     }
 
     @Override
@@ -67,7 +69,7 @@ public class ConnectionHandler extends Thread {
                     System.out.println("Received query.");
                     //exit is the quit command, replies with ok
 
-                    if ("exit".equals(string)) {
+                    if (exitCmd.equals(string)) {
                         listener = false;
                         out.println("ok");
                     } else {

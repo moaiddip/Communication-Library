@@ -23,9 +23,9 @@ import java.util.logging.Logger;
 public class ArdConnector extends Thread {
 
     private final ACQueue ac = new ACQueue();
-    private String port = "COM3";
+    private String port;
     private String reply = null;
-    private String command = "no_command!";
+    private String command;
     private final AtomicBoolean query = new AtomicBoolean(false);
     private final AtomicBoolean quit = new AtomicBoolean(false);
     private final AtomicBoolean working = new AtomicBoolean(false);
