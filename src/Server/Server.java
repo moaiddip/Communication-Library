@@ -42,7 +42,7 @@ public class Server extends Thread {
     }
 
     private final int port;
-    private int locality = 0;
+    private final int locality;
     private final String keystore;
     private final String keystorePass;
     private final String keypass;
