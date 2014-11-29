@@ -74,7 +74,7 @@ public class Server extends Thread {
         Calendar cal = Calendar.getInstance();
         que = new WriteQueue(cal.getTimeInMillis());
         this.logoutCmd = logoutCmd;
-        this.exitCmd=exitCmd;
+        this.exitCmd = exitCmd;
     }
 
     @Override
@@ -110,35 +110,22 @@ public class Server extends Thread {
             //Creates the que and listens to the socket.
 
             while (listening) {
-
-                SSLSocket socket;
-                if ((socket = (SSLSocket) sslserversocket.accept()).isConnected()) {
-                    placeInThreads(socket);
-                }
+                ConnectionHandler ch = new ConnectionHandler((SSLSocket) sslserversocket.accept(), que, logoutCmd, exitCmd);
+                setTail(ch.init(this, getThreads(), getTail()));
+                ch.start();
             }
         } catch (Exception ex) {
             Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
-
-    private synchronized void placeInThreads(SSLSocket socket) {
-        int placed = 0; //0 means communication thread cannot find place in hashmap, 1 means it can
-        for (int i = 0; i < threads.size(); i++) {
-            if (getThreads().get(i).isInterrupted() && placed == 0) {
-                getThreads().put(i, new ConnectionHandler(socket, que, logoutCmd, exitCmd));
-                getThreads().get(i).start();
-                placed = 1;
-            }
-        }
-        if (placed == 0) {
-            getThreads().put(hashTail, new ConnectionHandler(socket, que, logoutCmd, exitCmd));
-            getThreads().get(hashTail).start();
-            hashTail++;
-        }
-    }
-
     public WriteQueue getTheQueue() {
         return que;
+    }
+    public synchronized int getTail(){
+        return hashTail;
+    }
+    public synchronized void setTail(int Tail){
+        hashTail = Tail;
     }
 }
