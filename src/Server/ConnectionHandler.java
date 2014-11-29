@@ -164,15 +164,4 @@ public class ConnectionHandler extends Thread {
         out.println(status);
         System.out.println("Sending status update: " + status);
     }
-    class Update extends Thread {
-        String status;
-        Update(String status){
-            this.status = status;
-        }
-        @Override
-        public void run(){
-            out.println();
-        }
-    }
-
 }
