@@ -80,12 +80,6 @@ public class ConnectionHandler extends Thread {
         System.out.println("Connection with client "+remoteSocketAddress+" initialized successfully.");
         Boolean listener = true;
         try {
-            //Gets the ip address of the client.
-            
-            //Create I/O for the socket
-            System.out.println(remoteSocketAddress + " connected.");
-
-            //System.out.println("Initialized I/O.");
             String string;
             //System.out.println(remoteSocketAddress);
             //Listens in a loop until asked to exit
