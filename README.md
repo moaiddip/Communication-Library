@@ -8,6 +8,9 @@ The library's purpose is to keep things simple by not getting the rest of the gr
 What is next:
 --------------
 
+
+Rework the WriteQueue to be more efficient. Also, the dynamic functionality shall become readjustable on runtime.
+
 Use NIO instead of IO streams.
 
 Switch from RXTX to jSSC.
@@ -18,6 +21,8 @@ Send JSON objects instead of strings.
 
 Version Revisions:
 -------------------
+
+Version 1.0c: Softcoded more commands, refactored the code and fixed a bug that stopped multicasting from working.
 
 Version 1.0b: Softcoded some restricted commands. Syntax can now be more freely chosen.
 
