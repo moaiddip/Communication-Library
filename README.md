@@ -9,7 +9,9 @@ What is next:
 --------------
 
 
-Rework the WriteQueue to be more efficient. Also, the dynamic functionality shall become readjustable on runtime.
+Rework the WriteQueue to be more efficient. Also, the dynamic functionality shall become readjustable on runtime. 
+
+The item class will also be updated to support aging.
 
 Use NIO instead of IO streams.
 
