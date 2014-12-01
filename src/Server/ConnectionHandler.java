@@ -101,7 +101,7 @@ public class ConnectionHandler extends Thread {
 
                     if (exitCmd.equals(string)) {
                         listener = false;
-                        out.println("ok");
+                        out.println(exitCmd);
                     } else {
                         //Puts message in queue and waits until the message is
                         //Answered, then it sends the answer back to the client
