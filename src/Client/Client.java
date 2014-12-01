@@ -23,8 +23,8 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 /**
- * This is the class used to create an SSLSocket for the client.
- * It is a thread.
+ * This is the class used to create an SSLSocket for the client. It is a thread.
+ *
  * @author Sozos Assias
  */
 public class Client extends Thread {
@@ -45,11 +45,17 @@ public class Client extends Thread {
     private final String divider;
     private final String defaultCommand;
     private final String errCmd;
+    private PrintWriter out;
+    private BufferedReader in;
+    private SSLSocket sslsocket;
+
     /**
      * The first constructor for computers.
+     *
      * @param url The ip address of the server
      * @param port The port of the server
-     * @param truststore The truststore location and name. eg. "c:\blabla\keystore.jks"
+     * @param truststore The truststore location and name. eg.
+     * "c:\blabla\keystore.jks"
      * @param trustpass The truststore pass.
      * @param rCmds 0: divider 1: default command 2: error command
      */
@@ -64,8 +70,10 @@ public class Client extends Thread {
         errCmd = rCmds[2];
         command = defaultCommand;
     }
+
     /**
      * The constructor for android devices.
+     *
      * @param url The ip address of the server
      * @param port The port of the server
      * @param truststore The input stream of the truststore.
@@ -86,7 +94,7 @@ public class Client extends Thread {
 
     /**
      * Creates an SSLSocket and creates 2 threads to send and receive commands.
-     * 
+     *
      *
      */
     @Override
@@ -112,20 +120,20 @@ public class Client extends Thread {
                 keystore = KeyStore.getInstance("BKS"); //bouncy castle security library for android
                 keystore.load(trustStoreStream, passphrase);
             }
-                //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
+            //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
 
             trustfactory.init(keystore);
             //initialize the context using the keys you got from TMF
             context.init(null, trustfactory.getTrustManagers(), null);
             //create the factory and then use the factory to create the socket
             SSLSocketFactory factory = context.getSocketFactory();
-            SSLSocket sslsocket = (SSLSocket) factory.createSocket(url, port);
+            sslsocket = (SSLSocket) factory.createSocket(url, port);
             System.out.println("Socket created.");
-            PrintWriter out
+            out
                     = new PrintWriter(sslsocket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(
+            in = new BufferedReader(
                     new InputStreamReader(sslsocket.getInputStream()));
-            
+
             new Reader(in).start();
             new Writer(out).start();
             System.out.println("Created I/O stream threads.");
@@ -134,9 +142,11 @@ public class Client extends Thread {
             Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     /**
-     * The reader thread.
-     * Reads everything sent from the server and decides whether they go in the queue or set as the answer to a command previously sent.
+     * The reader thread. Reads everything sent from the server and decides
+     * whether they go in the queue or set as the answer to a command previously
+     * sent.
      */
     class Reader extends Thread {
 
@@ -149,14 +159,14 @@ public class Client extends Thread {
         @Override
         public void run() {
             while (!quit.get()) {
-                
+
                 String input;
                 try {
                     while ((input = in.readLine()) != null) {
 
                         System.out.println("Received: " + input);
                         //split finds a character, and creates an array of strings with parts before and after character
-                        String[] parts = input.split(divider); 
+                        String[] parts = input.split(divider);
                         String[] parts2 = command.split(divider);
                         //System.out.println(parts[0]+"\n"+parts2[0]);
                         if ((parts[0].equals(parts2[0]) || parts[0].equals(errCmd))) {
@@ -168,26 +178,19 @@ public class Client extends Thread {
                             cQue.putCmd(input);
                         }
                     }
-                    
+
                 } catch (Exception ex) {
-                    System.out.println("No input received from the server yet.");
-                    try {
-                        Reader.sleep(1000);
-                    } catch (InterruptedException ex1) {
-                        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex1);
-                    }
-                }
-                try {
-                    in.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("Cannot read from the socket. Closing.");
+                    closeCommunication();
                 }
             }
+            closeCommunication();
         }
     }
+
     /**
-     * The writer thread.
-     * Sends commands to the server, one at a time and lets the reader thread know that a command was sent.
+     * The writer thread. Sends commands to the server, one at a time and lets
+     * the reader thread know that a command was sent.
      */
     class Writer extends Thread {
 
@@ -208,86 +211,122 @@ public class Client extends Thread {
                     out.println(command);
                 }
             }
-            out.close();
-
         }
     }
+
     /**
-     * Sets the atomic boolean that is responsible for keeping the threads alive.
+     * Sets the atomic boolean that is responsible for keeping the threads
+     * alive.
      */
     public void quitCommunication() {
         quit.set(true);
     }
+
+    public void closeCommunication() {
+        if (!quit.get()) {
+            try {
+                sslsocket.close();
+                in.close();
+                out.close();
+                quit.set(true);
+            } catch (IOException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
+
     /**
      * If this is true then a command is about to be sent to the server.
+     *
      * @return an atomic boolean.
      */
     public Boolean hasQuery() {
         return query.get();
     }
+
     /**
      * Sets the atomic boolean stating whether a command is about to be sent.
-     * @param aQuery 
+     *
+     * @param aQuery
      */
     public void setQuery(Boolean aQuery) {
         query.set(aQuery);
     }
+
     /**
      * If this is true then a command was sent and is being processed.
+     *
      * @return an atomic boolean
      */
     public Boolean isWorking() {
         return working.get();
     }
+
     /**
      * Sets the atomic boolean that states whether a command is being processed.
-     * @param aWorking 
+     *
+     * @param aWorking
      */
     public void setWorking(Boolean aWorking) {
         working.set(aWorking);
     }
+
     /**
-     * Sets the next message to be sent and sets the query atomic boolean to true if false.
+     * Sets the next message to be sent and sets the query atomic boolean to
+     * true if false.
+     *
      * @param aCommand The command you wish to send.
      */
     public void setCommand(String aCommand) {
-        while(query.get() || working.get());
+        while (query.get() || working.get());
         command = aCommand;
         query.set(true);
     }
+
     /**
      * Gets the message to be sent.
+     *
      * @return The message as a string.
      */
     public String getCommand() {
         return command;
     }
+
     /**
-     * Gets an atomic boolean indicating if a command or message has been answered.
+     * Gets an atomic boolean indicating if a command or message has been
+     * answered.
+     *
      * @return An atomic boolean. True means it has been asnwered.
      */
-    public Boolean isFinished(){
+    public Boolean isFinished() {
         return finished.get();
     }
+
     /**
-     * Sets the atomic boolean indicating if a command or message has been answered.
+     * Sets the atomic boolean indicating if a command or message has been
+     * answered.
+     *
      * @param aFinished The state as a boolean. True: finished
      */
-    public void setFinished(Boolean aFinished){
+    public void setFinished(Boolean aFinished) {
         finished.set(aFinished);
     }
+
     /**
      * Returns the reply to a message.
+     *
      * @return The reply as a string.
      */
-    public String getReply(){
-        while(!finished.get());
+    public String getReply() {
+        while (!finished.get());
         finished.set(false);
         String respond = reply;
-        reply=null;
+        reply = null;
         return respond;
     }
-    public ACQueue getClientQueue(){
+
+    public ACQueue getClientQueue() {
         return cQue;
     }
 }

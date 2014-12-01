@@ -54,20 +54,23 @@ public final class WriteQueue {
     private final AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
     private int totalQueries = 0;
     private Calendar cal;
+    private boolean state = false;
+    private long refresh = 3;
 
+   
     public void initialize() {
-        Replace replace = new Replace();
-        replace.start();
-        CalculateTime time = new CalculateTime();
-        time.start();
-        
+        DynamicFun dFun = new DynamicFun();
+        dFun.start();
+        //CalculateTime time = new CalculateTime();
+        //time.start();
+
     }
 
     //puts a new message in the queue
     /**
      * Creates an instance of the Item class, puts the command and ip address of
- the client that queried the command in the instance created, then it puts
- the instance in a hashmap.
+     * the client that queried the command in the instance created, then it puts
+     * the instance in a hashmap.
      *
      * @param command The query in a string.
      * @param address The ip address of the client with the query.
@@ -80,7 +83,7 @@ public final class WriteQueue {
         cal = Calendar.getInstance();
         firstTime = secondTime;
         secondTime = cal.getTimeInMillis() / 1000;
-        if (firstTime - secondTime < 3 && firstTime != secondTime) {
+        if (firstTime - secondTime < refresh && firstTime != secondTime) {
             replaceInt++;
             System.out.println("Current replaceInt:" + replaceInt);
         }
@@ -89,7 +92,7 @@ public final class WriteQueue {
                 items.put(i, new Item());
                 items.get(i).create(command, address, userPrio);
                 totalQueries++;
-                System.out.println("A command was replaced at position:"+i);
+                System.out.println("A command was replaced at position:" + i);
                 System.out.println("Total queries: " + totalQueries);
                 return items.get(i);
             }
@@ -97,7 +100,7 @@ public final class WriteQueue {
         //creates new entry
         items.put(hashTail, new Item());
         items.get(hashTail).create(command, address, userPrio);
-        System.out.println("A command was added at position:"+hashTail);
+        System.out.println("A command was added at position:" + hashTail);
         hashTail++;
         totalQueries++;
         System.out.println("Total queries: " + totalQueries);
@@ -113,7 +116,6 @@ public final class WriteQueue {
      */
     public Item getObject(int pos) {
         return items.get(pos);
-
     }
 
     /**
@@ -128,69 +130,77 @@ public final class WriteQueue {
     }
 
     /**
-     * Calculates when should the queries be copied onto the second hashmap to
-     * begin processing.
-     */
-    public class CalculateTime extends Thread {
-
-        @Override
-        public synchronized void run() {
-            while (true) {
-                Calendar cal2 = Calendar.getInstance();
-                long past = cal2.getTimeInMillis() / 1000;
-
-                if (((secondTime - past) % 3 < 1) && replaceInt > 1) {
-                    replaceInt--;
-                    System.out.println("Current replaceInt:" + replaceInt);
-                }                
-            }
-        }
-    }
-
-    /**
      * Puts the new unaswered queries in the second hashmap that should be
      * handled by the second half of the realtime queue. Reduces how much the
      * waiting time for an answer might vary. Should not be called.
      */
-    public class Replace extends Thread {
+    public class DynamicFun extends Thread {
 
         @Override
         public synchronized void run() {
             while (true) {
-                
-                try {
-                    this.sleep(3000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(WriteQueue.class.getName()).log(Level.SEVERE, null, ex);
+                if (state) {
+                    replace();
+
+                } else {
+                    calcTime();
                 }
-                if (totalQueries >= replaceInt) {
-                    System.out.println("Putting commands in the ReadQueue.");
-                    totalQueries = 0;
-                    for (int i = 0; i < items.size(); i++) {
-                        if (secondList.isEmpty()) {
-                            secondList.put(0, items.get(i));
-                            System.out.println("Added in ReadQueue at: "+0);
-                        } else {
-                            int placed = 0;
-                            for (int j = 0; j < secondList.size(); j++) {
-                                if (placed == 0) {
-                                    if (secondList.get(i).getState() == false) {
-                                        System.out.println("Item number: "+i+" is false.");
-                                        System.out.println("Replaced in ReadQueue at: "+i);
-                                        secondList.put(j, items.get(i));
-                                        placed = 1;
-                                    }
-                                }
-                            }
-                            if (placed == 0) {
-                                secondList.put(secondList.size() + 1, items.get(i));
+                state = !state;
+            }
+        }
+    }
+
+    private synchronized void replace() {
+
+        if (totalQueries >= replaceInt) {
+            System.out.println("Putting commands in the ReadQueue.");
+            totalQueries = 0;
+            for (int i = 0; i < items.size(); i++) {
+                if (secondList.isEmpty()) {
+                    secondList.put(0, items.get(i));
+                    System.out.println("Added in ReadQueue at: " + 0);
+                } else {
+                    int placed = 0;
+                    for (int j = 0; j < secondList.size(); j++) {
+                        if (placed == 0) {
+                            if (secondList.get(i).getState() == false) {
+                                System.out.println("Item number: " + i + " is false.");
+                                System.out.println("Replaced in ReadQueue at: " + i);
+                                secondList.put(j, items.get(i));
+                                placed = 1;
                             }
                         }
                     }
-                    hasAddedCommands.set(true);
+                    if (placed == 0) {
+                        secondList.put(secondList.size() + 1, items.get(i));
+                    }
                 }
             }
+            hasAddedCommands.set(true);
         }
+    }
 
+    private synchronized void calcTime() {
+        Calendar cal2 = Calendar.getInstance();
+        long past = cal2.getTimeInMillis() / 1000;
+
+        if (((secondTime - past) / refresh < 1) && replaceInt > 1) {
+            replaceInt--;
+            System.out.println("Current replaceInt:" + replaceInt);
+        }
+    }
+    /**
+     * Gets this thing
+     * @return long
+     */
+    public synchronized long getRefreshRate(){
+        return refresh;
+    }
+    /**
+     * Returns this thing.
+     * @param refresh long
+     */
+    public synchronized void setRefreshRate(long refresh){
+        this.refresh = refresh;
     }
 }
