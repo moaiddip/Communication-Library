@@ -61,7 +61,7 @@ public class ArdConnector extends Thread {
             
 
             while (!quit.get()) {
-                CommPortIdentifier portId = null;
+
                 Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
                 while (portEnum.hasMoreElements()) {
                     CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
