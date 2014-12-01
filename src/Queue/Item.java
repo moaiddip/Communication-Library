@@ -30,6 +30,7 @@ public class Item {
     private int priority = 0;
     private String authsessionkey;
     private String sessionkey;
+    private int aging=0;
 
     //sets the query of a client and the clients ip address in the items instance
     /**
@@ -71,7 +72,24 @@ public class Item {
     public String getCmd() {
         return command;
     }
-
+    
+    /**
+     * gets the age for priority queues that use aging
+     * 
+     * 
+     */
+    public synchronized int  getAging() {
+        return aging;
+    }
+    /**
+     * sets the age for priority queues that use aging
+     * 
+     * @param aging an int
+     */
+    public synchronized void setAging(int aging) {
+       this.aging = aging;
+    }
+    
     /**
      * Returns the answer to a query. This method is already synchronized.
      *
