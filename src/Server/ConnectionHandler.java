@@ -33,24 +33,27 @@ public class ConnectionHandler extends Thread {
     private int userPrio = -1;
     private final String logoutCmd;
     private final String exitCmd;
+
     /**
      * Handles communication with each client. It extends Thread. Implemented
      * automatically in the Server class. Should not be called.
      *
      * @param sslsocket Requires an sslsocket with an established connection.
      * @param que Requires a shared instance of the WriteQueue class.
-     * @param logoutCmd The default logout command, if null it will not attempt to logout
+     * @param logoutCmd The default logout command, if null it will not attempt
+     * to logout
      * @param exitCmd The command used to close the socket.
      */
     public ConnectionHandler(SSLSocket sslsocket, WriteQueue que, String logoutCmd, String exitCmd) {
         this.sslsocket = sslsocket;
         this.que = que;
-        this.logoutCmd=logoutCmd;
-        this.exitCmd=exitCmd;
+        this.logoutCmd = logoutCmd;
+        this.exitCmd = exitCmd;
         //init(server, threads, hashTail);
-            
+
     }
-    public synchronized int init(Server server, HashMap<Integer, ConnectionHandler> threads, int hashTail){
+
+    public synchronized int init(Server server, HashMap<Integer, ConnectionHandler> threads, int hashTail) {
         try {
             out = new PrintWriter(sslsocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(sslsocket.getInputStream()));
@@ -60,23 +63,25 @@ public class ConnectionHandler extends Thread {
         }
         int placed = 0; //0 means communication thread cannot find place in hashmap, 1 means it can
         for (int i = 0; i < threads.size(); i++) {
-            if (threads.get(i).isInterrupted() && placed == 0) {
-                threads.put(i, this);
-                placed = 1;
-                System.out.println("Placed client thread in an existing spot.");
+            if (placed == 0 && threads.get(i) != null) {
+                if (!threads.get(i).isAlive()) {
+                    threads.put(i, this);
+                    placed = 1;
+                    System.out.println("Placed client in the existing spot no.:"+i+".");
+                }
             }
         }
         if (placed == 0) {
             threads.put(hashTail, this);
+            System.out.println("Placed client thread in the new spot no.:"+hashTail+".");
             hashTail++;
-            System.out.println("Placed client thread in a new spot.");
         }
         return hashTail;
     }
 
     @Override
     public void run() {
-        System.out.println("Connection with client "+remoteSocketAddress+" initialized successfully.");
+        System.out.println("Connection with client " + remoteSocketAddress + " initialized successfully.");
         Boolean listener = true;
         try {
             String string;
@@ -99,7 +104,7 @@ public class ConnectionHandler extends Thread {
                         if (userPrio != -1) {
                             item.setUser(getUser());
                             item.setUserPrio(userPrio);
-                        }                       
+                        }
                         synchronized (item) {
                             while (item.isAnswered() == false) {
                                 item.wait();
@@ -131,11 +136,12 @@ public class ConnectionHandler extends Thread {
                 }
 
                 sslsocket.close();
+                in.close();
+                out.close();
             } catch (IOException ex) {
                 Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        this.interrupt();
     }
 
     /**

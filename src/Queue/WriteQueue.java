@@ -92,7 +92,7 @@ public final class WriteQueue {
                 items.put(i, new Item());
                 items.get(i).create(command, address, userPrio);
                 totalQueries++;
-                System.out.println("A command was replaced at position:" + i);
+                System.out.println("A command has been replaced at position:" + i);
                 System.out.println("Total queries: " + totalQueries);
                 return items.get(i);
             }
@@ -100,7 +100,7 @@ public final class WriteQueue {
         //creates new entry
         items.put(hashTail, new Item());
         items.get(hashTail).create(command, address, userPrio);
-        System.out.println("A command was added at position:" + hashTail);
+        System.out.println("A command has been added at a new position:" + hashTail);
         hashTail++;
         totalQueries++;
         System.out.println("Total queries: " + totalQueries);
@@ -162,7 +162,7 @@ public final class WriteQueue {
                 } else {
                     int placed = 0;
                     for (int j = 0; j < secondList.size(); j++) {
-                        if (placed == 0) {
+                        if (placed == 0 && secondList.get(i)!=null) {
                             if (secondList.get(i).getState() == false) {
                                 System.out.println("Item number: " + i + " is false.");
                                 System.out.println("Replaced in ReadQueue at: " + i);
