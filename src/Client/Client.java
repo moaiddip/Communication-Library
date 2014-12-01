@@ -35,7 +35,7 @@ public class Client extends Thread {
     private String truststore; //Location of keystore
     private final String trustpass; // keystore password
     private InputStream trustStoreStream;
-    private String command = "no_command!"; // default command
+    private String command; // default command
     private String reply = null;
     private final AtomicBoolean query = new AtomicBoolean(false);
     private final ACQueue cQue = new ACQueue(); //arduino client queue
@@ -44,23 +44,25 @@ public class Client extends Thread {
     private final AtomicBoolean finished = new AtomicBoolean(false);
     private final String divider;
     private final String defaultCommand;
+    private final String errCmd;
     /**
      * The first constructor for computers.
      * @param url The ip address of the server
      * @param port The port of the server
      * @param truststore The truststore location and name. eg. "c:\blabla\keystore.jks"
      * @param trustpass The truststore pass.
-     * @param divider Used for syntax
-     * @param defaultCommand Restricted command
+     * @param rCmds 0: divider 1: default command 2: error command
      */
-    public Client(String url, int port, String truststore, String trustpass, String divider, String defaultCommand) {
+    public Client(String url, int port, String truststore, String trustpass, String[] rCmds) {
         device = 0;
         this.url = url;
         this.port = port;
         this.truststore = truststore;
         this.trustpass = trustpass;
-        this.divider = divider;
-        this.defaultCommand = defaultCommand;
+        divider = rCmds[0];
+        defaultCommand = rCmds[1];
+        errCmd = rCmds[2];
+        command = defaultCommand;
     }
     /**
      * The constructor for android devices.
@@ -68,17 +70,18 @@ public class Client extends Thread {
      * @param port The port of the server
      * @param truststore The input stream of the truststore.
      * @param trustpass The truststore pass.
-     * @param divider Used for syntax
-     * @param defaultCommand Restricted command
+     * @param rCmds 0: divider 1: default command 2: error command
      */
-    public Client(String url, int port, InputStream truststore, String trustpass, String divider, String defaultCommand) {
+    public Client(String url, int port, InputStream truststore, String trustpass, String[] rCmds) {
         device = 1;
         this.url = url;
         this.port = port;
         this.trustStoreStream = truststore;
         this.trustpass = trustpass;
-        this.divider = divider;
-        this.defaultCommand = defaultCommand;
+        divider = rCmds[0];
+        defaultCommand = rCmds[1];
+        errCmd = rCmds[2];
+        command = defaultCommand;
     }
 
     /**
@@ -88,7 +91,6 @@ public class Client extends Thread {
      */
     @Override
     public void run() {
-        String string;
         try {
             System.out.println("Creating socket.");
             SSLContext context;
@@ -157,7 +159,7 @@ public class Client extends Thread {
                         String[] parts = input.split(divider); 
                         String[] parts2 = command.split(divider);
                         //System.out.println(parts[0]+"\n"+parts2[0]);
-                        if ((parts[0].equals(parts2[0]) || parts[0].equals("error"))) {
+                        if ((parts[0].equals(parts2[0]) || parts[0].equals(errCmd))) {
                             reply = input;
                             command = defaultCommand;
                             setFinished(true);

@@ -23,30 +23,30 @@ import java.util.logging.Logger;
 public class ArdConnector extends Thread {
 
     private final ACQueue ac = new ACQueue();
-    private String port = "COM3";
+    private String port;
     private String reply = null;
-    private String command = "no_command!";
+    private String command;
     private final AtomicBoolean query = new AtomicBoolean(false);
     private final AtomicBoolean quit = new AtomicBoolean(false);
     private final AtomicBoolean working = new AtomicBoolean(false);
     private final AtomicBoolean finished = new AtomicBoolean(false);
     private boolean problem=true;
-    private String divider = "_";
-    private String defaultCommand = "no_command!";
+    private final String defaultCommand;
+    private final String[] rCmds;
+
     /**
      * Sets the port that the software will communicate with.
      *
      * @param port The port name as a string. eg. "COM3" (which is the default
      * on my pc)
-     * @param divider Used for syntax
      * @param defaultCommand Restricted command
+     * @param rCmds 0: divider 1: error command 2: autocheck 3: end of autocheck
      */
-    public ArdConnector(String port, String divider, String defaultCommand){
+    public ArdConnector(String port, String defaultCommand, String[] rCmds){
         this.port = port;
-        this.divider = divider;
         this.defaultCommand = defaultCommand;
         command = defaultCommand;
-        
+        this.rCmds = rCmds;
     }
 
     /**
@@ -68,7 +68,7 @@ public class ArdConnector extends Thread {
                     if (currPortId.getName().equals(port)) {
                         if(problem){
                             obj.close();
-                            obj.initialize(this, ac, currPortId, divider);
+                            obj.initialize(this, ac, currPortId, rCmds);
                             ArdConnector.sleep(2000);
                         }
                         problem=false;
@@ -174,7 +174,7 @@ public class ArdConnector extends Thread {
      *
      * @param aCommand The command to be processed by the arduino.
      */
-    public void setCommand(String aCommand) {
+    public synchronized void setCommand(String aCommand) {
         while(query.get() || working.get());
         command = aCommand;
         query.set(true);

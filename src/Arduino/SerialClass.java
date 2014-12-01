@@ -35,6 +35,9 @@ public class SerialClass implements SerialPortEventListener {
     private String[] parts;
     private String[] parts2;
     private String divider; 
+    private String errCmd;
+    private String autoCheck;
+    private String endAutoCheck;
     /**
      * Milliseconds to block while waiting for port open
      */
@@ -44,10 +47,13 @@ public class SerialClass implements SerialPortEventListener {
      */
     public final int DATA_RATE = 38400;
 
-    public void initialize(ArdConnector ard, ACQueue ac, CommPortIdentifier portId, String divider) {
+    public void initialize(ArdConnector ard, ACQueue ac, CommPortIdentifier portId, String[] rCmds) {
         this.ard = ard;
         this.ac = ac;
-        this.divider = divider;
+        divider = rCmds[0];
+        errCmd = rCmds[1];
+        autoCheck = rCmds[2];
+        endAutoCheck = rCmds[3];
         try {
             // open serial port, and use class name for the appName.
             serialPort = (SerialPort) portId.open(this.getClass().getName(),
@@ -99,12 +105,12 @@ public class SerialClass implements SerialPortEventListener {
 
                     System.out.println("Received: " + inputz);
                     parts = inputz.split(divider);
-                    parts2 = ard.getCommand().split("_");
-                    if ("autochkstart!".equals(inputz)) {
+                    parts2 = ard.getCommand().split(divider);
+                    if (autoCheck.equals(inputz)) {
                         autocheck = true;
-                    } else if ("eol!".equals(inputz)) {
+                    } else if (endAutoCheck.equals(inputz)) {
                         autocheck = false;
-                    } else if ((parts[0].equals(parts2[0]) || parts[0].equals("error")) && !autocheck) {
+                    } else if ((parts[0].equals(parts2[0]) || parts[0].equals(errCmd)) && !autocheck) {
                         ard.setReply(inputz);
                         ard.setCommandDefault();
                         ard.setWorking(false);

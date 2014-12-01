@@ -40,14 +40,15 @@ public class Server extends Thread {
     public synchronized HashMap<Integer, ConnectionHandler> getThreads() {
         return threads;
     }
-    
+
     private final int port;
-    private int locality = 0;
+    private final int locality;
     private final String keystore;
     private final String keystorePass;
     private final String keypass;
     private int hashTail = 0;
     private final String logoutCmd;
+    private final String exitCmd;
 
     /**
      * Creates an SSLServerSocket and then it creates a loop that creates new
@@ -60,9 +61,11 @@ public class Server extends Thread {
      * @param keystore The path to and the name of a keystore.
      * @param keystorePass The password of the keystore.
      * @param keypass The password of the private key in the keystore.
-     * @param logoutCmd The logout command. If null the server will not attempt to logout automatically.
+     * @param logoutCmd The logout command. If null the server will not attempt
+     * to logout automatically.
+     * @param exitCmd The command used to quit a client thread.
      */
-    public Server(int port, int locality, String keystore, String keystorePass, String keypass, String logoutCmd) {
+    public Server(int port, int locality, String keystore, String keystorePass, String keypass, String logoutCmd, String exitCmd) {
         this.port = port;
         this.locality = locality; //if 1 server is local, 0 means remote
         this.keypass = keypass;
@@ -70,11 +73,12 @@ public class Server extends Thread {
         this.keystorePass = keystorePass;
         Calendar cal = Calendar.getInstance();
         que = new WriteQueue(cal.getTimeInMillis());
-        this.logoutCmd=logoutCmd;
+        this.logoutCmd = logoutCmd;
+        this.exitCmd = exitCmd;
     }
 
     @Override
-    public synchronized void run() {
+    public void run() {
         boolean listening = true;
         try {
 //            Calendar cal = Calendar.getInstance();
@@ -106,27 +110,22 @@ public class Server extends Thread {
             //Creates the que and listens to the socket.
 
             while (listening) {
-                int placed = 0; //0 means communication thread cannot find place in hashmap, 1 means it can
-                for (int i = 0; i < threads.size(); i++) {
-                    if (getThreads().get(i).isInterrupted() && placed == 0) {
-                        getThreads().put(i, new ConnectionHandler((SSLSocket) sslserversocket.accept(), que, logoutCmd));
-                        getThreads().get(i).start();
-                        placed = 1;
-                    }
-                }
-                if (placed == 0) {
-                    getThreads().put(hashTail, new ConnectionHandler((SSLSocket) sslserversocket.accept(), que, logoutCmd));
-                    getThreads().get(hashTail).start();
-                    hashTail++;
-                }
+                ConnectionHandler ch = new ConnectionHandler((SSLSocket) sslserversocket.accept(), que, logoutCmd, exitCmd);
+                setTail(ch.init(this, getThreads(), getTail()));
+                ch.start();
             }
         } catch (Exception ex) {
             Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
-
     public WriteQueue getTheQueue() {
         return que;
+    }
+    public synchronized int getTail(){
+        return hashTail;
+    }
+    public synchronized void setTail(int Tail){
+        hashTail = Tail;
     }
 }

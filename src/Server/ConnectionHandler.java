@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.net.ssl.SSLSocket;
@@ -30,8 +31,8 @@ public class ConnectionHandler extends Thread {
     private final WriteQueue que;
     private String user = null;
     private int userPrio = -1;
-    private String logoutCmd = null;
-
+    private final String logoutCmd;
+    private final String exitCmd;
     /**
      * Handles communication with each client. It extends Thread. Implemented
      * automatically in the Server class. Should not be called.
@@ -39,25 +40,45 @@ public class ConnectionHandler extends Thread {
      * @param sslsocket Requires an sslsocket with an established connection.
      * @param que Requires a shared instance of the WriteQueue class.
      * @param logoutCmd The default logout command, if null it will not attempt to logout
+     * @param exitCmd The command used to close the socket.
      */
-    public ConnectionHandler(SSLSocket sslsocket, WriteQueue que, String logoutCmd) {
+    public ConnectionHandler(SSLSocket sslsocket, WriteQueue que, String logoutCmd, String exitCmd) {
         this.sslsocket = sslsocket;
         this.que = que;
         this.logoutCmd=logoutCmd;
+        this.exitCmd=exitCmd;
+        //init(server, threads, hashTail);
+            
+    }
+    public synchronized int init(Server server, HashMap<Integer, ConnectionHandler> threads, int hashTail){
+        try {
+            out = new PrintWriter(sslsocket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(sslsocket.getInputStream()));
+            remoteSocketAddress = sslsocket.getRemoteSocketAddress().toString();
+        } catch (IOException ex) {
+            Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        int placed = 0; //0 means communication thread cannot find place in hashmap, 1 means it can
+        for (int i = 0; i < threads.size(); i++) {
+            if (threads.get(i).isInterrupted() && placed == 0) {
+                threads.put(i, this);
+                placed = 1;
+                System.out.println("Placed client thread in an existing spot.");
+            }
+        }
+        if (placed == 0) {
+            threads.put(hashTail, this);
+            hashTail++;
+            System.out.println("Placed client thread in a new spot.");
+        }
+        return hashTail;
     }
 
     @Override
     public void run() {
-
+        System.out.println("Connection with client "+remoteSocketAddress+" initialized successfully.");
         Boolean listener = true;
         try {
-            //Gets the ip address of the client.
-            remoteSocketAddress = sslsocket.getRemoteSocketAddress().toString();
-            //Create I/O for the socket
-            System.out.println(remoteSocketAddress + " connected.");
-            out = new PrintWriter(sslsocket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(sslsocket.getInputStream()));
-            System.out.println("Initialized I/O.");
             String string;
             //System.out.println(remoteSocketAddress);
             //Listens in a loop until asked to exit
@@ -67,7 +88,7 @@ public class ConnectionHandler extends Thread {
                     System.out.println("Received query.");
                     //exit is the quit command, replies with ok
 
-                    if ("exit".equals(string)) {
+                    if (exitCmd.equals(string)) {
                         listener = false;
                         out.println("ok");
                     } else {
@@ -136,5 +157,4 @@ public class ConnectionHandler extends Thread {
         out.println(status);
         System.out.println("Sending status update: " + status);
     }
-
 }
