@@ -9,10 +9,6 @@ What is next:
 --------------
 
 
-Rework the WriteQueue to be more efficient. Also, the dynamic functionality shall become readjustable on runtime. 
-
-The item class will also be updated to support aging.
-
 Use NIO instead of IO streams.
 
 Switch from RXTX to jSSC.
@@ -23,6 +19,10 @@ Send JSON objects instead of strings.
 
 Version Revisions:
 -------------------
+
+Version 1.1: Reworked the WriteQueue to be more efficient. Also, the dynamic functionality can be readjusted on runtime. 
+The Item class now supports aging.
+The way the Client class quits communication has been reworked.
 
 Version 1.0c: Softcoded more commands, refactored the code and fixed a bug that stopped multicasting from working.
 
