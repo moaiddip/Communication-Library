@@ -48,6 +48,7 @@ public class Client extends Thread {
     private PrintWriter out;
     private BufferedReader in;
     private SSLSocket sslsocket;
+    private final String exitCmd;
 
     /**
      * The first constructor for computers.
@@ -68,6 +69,7 @@ public class Client extends Thread {
         divider = rCmds[0];
         defaultCommand = rCmds[1];
         errCmd = rCmds[2];
+        exitCmd = rCmds[3];
         command = defaultCommand;
     }
 
@@ -89,6 +91,7 @@ public class Client extends Thread {
         divider = rCmds[0];
         defaultCommand = rCmds[1];
         errCmd = rCmds[2];
+        exitCmd = rCmds[3];
         command = defaultCommand;
     }
 
@@ -163,19 +166,22 @@ public class Client extends Thread {
                 String input;
                 try {
                     while ((input = in.readLine()) != null) {
-
-                        System.out.println("Received: " + input);
-                        //split finds a character, and creates an array of strings with parts before and after character
-                        String[] parts = input.split(divider);
-                        String[] parts2 = command.split(divider);
-                        //System.out.println(parts[0]+"\n"+parts2[0]);
-                        if ((parts[0].equals(parts2[0]) || parts[0].equals(errCmd))) {
-                            reply = input;
-                            command = defaultCommand;
-                            setFinished(true);
-                            setWorking(false);
+                        if (input.equals(exitCmd)) {
+                            quitCommunication();
                         } else {
-                            cQue.putCmd(input);
+                            System.out.println("Received: " + input);
+                            //split finds a character, and creates an array of strings with parts before and after character
+                            String[] parts = input.split(divider);
+                            String[] parts2 = command.split(divider);
+                            //System.out.println(parts[0]+"\n"+parts2[0]);
+                            if ((parts[0].equals(parts2[0]) || parts[0].equals(errCmd))) {
+                                reply = input;
+                                command = defaultCommand;
+                                setFinished(true);
+                                setWorking(false);
+                            } else {
+                                cQue.putCmd(input);
+                            }
                         }
                     }
 
