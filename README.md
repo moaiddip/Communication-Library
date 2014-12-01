@@ -23,6 +23,7 @@ Version Revisions:
 Version 1.1: Reworked the WriteQueue to be more efficient. Also, the dynamic functionality can be readjusted on runtime. 
 The Item class now supports aging.
 The way the Client class quits communication has been reworked.
+Reworked the way hashmaps are handled.
 
 Version 1.0c: Softcoded more commands, refactored the code and fixed a bug that stopped multicasting from working.
 
