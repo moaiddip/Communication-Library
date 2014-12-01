@@ -53,7 +53,7 @@ public class ConnectionHandler extends Thread {
 
     }
 
-    public synchronized int init(Server server, HashMap<Integer, ConnectionHandler> threads, int hashTail) {
+    public synchronized void init(Server server, HashMap<Integer, ConnectionHandler> threads) {
         try {
             out = new PrintWriter(sslsocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(sslsocket.getInputStream()));
@@ -61,22 +61,28 @@ public class ConnectionHandler extends Thread {
         } catch (IOException ex) {
             Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        int placed = 0; //0 means communication thread cannot find place in hashmap, 1 means it can
-        for (int i = 0; i < threads.size(); i++) {
-            if (placed == 0 && threads.get(i) != null) {
-                if (!threads.get(i).isAlive()) {
+        if (threads.isEmpty()) {
+            threads.put(0, this);
+            System.out.println("Placed client in spot no.: 0.");
+
+        } else {
+            boolean foundSpot = false;
+            for (int i = 0; i < threads.size(); i++) {
+                if (threads.get(i) == null) {
                     threads.put(i, this);
-                    placed = 1;
-                    System.out.println("Placed client in the existing spot no.:"+i+".");
+                    System.out.println("Placed client in spot no.:" + i + ".");
+                    foundSpot = true;
+                } else if (!threads.get(i).isAlive()) {
+                    threads.put(i, this);
+                    System.out.println("Placed client in spot no.:" + i + ".");
+                    foundSpot = true;
                 }
             }
+            if (!foundSpot) {
+                threads.put(threads.size(), this);
+                System.out.println("Placed client in spot no.:" + (threads.size()-1) + ".");
+            }
         }
-        if (placed == 0) {
-            threads.put(hashTail, this);
-            System.out.println("Placed client thread in the new spot no.:"+hashTail+".");
-            hashTail++;
-        }
-        return hashTail;
     }
 
     @Override

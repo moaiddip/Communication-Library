@@ -46,7 +46,6 @@ public class Server extends Thread {
     private final String keystore;
     private final String keystorePass;
     private final String keypass;
-    private int hashTail = 0;
     private final String logoutCmd;
     private final String exitCmd;
 
@@ -111,7 +110,7 @@ public class Server extends Thread {
 
             while (listening) {
                 ConnectionHandler ch = new ConnectionHandler((SSLSocket) sslserversocket.accept(), que, logoutCmd, exitCmd);
-                setTail(ch.init(this, getThreads(), getTail()));
+                ch.init(this, getThreads());
                 ch.start();
             }
         } catch (Exception ex) {
@@ -121,11 +120,5 @@ public class Server extends Thread {
     }
     public WriteQueue getTheQueue() {
         return que;
-    }
-    public synchronized int getTail(){
-        return hashTail;
-    }
-    public synchronized void setTail(int Tail){
-        hashTail = Tail;
     }
 }

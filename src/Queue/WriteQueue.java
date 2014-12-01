@@ -8,8 +8,6 @@ package Queue;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Accessed by the Communication class to query a command. The first half of the
@@ -48,16 +46,13 @@ public final class WriteQueue {
         secondTime = firstTime;
         initialize();
     }
-    private int hashTail = 0;
     private final HashMap<Integer, Item> items = new HashMap<Integer, Item>();
     private final HashMap<Integer, Item> secondList = new HashMap<Integer, Item>();
     private final AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
     private int totalQueries = 0;
     private Calendar cal;
-    private boolean state = false;
     private long refresh = 3;
 
-   
     public void initialize() {
         DynamicFun dFun = new DynamicFun();
         dFun.start();
@@ -87,24 +82,37 @@ public final class WriteQueue {
             replaceInt++;
             System.out.println("Current replaceInt:" + replaceInt);
         }
-        for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).getState() == false) {
-                items.put(i, new Item());
-                items.get(i).create(command, address, userPrio);
-                totalQueries++;
-                System.out.println("A command has been replaced at position:" + i);
-                System.out.println("Total queries: " + totalQueries);
-                return items.get(i);
+        if (items.isEmpty()) {
+            items.put(0, new Item());
+            items.get(0).create(command, address, userPrio);
+            totalQueries++;
+            System.out.println("A command has been added at position:" + 0);
+            return items.get(0);
+        } else {
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i) == null) {
+                    items.put(i, new Item());
+                    items.get(i).create(command, address, userPrio);
+                    totalQueries++;
+                    System.out.println("A command has been added at position:" + i);
+                    System.out.println("Total queries: " + totalQueries);
+                    return items.get(i);
+                } else if (items.get(i).getState() == false || items.get(i).isCopied()) {
+                    items.put(i, new Item());
+                    items.get(i).create(command, address, userPrio);
+                    totalQueries++;
+                    System.out.println("A command has been replaced at position:" + i);
+                    System.out.println("Total queries: " + totalQueries);
+                    return items.get(i);
+                }
             }
         }
-        //creates new entry
-        items.put(hashTail, new Item());
-        items.get(hashTail).create(command, address, userPrio);
-        System.out.println("A command has been added at a new position:" + hashTail);
-        hashTail++;
+        items.put(items.size(), new Item());
+        items.get(items.size() - 1).create(command, address, userPrio);
         totalQueries++;
+        System.out.println("A command has been added at position:" + (items.size() - 1));
         System.out.println("Total queries: " + totalQueries);
-        return items.get(hashTail - 1);
+        return items.get(items.size() - 1);
     }
 
     /**
@@ -139,45 +147,54 @@ public final class WriteQueue {
         @Override
         public synchronized void run() {
             while (true) {
-                if (state) {
-                    replace();
-
-                } else {
-                    calcTime();
-                }
-                state = !state;
+                checkState();
             }
         }
+    }
+    public synchronized void checkState(){
+                if (totalQueries >= replaceInt) {
+                    replace();
+                }
+                else{
+                    calcTime();
+                }
     }
 
     private synchronized void replace() {
 
-        if (totalQueries >= replaceInt) {
             System.out.println("Putting commands in the ReadQueue.");
             totalQueries = 0;
             for (int i = 0; i < items.size(); i++) {
                 if (secondList.isEmpty()) {
                     secondList.put(0, items.get(i));
+                    secondList.get(0).setCopied(true);
                     System.out.println("Added in ReadQueue at: " + 0);
                 } else {
-                    int placed = 0;
+                    boolean foundSpot = false;
                     for (int j = 0; j < secondList.size(); j++) {
-                        if (placed == 0 && secondList.get(i)!=null) {
-                            if (secondList.get(i).getState() == false) {
-                                System.out.println("Item number: " + i + " is false.");
-                                System.out.println("Replaced in ReadQueue at: " + i);
-                                secondList.put(j, items.get(i));
-                                placed = 1;
-                            }
+                        if (secondList.get(j) == null) {
+                            System.out.println("Added in ReadQueue at: " + j);
+                            secondList.put(j, items.get(i));
+                            secondList.get(j).setCopied(true);
+                            foundSpot = true;
+                        } else if (secondList.get(j).getState() == false) {
+                            System.out.println("Replaced in ReadQueue at: " + j);
+                            secondList.put(j, items.get(i));
+                            secondList.get(j).setCopied(true);
+                            foundSpot = true;
                         }
                     }
-                    if (placed == 0) {
-                        secondList.put(secondList.size() + 1, items.get(i));
+                    if (!foundSpot) {
+                        System.out.println("Item number: " + secondList.size() + " is false.");
+                        System.out.println("Added in ReadQueue at: " + secondList.size());
+                        secondList.put(secondList.size(), items.get(i));
+                        secondList.get(secondList.size()-1).setCopied(true);
                     }
                 }
+
             }
             hasAddedCommands.set(true);
-        }
+        
     }
 
     private synchronized void calcTime() {
@@ -189,18 +206,22 @@ public final class WriteQueue {
             System.out.println("Current replaceInt:" + replaceInt);
         }
     }
+
     /**
      * Gets this thing
+     *
      * @return long
      */
-    public synchronized long getRefreshRate(){
+    public synchronized long getRefreshRate() {
         return refresh;
     }
+
     /**
      * Returns this thing.
+     *
      * @param refresh long
      */
-    public synchronized void setRefreshRate(long refresh){
+    public synchronized void setRefreshRate(long refresh) {
         this.refresh = refresh;
     }
 }
