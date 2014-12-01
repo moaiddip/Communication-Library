@@ -164,11 +164,13 @@ public final class WriteQueue {
 
             System.out.println("Putting commands in the ReadQueue.");
             totalQueries = 0;
+            int copied = 0;
             for (int i = 0; i < items.size(); i++) {
                 if (secondList.isEmpty()) {
                     secondList.put(0, items.get(i));
                     items.put(i, null);
                     System.out.println("Added in ReadQueue at: " + 0);
+                    copied++;
                 } else {
                     boolean foundSpot = false;
                     for (int j = 0; j < secondList.size(); j++) {
@@ -177,11 +179,13 @@ public final class WriteQueue {
                             secondList.put(j, items.get(i));
                             items.put(i, null);
                             foundSpot = true;
+                            copied++;
                         } else if (secondList.get(j).getState() == false) {
                             System.out.println("Replaced in ReadQueue at: " + j);
                             secondList.put(j, items.get(i));
                             items.put(i, null);
                             foundSpot = true;
+                            copied++;
                         }
                     }
                     if (!foundSpot) {
@@ -189,10 +193,13 @@ public final class WriteQueue {
                         System.out.println("Added in ReadQueue at: " + secondList.size());
                         secondList.put(secondList.size(), items.get(i));
                         items.put(i, null);
+                        copied++;
                     }
                 }
 
             }
+            System.out.println(copied+" commands have been added in the ReadQueue. ReadQueue's current size: "+secondList.size());
+            System.out.println("Note: You should strive to copy as many commands as possible without any previous commands still in the ReadQueue.");
             hasAddedCommands.set(true);
         
     }
