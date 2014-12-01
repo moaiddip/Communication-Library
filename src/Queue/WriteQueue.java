@@ -97,7 +97,7 @@ public final class WriteQueue {
                     System.out.println("A command has been added at position:" + i);
                     System.out.println("Total queries: " + totalQueries);
                     return items.get(i);
-                } else if (items.get(i).getState() == false || items.get(i).isCopied()) {
+                } else if (items.get(i).getState() == false) {
                     items.put(i, new Item());
                     items.get(i).create(command, address, userPrio);
                     totalQueries++;
@@ -167,7 +167,7 @@ public final class WriteQueue {
             for (int i = 0; i < items.size(); i++) {
                 if (secondList.isEmpty()) {
                     secondList.put(0, items.get(i));
-                    secondList.get(0).setCopied(true);
+                    items.put(i, null);
                     System.out.println("Added in ReadQueue at: " + 0);
                 } else {
                     boolean foundSpot = false;
@@ -175,12 +175,12 @@ public final class WriteQueue {
                         if (secondList.get(j) == null) {
                             System.out.println("Added in ReadQueue at: " + j);
                             secondList.put(j, items.get(i));
-                            secondList.get(j).setCopied(true);
+                            items.put(i, null);
                             foundSpot = true;
                         } else if (secondList.get(j).getState() == false) {
                             System.out.println("Replaced in ReadQueue at: " + j);
                             secondList.put(j, items.get(i));
-                            secondList.get(j).setCopied(true);
+                            items.put(i, null);
                             foundSpot = true;
                         }
                     }
@@ -188,7 +188,7 @@ public final class WriteQueue {
                         System.out.println("Item number: " + secondList.size() + " is false.");
                         System.out.println("Added in ReadQueue at: " + secondList.size());
                         secondList.put(secondList.size(), items.get(i));
-                        secondList.get(secondList.size()-1).setCopied(true);
+                        items.put(i, null);
                     }
                 }
 

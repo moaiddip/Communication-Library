@@ -31,7 +31,6 @@ public class Item {
     private String authsessionkey;
     private String sessionkey;
     private int aging=0;
-    private boolean copied = false;
 
     //sets the query of a client and the clients ip address in the items instance
     /**
@@ -214,10 +213,5 @@ public class Item {
    public synchronized String getSessionKey() {
             return sessionkey;
     }
-   public Boolean isCopied(){
-       return copied;
-   }
-   public void setCopied(boolean copied){
-       this.copied=copied;
-   }
+
 }
