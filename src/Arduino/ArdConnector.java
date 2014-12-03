@@ -30,7 +30,7 @@ public class ArdConnector extends Thread {
     private final AtomicBoolean quit = new AtomicBoolean(false);
     private final AtomicBoolean working = new AtomicBoolean(false);
     private final AtomicBoolean finished = new AtomicBoolean(false);
-    private boolean problem=true;
+    private boolean problem = true;
     private final String defaultCommand;
     private final String[] rCmds;
 
@@ -42,7 +42,7 @@ public class ArdConnector extends Thread {
      * @param defaultCommand Restricted command
      * @param rCmds 0: divider 1: error command 2: autocheck 3: end of autocheck
      */
-    public ArdConnector(String port, String defaultCommand, String[] rCmds){
+    public ArdConnector(String port, String defaultCommand, String[] rCmds) {
         this.port = port;
         this.defaultCommand = defaultCommand;
         command = defaultCommand;
@@ -57,8 +57,7 @@ public class ArdConnector extends Thread {
     @Override
     public void run() {
         try {
-            SerialClass obj = new SerialClass();
-            
+            SerialClass obj = null;
 
             while (!quit.get()) {
 
@@ -66,19 +65,21 @@ public class ArdConnector extends Thread {
                 while (portEnum.hasMoreElements()) {
                     CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
                     if (currPortId.getName().equals(port)) {
-                        if(problem){
-                            obj.close();
+                        if (problem) {
+                            //Test
+                            obj = new SerialClass();
                             obj.initialize(this, ac, currPortId, rCmds);
                             ArdConnector.sleep(2000);
                         }
-                        problem=false;
+                        problem = false;
                         break;
-                    }else{
-                        problem=true;
+                    } else {
+                        obj.close();
+                        problem = true;
                     }
 
                 }
-                if (query.get()&&!problem) {
+                if (query.get() && !problem) {
                     setQuery(false);
                     setWorking(true);
                     setFinished(false);
@@ -151,7 +152,7 @@ public class ArdConnector extends Thread {
      * @return A string with the answer.
      */
     public String getReply() {
-        while(!finished.get());
+        while (!finished.get());
         finished.set(false);
         String answer = this.reply;
         this.reply = null;
@@ -162,7 +163,7 @@ public class ArdConnector extends Thread {
      * Sets the answer, used by the SerialClass to edit the answer when received
      * from the arduino.
      *
-     * @param aReply The answer received from the arduino. 
+     * @param aReply The answer received from the arduino.
      */
     public void setReply(String aReply) {
         reply = aReply;
@@ -175,7 +176,7 @@ public class ArdConnector extends Thread {
      * @param aCommand The command to be processed by the arduino.
      */
     public synchronized void setCommand(String aCommand) {
-        while(query.get() || working.get());
+        while (query.get() || working.get());
         command = aCommand;
         query.set(true);
     }
@@ -195,7 +196,7 @@ public class ArdConnector extends Thread {
      */
     public void setCommandDefault() {
         command = defaultCommand;
-        
+
     }
 
     /**
@@ -213,14 +214,15 @@ public class ArdConnector extends Thread {
      * @param aFinished True: finished False: not finished.
      */
     public void setFinished(Boolean aFinished) {
-            finished.set(aFinished);
+        finished.set(aFinished);
     }
 
     public ACQueue getArduinoQueue() {
         return ac;
     }
-    public synchronized void setPort(String port){
-        this.port=port;
-        problem=true;
+
+    public synchronized void setPort(String port) {
+        this.port = port;
+        problem = true;
     }
 }

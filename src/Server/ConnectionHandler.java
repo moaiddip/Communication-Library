@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.net.ssl.SSLSocket;
@@ -33,6 +34,7 @@ public class ConnectionHandler extends Thread {
     private int userPrio = -1;
     private final String logoutCmd;
     private final String exitCmd;
+    private AtomicBoolean terminated = new AtomicBoolean(false);
 
     /**
      * Handles communication with each client. It extends Thread. Implemented
@@ -80,7 +82,7 @@ public class ConnectionHandler extends Thread {
             }
             if (!foundSpot) {
                 threads.put(threads.size(), this);
-                System.out.println("Placed client in spot no.:" + (threads.size()-1) + ".");
+                System.out.println("Placed client in spot no.:" + (threads.size() - 1) + ".");
             }
         }
     }
@@ -134,6 +136,7 @@ public class ConnectionHandler extends Thread {
         } catch (Exception ex) {
             Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
+            terminated.set(true);
             try {
                 Item item;
                 if (user != null && logoutCmd != null) {
@@ -166,7 +169,9 @@ public class ConnectionHandler extends Thread {
      * @param status The status update as a string.
      */
     public void sendUpdate(String status) {
-        out.println(status);
-        System.out.println("Sending status update: " + status);
+        if (!terminated.get()) {
+            out.println(status);
+            System.out.println("Sending status update: " + status);
+        }
     }
 }
