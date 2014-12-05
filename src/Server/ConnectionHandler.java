@@ -34,7 +34,7 @@ public class ConnectionHandler extends Thread {
     private int userPrio = -1;
     private final String logoutCmd;
     private final String exitCmd;
-    private AtomicBoolean terminated = new AtomicBoolean(false);
+    private final AtomicBoolean terminated = new AtomicBoolean(false);
 
     /**
      * Handles communication with each client. It extends Thread. Implemented

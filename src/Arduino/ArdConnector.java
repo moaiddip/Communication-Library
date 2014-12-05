@@ -57,7 +57,7 @@ public class ArdConnector extends Thread {
     @Override
     public void run() {
         try {
-            SerialClass obj = null;
+            SerialClass obj = new SerialClass();
 
             while (!quit.get()) {
 
@@ -67,11 +67,11 @@ public class ArdConnector extends Thread {
                     if (currPortId.getName().equals(port)) {
                         if (problem) {
                             //Test
-                            obj = new SerialClass();
                             obj.initialize(this, ac, currPortId, rCmds);
                             ArdConnector.sleep(2000);
+                            problem = false;
                         }
-                        problem = false;
+
                         break;
                     } else {
                         obj.close();
