@@ -8,6 +8,9 @@ The library's purpose is to keep things simple by not getting the rest of the gr
 What is possibly next:
 --------------
 
+Remake the way ConnectionHandler threads are dropped.
+
+Remake the server to accept normal Socket connections.
 
 Use NIO instead of IO streams.
 
@@ -19,6 +22,8 @@ Send JSON objects instead of strings.
 
 Version Revisions:
 -------------------
+
+Version 1.1b: Fixed bugs; the 1.1 release was deleted due to the number and nature of the bugs found. A small improvement in the way multicast in handled in some special cases was added.
 
 Version 1.1: Reworked the WriteQueue to be more efficient. Also, the dynamic functionality can be readjusted on runtime. 
 The Item class now supports aging.
