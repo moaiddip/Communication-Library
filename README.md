@@ -23,7 +23,7 @@ Send JSON objects instead of strings.
 Version Revisions:
 -------------------
 
-Version 1.1b: Fixed bugs; the 1.1 release was deleted due to the number and nature of the bugs found. A small improvement in the way multicast in handled in some special cases was added.
+Version 1.1b: Fixed bugs; the 1.1 release was deleted due to the nature of the bugs found. A small improvement in the way multicast in handled in some special cases was added.
 
 Version 1.1: Reworked the WriteQueue to be more efficient. Also, the dynamic functionality can be readjusted on runtime. 
 The Item class now supports aging.
