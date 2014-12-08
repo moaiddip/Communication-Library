@@ -37,7 +37,7 @@ public class ConnectionHandler extends Thread {
     private final String exitCmd;
     private final AtomicBoolean terminated = new AtomicBoolean(false);
     private Socket socket;
-    private int mode;
+    private final int mode;
 
     /**
      * Handles communication with each client. It extends Thread. Implemented
@@ -71,8 +71,7 @@ public class ConnectionHandler extends Thread {
                 out = new PrintWriter(sslsocket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(sslsocket.getInputStream()));
                 remoteSocketAddress = sslsocket.getRemoteSocketAddress().toString();
-            }
-            else {
+            } else {
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 remoteSocketAddress = socket.getRemoteSocketAddress().toString();
@@ -142,7 +141,6 @@ public class ConnectionHandler extends Thread {
                             user = item.getUser();
                             userPrio = item.getUserPrio();
                         }
-
                         System.out.println("Replying.");
                         out.println(string);
                         item.makeOld();
@@ -160,8 +158,12 @@ public class ConnectionHandler extends Thread {
                     item = que.putCmd(logoutCmd, remoteSocketAddress, userPrio);
                     item.setUser(getUser());
                 }
+                if (mode == 0) {
+                    sslsocket.close();
 
-                sslsocket.close();
+                } else {
+                    socket.close();
+                }
                 in.close();
                 out.close();
             } catch (IOException ex) {
