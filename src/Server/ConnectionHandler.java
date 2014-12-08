@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -28,13 +29,15 @@ public class ConnectionHandler extends Thread {
     private BufferedReader in;
     private PrintWriter out;
     private String remoteSocketAddress;
-    private final SSLSocket sslsocket;
+    private SSLSocket sslsocket;
     private final WriteQueue que;
     private String user = null;
     private int userPrio = -1;
     private final String logoutCmd;
     private final String exitCmd;
     private final AtomicBoolean terminated = new AtomicBoolean(false);
+    private Socket socket;
+    private int mode;
 
     /**
      * Handles communication with each client. It extends Thread. Implemented
@@ -51,15 +54,29 @@ public class ConnectionHandler extends Thread {
         this.que = que;
         this.logoutCmd = logoutCmd;
         this.exitCmd = exitCmd;
-        //init(server, threads, hashTail);
-
+        mode = 0;
     }
 
-    public synchronized void init(Server server, HashMap<Integer, ConnectionHandler> threads) {
+    public ConnectionHandler(Socket socket, WriteQueue que, String logoutCmd, String exitCmd) {
+        this.socket = socket;
+        this.que = que;
+        this.logoutCmd = logoutCmd;
+        this.exitCmd = exitCmd;
+        mode = 1;
+    }
+
+    public synchronized void init(HashMap<Integer, ConnectionHandler> threads) {
         try {
-            out = new PrintWriter(sslsocket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(sslsocket.getInputStream()));
-            remoteSocketAddress = sslsocket.getRemoteSocketAddress().toString();
+            if (mode == 0) {
+                out = new PrintWriter(sslsocket.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(sslsocket.getInputStream()));
+                remoteSocketAddress = sslsocket.getRemoteSocketAddress().toString();
+            }
+            else {
+                out = new PrintWriter(socket.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                remoteSocketAddress = socket.getRemoteSocketAddress().toString();
+            }
         } catch (IOException ex) {
             Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
