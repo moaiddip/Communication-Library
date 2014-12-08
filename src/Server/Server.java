@@ -61,7 +61,8 @@ public class Server extends Thread {
      * threads of the Communication class, every time a new connection is
      * established.
      *
-     * @param portSSL The port that the server should listen to, as an int.
+     * @param portSSL The port that the SSL server should listen to, as an int.
+     * @param port The port the not secured server should listen to, as an int.
      * @param locality An int, either 0 or 1, indicating if the server should
      * run remotely and locally or only locally respectively.
      * @param keystore The path to and the name of a keystore.
