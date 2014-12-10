@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.KeyStore;
+import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,6 +50,7 @@ public class Client extends Thread {
     private SSLSocket sslsocket;
     private final String exitCmd = "isAboutToExit";
     private final String replyCmd = "isReply";
+    private int timeOut = 15;
 
     /**
      * The first constructor for computers.
@@ -285,7 +287,13 @@ public class Client extends Thread {
      * @param aCommand The command you wish to send.
      */
     public void setCommand(String aCommand) {
-        while (query.get() || working.get());
+        Calendar cal = Calendar.getInstance();
+        long time = cal.getTimeInMillis() / 1000;
+        while (query.get() || working.get()) {
+            if (time - timeOut >= 0) {
+                return;
+            }
+        }
         command = aCommand;
         query.set(true);
     }
@@ -325,7 +333,13 @@ public class Client extends Thread {
      * @return The reply as a string.
      */
     public String getReply() {
-        while (!finished.get());
+        Calendar cal = Calendar.getInstance();
+        long time = cal.getTimeInMillis() / 1000;
+        while (!finished.get()){
+            if (time - timeOut >= 0) {
+                return null;
+            }
+        }
         finished.set(false);
         String respond = reply;
         reply = null;
