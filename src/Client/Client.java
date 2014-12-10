@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.Socket;
 import java.security.KeyStore;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -33,7 +34,7 @@ public class Client extends Thread {
     private final String url; // holds ip address
     private final int port;
     private String truststore; //Location of keystore
-    private final String trustpass; // keystore password
+    private String trustpass; // keystore password
     private InputStream trustStoreStream;
     private String command; // default command
     private String reply = null;
@@ -95,6 +96,17 @@ public class Client extends Thread {
         command = defaultCommand;
     }
 
+    public Client(String url, int port, String[] rCmds) {
+        device = 2;
+        this.url = url;
+        this.port = port;
+        divider = rCmds[0];
+        defaultCommand = rCmds[1];
+        errCmd = rCmds[2];
+        exitCmd = rCmds[3];
+        command = defaultCommand;
+    }
+
     /**
      * Creates an SSLSocket and creates 2 threads to send and receive commands.
      *
@@ -104,39 +116,47 @@ public class Client extends Thread {
     public void run() {
         try {
             System.out.println("Creating socket.");
-            SSLContext context;
-            KeyStore keystore;
-            //Passphrase = the password to the truststore
-            char[] passphrase = trustpass.toCharArray();
-            //Get TrustManagerFactory
-            TrustManagerFactory trustfactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            //Set security to TLS
-            context = SSLContext.getInstance("TLS");
+            if (device == 0 || device == 1) {
+                SSLContext context;
+                KeyStore keystore;
+                //Passphrase = the password to the truststore
+                char[] passphrase = trustpass.toCharArray();
+                //Get TrustManagerFactory
+                TrustManagerFactory trustfactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                //Set security to TLS
+                context = SSLContext.getInstance("TLS");
             //Get the keystore
-            //keystore = KeyStore.getInstance("BKS");
-            //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
-            //InputStream trustStoreStream = context.getResources().openRawResource(R.raw.server);
-            if (device == 0) {
-                keystore = KeyStore.getInstance("JKS");
-                keystore.load(new FileInputStream(truststore), passphrase);
-            } else {
-                keystore = KeyStore.getInstance("BKS"); //bouncy castle security library for android
-                keystore.load(trustStoreStream, passphrase);
+                //keystore = KeyStore.getInstance("BKS");
+                //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
+                //InputStream trustStoreStream = context.getResources().openRawResource(R.raw.server);
+                if (device == 0) {
+                    keystore = KeyStore.getInstance("JKS");
+                    keystore.load(new FileInputStream(truststore), passphrase);
+                } else {
+                    keystore = KeyStore.getInstance("BKS"); //bouncy castle security library for android
+                    keystore.load(trustStoreStream, passphrase);
+                }
+                //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
+
+                trustfactory.init(keystore);
+                //initialize the context using the keys you got from TMF
+                context.init(null, trustfactory.getTrustManagers(), null);
+                //create the factory and then use the factory to create the socket
+                SSLSocketFactory factory = context.getSocketFactory();
+                sslsocket = (SSLSocket) factory.createSocket(url, port);
+                System.out.println("Socket created.");
+                out
+                        = new PrintWriter(sslsocket.getOutputStream(), true);
+                in = new BufferedReader(
+                        new InputStreamReader(sslsocket.getInputStream()));
+            } else{
+                Socket socket = new Socket(url, port);
+                System.out.println("Socket created.");
+                out
+                        = new PrintWriter(socket.getOutputStream(), true);
+                in = new BufferedReader(
+                        new InputStreamReader(socket.getInputStream()));
             }
-            //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
-
-            trustfactory.init(keystore);
-            //initialize the context using the keys you got from TMF
-            context.init(null, trustfactory.getTrustManagers(), null);
-            //create the factory and then use the factory to create the socket
-            SSLSocketFactory factory = context.getSocketFactory();
-            sslsocket = (SSLSocket) factory.createSocket(url, port);
-            System.out.println("Socket created.");
-            out
-                    = new PrintWriter(sslsocket.getOutputStream(), true);
-            in = new BufferedReader(
-                    new InputStreamReader(sslsocket.getInputStream()));
-
             new Reader(in).start();
             new Writer(out).start();
             System.out.println("Created I/O stream threads.");
