@@ -17,7 +17,7 @@ Switch from RXTX to jSSC.
 Version Revisions:
 -------------------
 
-Version 1.2: Added JSON support. Changed the way replies are processed between the server and the client. The server can accept normal sockets and the client can create a normal socket. Removed some softcoded commands that contributed negatively to the complexity of the implementation. 
+Version 1.2: Added JSON support. Changed the way replies are processed between the server and the client. The server can accept normal sockets and the client can create a normal socket. Removed some softcoded commands that contributed negatively to the complexity of the implementation. Added a timeout feature to the client class.
 
 Version 1.1b: Fixed bugs; the 1.1 release was deleted due to the nature of the bugs found. A small improvement in the way multicast in handled in some special cases was added.
 
@@ -57,3 +57,18 @@ Added an Item class, instead of a String, in which relevant information regardin
 
 Version 0.1:
 Multithreaded server/client using TLS security that queues commands in a single queue called Queue.
+
+Contributors:
+--------------
+
+SorcerersApprentice - Sozos Assias/Denisa Biala (same person, different computer owner)
+
+roguelikerogue - Cameron Brownlee (his commits are not linked to his username but his name)
+
+rayaq - Raya Bogoslovova
+
+Related projects:
+----------------
+
+https://github.com/roguelikerogue/SmartHouseServlet The part created by our group to establish a connection between a webbrowser and the server.
+
