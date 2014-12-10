@@ -63,6 +63,6 @@ Contributors:
 
 SorcerersApprentice - Sozos Assias/Denisa Biala (same person, different computer owner)
 
-roguelikerogue - Cameron Brownlee (his commits are not linked to his username)
+roguelikerogue - Cameron Brownlee (his commits are not linked to his username but his name)
 
 rayaq - Raya Bogoslovova
