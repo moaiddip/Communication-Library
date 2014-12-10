@@ -43,6 +43,7 @@ public class Client extends Thread {
     private final AtomicBoolean quit = new AtomicBoolean(false);
     private final AtomicBoolean working = new AtomicBoolean(false);
     private final AtomicBoolean finished = new AtomicBoolean(false);
+    private final AtomicBoolean conError = new AtomicBoolean(false);
     private PrintWriter out;
     private BufferedReader in;
     private SSLSocket sslsocket;
@@ -140,6 +141,7 @@ public class Client extends Thread {
             }
             new Reader(in).start();
             new Writer(out).start();
+            conError.set(false);
             System.out.println("Created I/O stream threads.");
 
         } catch (Exception ex) {
@@ -186,6 +188,7 @@ public class Client extends Thread {
 
                 } catch (Exception ex) {
                     System.out.println("Cannot read from the socket. Closing.");
+                    conError.set(true);
                     closeCommunication();
                 }
             }
@@ -335,5 +338,8 @@ public class Client extends Thread {
 
     public ACQueue getClientQueue() {
         return cQue;
+    }
+    public Boolean getConError(){
+        return conError.get();
     }
 }
