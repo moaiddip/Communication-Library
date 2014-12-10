@@ -290,7 +290,7 @@ public class Client extends Thread {
         Calendar cal = Calendar.getInstance();
         long time = cal.getTimeInMillis() / 1000;
         while (query.get() || working.get()) {
-            if (time - timeOut >= 0) {
+            if (cal.getTimeInMillis() - time >= timeOut) {
                 return;
             }
         }
@@ -336,7 +336,7 @@ public class Client extends Thread {
         Calendar cal = Calendar.getInstance();
         long time = cal.getTimeInMillis() / 1000;
         while (!finished.get()){
-            if (time - timeOut >= 0) {
+            if (cal.getTimeInMillis() - time >= timeOut) {
                 return null;
             }
         }
