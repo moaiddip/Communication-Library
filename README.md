@@ -5,6 +5,15 @@ This is the communication protocol library developped for HKR's last year's firs
 Our job is to be able to transmit the messages in a secure and somewhat efficient way between the arduino-server-clients and prepare a medium for the other groups to be able to access the messages sent. 
 The library's purpose is to keep things simple by not getting the rest of the groups involved with more code and to provide simple methods for them to use instead.
 
+Contributors:
+--------------
+
+SorcerersApprentice - Sozos/Denisa (same person, different computer owner)
+
+Cameron Brownlee
+
+rayaq - Raya Bogoslovova
+
 Additional optional future features:
 -------------------
 
