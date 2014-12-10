@@ -17,7 +17,7 @@ Switch from RXTX to jSSC.
 Version Revisions:
 -------------------
 
-Version 1.2: Added JSON support. Changed the way replies are processed between the server and the client. The server can accept normal sockets and the client can create a normal socket. Removed some softcoded commands that contributed negatively to the complexity of the implementation. 
+Version 1.2: Added JSON support. Changed the way replies are processed between the server and the client. The server can accept normal sockets and the client can create a normal socket. Removed some softcoded commands that contributed negatively to the complexity of the implementation. Added a timeout feature to the client class.
 
 Version 1.1b: Fixed bugs; the 1.1 release was deleted due to the nature of the bugs found. A small improvement in the way multicast in handled in some special cases was added.
 
