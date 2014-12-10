@@ -173,7 +173,7 @@ public class Client extends Thread {
                             System.out.println("Received: " + input);
                             //split finds a character, and creates an array of strings with parts before and after character
                             //System.out.println(parts[0]+"\n"+parts2[0]);
-                            if (input.contains("isReply")) {
+                            if (input.contains(replyCmd)) {
                                 input = input.replace(replyCmd, "");
                                 reply = input;
                                 setFinished(true);
@@ -224,6 +224,8 @@ public class Client extends Thread {
      * alive.
      */
     public void quitCommunication() {
+        setCommand("isAboutToExit");
+        getReply();
         quit.set(true);
     }
 
