@@ -33,6 +33,7 @@ public class ArdConnector extends Thread {
     private boolean problem = true;
     private final String defaultCommand;
     private final String[] rCmds;
+    private int retryTime = 3;
 
     /**
      * Sets the port that the software will communicate with.
@@ -86,13 +87,13 @@ public class ArdConnector extends Thread {
                     obj.writeData(command);
                     Calendar cal = Calendar.getInstance();
                     long time = cal.getTimeInMillis() / 1000;
-                    while ((cal.getTimeInMillis() / 1000) - time > 3 || !isWorking());
+                    while ((cal.getTimeInMillis() / 1000) - time > retryTime || !isWorking());
                     if (!isWorking()) {
                         System.out.println("Did not receive an answer from the arduino, trying again.");
                         obj.writeData(command);
                     }
                     time = cal.getTimeInMillis() / 1000;
-                    while ((cal.getTimeInMillis() / 1000) - time > 3 || !isWorking());
+                    while ((cal.getTimeInMillis() / 1000) - time > retryTime || !isWorking());
                     if (!isWorking()) {
                         System.out.println("Did not receive an answer from the arduino, stopping.");
                         setReply("no_answer!");
@@ -225,4 +226,5 @@ public class ArdConnector extends Thread {
         this.port = port;
         problem = true;
     }
+ 
 }
