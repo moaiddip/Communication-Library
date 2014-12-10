@@ -34,7 +34,8 @@ public class ConnectionHandler extends Thread {
     private String user = null;
     private int userPrio = -1;
     private final String logoutCmd;
-    private final String exitCmd;
+    private final String exitCmd = "isAboutToExit";
+    private final String replyCmd = "isReply";
     private final AtomicBoolean terminated = new AtomicBoolean(false);
     private Socket socket;
     private final int mode;
@@ -47,21 +48,18 @@ public class ConnectionHandler extends Thread {
      * @param que Requires a shared instance of the WriteQueue class.
      * @param logoutCmd The default logout command, if null it will not attempt
      * to logout
-     * @param exitCmd The command used to close the socket.
      */
-    public ConnectionHandler(SSLSocket sslsocket, WriteQueue que, String logoutCmd, String exitCmd) {
+    public ConnectionHandler(SSLSocket sslsocket, WriteQueue que, String logoutCmd) {
         this.sslsocket = sslsocket;
         this.que = que;
         this.logoutCmd = logoutCmd;
-        this.exitCmd = exitCmd;
         mode = 0;
     }
 
-    public ConnectionHandler(Socket socket, WriteQueue que, String logoutCmd, String exitCmd) {
+    public ConnectionHandler(Socket socket, WriteQueue que, String logoutCmd) {
         this.socket = socket;
         this.que = que;
         this.logoutCmd = logoutCmd;
-        this.exitCmd = exitCmd;
         mode = 1;
     }
 
@@ -136,7 +134,7 @@ public class ConnectionHandler extends Thread {
                         }
                         System.out.println("Answer processed, preparing to reply.");
 
-                        string = item.getReply();
+                        string = item.getReply()+"isReply";
                         if (getUser() == null) {
                             user = item.getUser();
                             userPrio = item.getUserPrio();

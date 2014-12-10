@@ -43,13 +43,11 @@ public class Client extends Thread {
     private final AtomicBoolean quit = new AtomicBoolean(false);
     private final AtomicBoolean working = new AtomicBoolean(false);
     private final AtomicBoolean finished = new AtomicBoolean(false);
-    private final String divider;
-    private final String defaultCommand;
-    private final String errCmd;
     private PrintWriter out;
     private BufferedReader in;
     private SSLSocket sslsocket;
-    private final String exitCmd;
+    private final String exitCmd = "isAboutToExit";
+    private final String replyCmd = "isReply";
 
     /**
      * The first constructor for computers.
@@ -59,19 +57,13 @@ public class Client extends Thread {
      * @param truststore The truststore location and name. eg.
      * "c:\blabla\keystore.jks"
      * @param trustpass The truststore pass.
-     * @param rCmds 0: divider 1: default command 2: error command
      */
-    public Client(String url, int port, String truststore, String trustpass, String[] rCmds) {
+    public Client(String url, int port, String truststore, String trustpass) {
         device = 0;
         this.url = url;
         this.port = port;
         this.truststore = truststore;
         this.trustpass = trustpass;
-        divider = rCmds[0];
-        defaultCommand = rCmds[1];
-        errCmd = rCmds[2];
-        exitCmd = rCmds[3];
-        command = defaultCommand;
     }
 
     /**
@@ -81,30 +73,19 @@ public class Client extends Thread {
      * @param port The port of the server
      * @param truststore The input stream of the truststore.
      * @param trustpass The truststore pass.
-     * @param rCmds 0: divider 1: default command 2: error command
      */
-    public Client(String url, int port, InputStream truststore, String trustpass, String[] rCmds) {
+    public Client(String url, int port, InputStream truststore, String trustpass) {
         device = 1;
         this.url = url;
         this.port = port;
         this.trustStoreStream = truststore;
         this.trustpass = trustpass;
-        divider = rCmds[0];
-        defaultCommand = rCmds[1];
-        errCmd = rCmds[2];
-        exitCmd = rCmds[3];
-        command = defaultCommand;
     }
 
-    public Client(String url, int port, String[] rCmds) {
+    public Client(String url, int port) {
         device = 2;
         this.url = url;
         this.port = port;
-        divider = rCmds[0];
-        defaultCommand = rCmds[1];
-        errCmd = rCmds[2];
-        exitCmd = rCmds[3];
-        command = defaultCommand;
     }
 
     /**
@@ -191,12 +172,10 @@ public class Client extends Thread {
                         } else {
                             System.out.println("Received: " + input);
                             //split finds a character, and creates an array of strings with parts before and after character
-                            String[] parts = input.split(divider);
-                            String[] parts2 = command.split(divider);
                             //System.out.println(parts[0]+"\n"+parts2[0]);
-                            if ((parts[0].equals(parts2[0]) || parts[0].equals(errCmd))) {
+                            if (input.contains("isReply")) {
+                                input = input.replace(replyCmd, "");
                                 reply = input;
-                                command = defaultCommand;
                                 setFinished(true);
                                 setWorking(false);
                             } else {

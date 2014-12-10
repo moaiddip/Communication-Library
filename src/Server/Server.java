@@ -50,8 +50,7 @@ public class Server extends Thread {
     private final String keystorePass;
     private final String keypass;
     private final String logoutCmd;
-    private final String exitCmd;
-    private boolean listening = true;
+    private final boolean listening = true;
     private ServerSocket serverSocket;
     private SSLServerSocket sslserversocket;
     private final int port;
@@ -70,9 +69,8 @@ public class Server extends Thread {
      * @param keypass The password of the private key in the keystore.
      * @param logoutCmd The logout command. If null the server will not attempt
      * to logout automatically.
-     * @param exitCmd The command used to quit a client thread.
      */
-    public Server(int portSSL, int port, int locality, String keystore, String keystorePass, String keypass, String logoutCmd, String exitCmd) {
+    public Server(int portSSL, int port, int locality, String keystore, String keystorePass, String keypass, String logoutCmd) {
         this.portSSL = portSSL;
         this.port = port;
         this.locality = locality; //if 1 server is local, 0 means remote
@@ -82,7 +80,6 @@ public class Server extends Thread {
         Calendar cal = Calendar.getInstance();
         que = new WriteQueue(cal.getTimeInMillis());
         this.logoutCmd = logoutCmd;
-        this.exitCmd = exitCmd;
     }
 
     @Override
@@ -136,7 +133,7 @@ public class Server extends Thread {
         public void run() {
             while (listening) {
                 try {
-                    ConnectionHandler ch = new ConnectionHandler((SSLSocket) sslserversocket.accept(), que, logoutCmd, exitCmd);
+                    ConnectionHandler ch = new ConnectionHandler((SSLSocket) sslserversocket.accept(), que, logoutCmd);
                     ch.init(getThreads());
                     ch.start();
                 } catch (IOException ex) {
@@ -151,7 +148,7 @@ public class Server extends Thread {
         public void run() {
             while (listening) {
                 try {
-                    ConnectionHandler ch = new ConnectionHandler((Socket) serverSocket.accept(), que, logoutCmd, exitCmd);
+                    ConnectionHandler ch = new ConnectionHandler((Socket) serverSocket.accept(), que, logoutCmd);
                     ch.init(getThreads());
                     ch.start();
                 } catch (IOException ex) {
