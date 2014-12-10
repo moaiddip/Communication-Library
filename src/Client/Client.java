@@ -50,7 +50,7 @@ public class Client extends Thread {
     private SSLSocket sslsocket;
     private final String exitCmd = "isAboutToExit";
     private final String replyCmd = "isReply";
-    private int timeOut = 15;
+    private final int timeOut = 15;
 
     /**
      * The first constructor for computers.
