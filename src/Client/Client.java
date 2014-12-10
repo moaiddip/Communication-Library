@@ -30,7 +30,7 @@ import javax.net.ssl.TrustManagerFactory;
  */
 public class Client extends Thread {
 
-    private final int device; // holds 0 or 1: 1 for android device, 0 for computer
+    private final int device; // 1 for android device, 0 for computer app, 2 for webbrowser
     private final String url; // holds ip address
     private final int port;
     private String truststore; //Location of keystore
