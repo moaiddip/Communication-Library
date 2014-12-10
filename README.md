@@ -66,3 +66,9 @@ SorcerersApprentice - Sozos Assias/Denisa Biala (same person, different computer
 roguelikerogue - Cameron Brownlee (his commits are not linked to his username but his name)
 
 rayaq - Raya Bogoslovova
+
+Related projects:
+----------------
+
+https://github.com/roguelikerogue/SmartHouseServlet The part created by our group to establish a connection between a webbrowser and the server.
+
