@@ -5,18 +5,10 @@ This is the communication protocol library developped for HKR's last year's firs
 Our job is to be able to transmit the messages in a secure and somewhat efficient way between the arduino-server-clients and prepare a medium for the other groups to be able to access the messages sent. 
 The library's purpose is to keep things simple by not getting the rest of the groups involved with more code and to provide simple methods for them to use instead.
 
-What is next:
---------------
-
-Rework the protocol to be able to send JSON objects or strings.
-
-Remake the way ConnectionHandler threads are dropped.
-
-Remake the server to accept normal Socket connections.
-
-
 Additional optional future features:
 -------------------
+
+Remake the way ConnectionHandler threads are dropped.
 
 Use NIO instead of IO streams.
 
@@ -24,6 +16,8 @@ Switch from RXTX to jSSC.
 
 Version Revisions:
 -------------------
+
+Version 1.2: Added JSON support. Changed the way replies are processed between the server and the client. The server can accept normal sockets and the client can create a normal socket. Removed some softcoded commands that contributed negatively to the complexity of the implementation. 
 
 Version 1.1b: Fixed bugs; the 1.1 release was deleted due to the nature of the bugs found. A small improvement in the way multicast in handled in some special cases was added.
 
