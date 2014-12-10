@@ -107,7 +107,7 @@ public class Client extends Thread {
                 TrustManagerFactory trustfactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
                 //Set security to TLS
                 context = SSLContext.getInstance("TLS");
-            //Get the keystore
+                //Get the keystore
                 //keystore = KeyStore.getInstance("BKS");
                 //Load the keystore's file using the passphrase and initialize the factory using the keys you got from the keystore
                 //InputStream trustStoreStream = context.getResources().openRawResource(R.raw.server);
@@ -131,7 +131,7 @@ public class Client extends Thread {
                         = new PrintWriter(sslsocket.getOutputStream(), true);
                 in = new BufferedReader(
                         new InputStreamReader(sslsocket.getInputStream()));
-            } else{
+            } else {
                 Socket socket = new Socket(url, port);
                 System.out.println("Socket created.");
                 out
@@ -169,21 +169,17 @@ public class Client extends Thread {
                 String input;
                 try {
                     while ((input = in.readLine()) != null) {
-                        if (input.equals(exitCmd)) {
-                            quitCommunication();
+
+                        System.out.println("Received: " + input);
+                        if (input.contains(replyCmd)) {
+                            input = input.replace(replyCmd, "");
+                            reply = input;
+                            setFinished(true);
+                            setWorking(false);
                         } else {
-                            System.out.println("Received: " + input);
-                            //split finds a character, and creates an array of strings with parts before and after character
-                            //System.out.println(parts[0]+"\n"+parts2[0]);
-                            if (input.contains(replyCmd)) {
-                                input = input.replace(replyCmd, "");
-                                reply = input;
-                                setFinished(true);
-                                setWorking(false);
-                            } else {
-                                cQue.putCmd(input);
-                            }
+                            cQue.putCmd(input);
                         }
+
                     }
 
                 } catch (Exception ex) {
@@ -339,7 +335,8 @@ public class Client extends Thread {
     public ACQueue getClientQueue() {
         return cQue;
     }
-    public Boolean getConError(){
+
+    public Boolean getConError() {
         return conError.get();
     }
 }
