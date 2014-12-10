@@ -5,15 +5,6 @@ This is the communication protocol library developped for HKR's last year's firs
 Our job is to be able to transmit the messages in a secure and somewhat efficient way between the arduino-server-clients and prepare a medium for the other groups to be able to access the messages sent. 
 The library's purpose is to keep things simple by not getting the rest of the groups involved with more code and to provide simple methods for them to use instead.
 
-Contributors:
---------------
-
-SorcerersApprentice - Sozos/Denisa (same person, different computer owner)
-
-Cameron Brownlee
-
-rayaq - Raya Bogoslovova
-
 Additional optional future features:
 -------------------
 
@@ -66,3 +57,12 @@ Added an Item class, instead of a String, in which relevant information regardin
 
 Version 0.1:
 Multithreaded server/client using TLS security that queues commands in a single queue called Queue.
+
+Contributors:
+--------------
+
+SorcerersApprentice - Sozos Assias/Denisa Biala (same person, different computer owner)
+
+roguelikerogue - Cameron Brownlee (his commits are not linked to his username)
+
+rayaq - Raya Bogoslovova
