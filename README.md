@@ -1,23 +1,20 @@
 ComProt
 =======
 
-This is the communication protocol library developped for HKR's last year's first semester project named Smart House.
+We are the communication protocol group of HKR's last year's first semester project named Smart House.
+The Smart House project consists of four groups: Devices group, Units group, Servers and Databases group and Communication Protocol group.
 Our job is to be able to transmit the messages in a secure and efficient way between the arduinos-servers-clients and prepare a medium for the other groups to be able to access the messages sent. 
-The library's purpose is to keep things simple by not getting the rest of the groups involved with more complex code and in turn provide them with simple methods to use.
+We have developped a library for the purpose of keeping things simple by not getting the rest of the groups involved with more complex code and in turn provide them with simple methods to use.
 
 What's next:
 ------------
 
-Bug fixing, stress testing, optimization.
+Bug fixing, stress testing, optimization, redo JDOC.
 
 Additional optional future features:
 -------------------
 
 Remake the way ConnectionHandler threads are dropped.
-
-Use NIO instead of IO streams.
-
-Switch from RXTX to jSSC.
 
 Version Revisions:
 -------------------
