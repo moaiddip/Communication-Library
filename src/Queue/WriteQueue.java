@@ -6,7 +6,7 @@
 package Queue;
 
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -46,8 +46,8 @@ public final class WriteQueue {
         secondTime = firstTime;
         initialize();
     }
-    private final HashMap<Integer, Item> items = new HashMap<Integer, Item>();
-    private final HashMap<Integer, Item> secondList = new HashMap<Integer, Item>();
+    private final ConcurrentHashMap<Integer, Item> items = new ConcurrentHashMap<Integer, Item>();
+    private final ConcurrentHashMap<Integer, Item> secondList = new ConcurrentHashMap<Integer, Item>();
     private final AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
     private int totalQueries = 0;
     private Calendar cal;
@@ -133,7 +133,7 @@ public final class WriteQueue {
      *
      * @return A hashmap(Integer, Item).
      */
-    public HashMap getMap() {
+    public ConcurrentHashMap getMap() {
         return secondList;
     }
 
@@ -153,6 +153,7 @@ public final class WriteQueue {
     }
     public synchronized void checkState(){
                 if (totalQueries >= replaceInt) {
+                    totalQueries = 0;
                     replace();
                 }
                 else{
@@ -162,8 +163,7 @@ public final class WriteQueue {
 
     private synchronized void replace() {
 
-            System.out.println("Putting commands in the ReadQueue.");
-            totalQueries = 0;
+            System.out.println("Putting commands in the ReadQueue.");            
             int copied = 0;
             for (int i = 0; i < items.size(); i++) {
                 if (secondList.isEmpty()) {

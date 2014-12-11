@@ -6,7 +6,7 @@
 //1.8
 package Queue;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -42,12 +42,11 @@ public class ACQueue {
      *
      * @return the items
      */
-    public HashMap<Integer, String> getItems() {
+    public ConcurrentHashMap<Integer, String> getItems() {
         return items;
     }
-    
-    private int hashTail = 0;
-    private final HashMap<Integer, String> items = new HashMap<Integer, String>();
+
+    private final ConcurrentHashMap<Integer, String> items = new ConcurrentHashMap<Integer, String>();
     private final AtomicBoolean hasAddedCommands = new AtomicBoolean(false);
 
     /**
@@ -58,19 +57,23 @@ public class ACQueue {
      */
     public synchronized String putCmd(String command) {
         //looks for an old message to replace
-        for (int i = 0; i < getItems().size(); i++) {
-            if (getItems().get(i) == null) { //all "empty" entries should be null
-                getItems().put(i, command);
-                System.out.println("Replacing command in the Arduino/Client queue");
-                hasAddedCommands.set(true);
-                return getItems().get(i);
+        if (items.isEmpty()) {
+            items.put(0, command);
+            return items.get(0);
+        } else {
+            for (int i = 0; i < getItems().size(); i++) {
+                if (getItems().get(i) == null) { //all "empty" entries should be null
+                    getItems().put(i, command);
+                    System.out.println("Replacing command in the Arduino/Client queue");
+                    hasAddedCommands.set(true);
+                    return getItems().get(i);
+                }
             }
         }
         //creates new entry
-        getItems().put(hashTail, command);
-        hashTail++;
+        getItems().put(items.size(), command);
         System.out.println("Putting new command in the Arduino/Client queue");
         hasAddedCommands.set(true);
-        return getItems().get(hashTail - 1);
+        return getItems().get(items.size() - 1);
     }
 }
