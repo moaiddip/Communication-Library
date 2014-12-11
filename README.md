@@ -36,7 +36,7 @@ Version 1.0: Made the server automatically detect when an arduino has disconnect
 
 Version 0.9: Made the classes more expandable, got rid of a lot of static classes/methods/objects. The arduino connector can now be instantiated multiple times from the same server, which means you can have multiple arduinos inside the same house. The client can also be connected to multiple servers/houses.
 
-Version 0.8: Added a queue to the client side for messages pushed by the server and updates that are not requested by the client explicitly.
+Version 0.8: Added a queue to the client side for messages pushed by the server and updates that are not requested by the client explicitly. Removed the key generator, a different solution was implemented.
 
 Version 0.7: Changed the way threads are handled, threads are now saved in a hashmap. Added Multicast support using a username to find the thread you want to send a message to.
 
