@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,7 +63,7 @@ public class ConnectionHandler extends Thread {
         mode = 1;
     }
 
-    public synchronized void init(HashMap<Integer, ConnectionHandler> threads) {
+    public synchronized void init(ConcurrentHashMap<Integer, ConnectionHandler> threads) {
         try {
             if (mode == 0) {
                 out = new PrintWriter(sslsocket.getOutputStream(), true);

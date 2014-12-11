@@ -13,7 +13,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.KeyStore;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.net.ssl.KeyManagerFactory;
@@ -30,7 +30,7 @@ import javax.net.ssl.SSLSocket;
  */
 public class Server extends Thread {
 
-    private final HashMap<Integer, ConnectionHandler> threads = new HashMap<Integer, ConnectionHandler>();
+    private final ConcurrentHashMap<Integer, ConnectionHandler> threads = new ConcurrentHashMap<Integer, ConnectionHandler>();
 
     private final WriteQueue que;
 
@@ -40,7 +40,7 @@ public class Server extends Thread {
      *
      * @return the threads
      */
-    public synchronized HashMap<Integer, ConnectionHandler> getThreads() {
+    public synchronized ConcurrentHashMap<Integer, ConnectionHandler> getThreads() {
         return threads;
     }
 
