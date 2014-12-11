@@ -133,7 +133,7 @@ public final class WriteQueue {
      *
      * @return A hashmap(Integer, Item).
      */
-    public synchronized HashMap getMap() {
+    public HashMap getMap() {
         return secondList;
     }
 

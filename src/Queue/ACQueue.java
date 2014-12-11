@@ -42,7 +42,7 @@ public class ACQueue {
      *
      * @return the items
      */
-    public synchronized HashMap<Integer, String> getItems() {
+    public HashMap<Integer, String> getItems() {
         return items;
     }
     
