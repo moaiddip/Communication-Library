@@ -2,8 +2,8 @@ ComProt
 =======
 
 This is the communication protocol library developped for HKR's last year's first semester project named Smart House.
-Our job is to be able to transmit the messages in a secure and somewhat efficient way between the arduino-server-clients and prepare a medium for the other groups to be able to access the messages sent. 
-The library's purpose is to keep things simple by not getting the rest of the groups involved with more code and to provide simple methods for them to use instead.
+Our job is to be able to transmit the messages in a secure and efficient way between the arduinos-servers-clients and prepare a medium for the other groups to be able to access the messages sent. 
+The library's purpose is to keep things simple by not getting the rest of the groups involved with more complex code and in turn provide them with simple methods to use.
 
 What's next:
 ------------
