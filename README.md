@@ -9,7 +9,7 @@ We have developped a library for the purpose of keeping things simple by not get
 What's next:
 ------------
 
-Bug fixing, stress testing, optimization, redo JDOC.
+Bug fixing, stress testing, optimization, redoing JDOC.
 
 Additional optional future features:
 -------------------
