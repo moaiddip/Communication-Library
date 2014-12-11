@@ -177,7 +177,7 @@ public class ConnectionHandler extends Thread {
      * in.
      */
     public synchronized String getUser() {
-        return user; //Sync problem.
+        return user; 
     }
 
     /**
