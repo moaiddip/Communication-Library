@@ -11,10 +11,7 @@ What's next:
 
 Bug fixing, stress testing, optimization, redoing JDOC.
 
-Additional optional future features:
--------------------
-
-Remake the way ConnectionHandler threads are dropped.
+Remake the way CommunicationHandler class is handled.
 
 Version Revisions:
 -------------------
