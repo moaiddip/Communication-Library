@@ -11,7 +11,7 @@ What's next:
 
 Bug fixing, stress testing, optimization, redoing JDOC.
 
-Remake the way CommunicationHandler class is handled (Use a thread pool instead).
+Remaking the way CommunicationHandler class is handled (Use a thread pool instead).
 
 Version Revisions:
 -------------------
