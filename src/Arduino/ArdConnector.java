@@ -33,7 +33,8 @@ public class ArdConnector extends Thread {
     private boolean problem = true;
     private final String defaultCommand;
     private final String[] rCmds;
-    private int retryTime = 3;
+    private final int retryTime = 3;
+    private final int timeOut = 15;
 
     /**
      * Sets the port that the software will communicate with.
@@ -153,7 +154,13 @@ public class ArdConnector extends Thread {
      * @return A string with the answer.
      */
     public String getReply() {
-        while (!finished.get());
+        Calendar cal = Calendar.getInstance();
+        long time = cal.getTimeInMillis() / 1000;
+        while (!finished.get()) {
+            if (cal.getTimeInMillis() / 1000 - time >= timeOut) {
+                return null;
+            }
+        }
         finished.set(false);
         String answer = this.reply;
         this.reply = null;
@@ -177,7 +184,13 @@ public class ArdConnector extends Thread {
      * @param aCommand The command to be processed by the arduino.
      */
     public synchronized void setCommand(String aCommand) {
-        while (query.get() || working.get());
+        Calendar cal = Calendar.getInstance();
+        long time = cal.getTimeInMillis() / 1000;
+        while (query.get() || working.get()){
+            if (cal.getTimeInMillis() / 1000 - time >= timeOut) {
+                return;
+            }
+        }
         command = aCommand;
         query.set(true);
     }
@@ -226,5 +239,5 @@ public class ArdConnector extends Thread {
         this.port = port;
         problem = true;
     }
- 
+
 }

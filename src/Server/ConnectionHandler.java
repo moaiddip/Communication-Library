@@ -134,7 +134,7 @@ public class ConnectionHandler extends Thread {
                         }
                         System.out.println("Answer processed, preparing to reply.");
 
-                        string = item.getReply()+"isReply";
+                        string = item.getReply()+replyCmd;
                         if (getUser() == null) {
                             user = item.getUser();
                             userPrio = item.getUserPrio();
