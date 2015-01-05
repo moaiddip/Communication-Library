@@ -104,6 +104,12 @@ public final class WriteQueue {
                     System.out.println("A command has been replaced at position:" + i);
                     System.out.println("Total queries: " + totalQueries);
                     return items.get(i);
+                } else if (items.get(i).getCmd()==null){
+                    items.get(i).create(command, address, userPrio);
+                    totalQueries++;
+                    System.out.println("A command has been replaced at position:" + i);
+                    System.out.println("Total queries: " + totalQueries);
+                    return items.get(i);
                 }
             }
         }
@@ -168,7 +174,7 @@ public final class WriteQueue {
             for (int i = 0; i < items.size(); i++) {
                 if (secondList.isEmpty()) {
                     secondList.put(0, items.get(i));
-                    items.put(i, null);
+                    items.put(i, new Item());
                     System.out.println("Added in ReadQueue at: " + 0);
                     copied++;
                 } else {
@@ -177,13 +183,13 @@ public final class WriteQueue {
                         if (secondList.get(j) == null) {
                             System.out.println("Added in ReadQueue at: " + j);
                             secondList.put(j, items.get(i));
-                            items.put(i, null);
+                            items.put(i, new Item());
                             foundSpot = true;
                             copied++;
                         } else if (secondList.get(j).getState() == false) {
                             System.out.println("Replaced in ReadQueue at: " + j);
                             secondList.put(j, items.get(i));
-                            items.put(i, null);
+                            items.put(i, new Item());
                             foundSpot = true;
                             copied++;
                         }
@@ -192,7 +198,7 @@ public final class WriteQueue {
                         System.out.println("Item number: " + secondList.size() + " is false.");
                         System.out.println("Added in ReadQueue at: " + secondList.size());
                         secondList.put(secondList.size(), items.get(i));
-                        items.put(i, null);
+                        items.put(i, new Item());
                         copied++;
                     }
                 }

@@ -22,7 +22,7 @@ public class Item {
      */
     private boolean newOrOld = true;
     private boolean answered = false;//testing: true, default: false
-    private String command;
+    private String command = null;
     private String reply;
     private String address;
     private String user = null;
