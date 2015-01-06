@@ -14,6 +14,7 @@ Bug fixing, stress testing, optimization, redoing JDOC.
 
 Version Revisions:
 -------------------
+Version 1.2d: Implemented an Executor Service and fixed some bugs.
 
 Version 1.2: Added JSON support. Changed the way replies are processed between the server and the client. The server can accept normal sockets and the client can create a normal socket. Removed some softcoded commands that contributed negatively to the complexity of the implementation. Added a timeout feature to the client class.
 
