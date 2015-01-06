@@ -14,6 +14,8 @@ import java.net.Socket;
 import java.security.KeyStore;
 import java.util.Calendar;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.net.ssl.KeyManagerFactory;
@@ -54,6 +56,7 @@ public class Server extends Thread {
     private ServerSocket serverSocket;
     private SSLServerSocket sslserversocket;
     private final int port;
+    private ExecutorService executor = null;
 
     /**
      * Creates an SSLServerSocket and then it creates a loop that creates new
@@ -80,6 +83,7 @@ public class Server extends Thread {
         Calendar cal = Calendar.getInstance();
         que = new WriteQueue(cal.getTimeInMillis());
         this.logoutCmd = logoutCmd;
+        executor = Executors.newCachedThreadPool();
     }
 
     @Override
@@ -116,7 +120,6 @@ public class Server extends Thread {
             //Creates the que and listens to the socket.
             new Thread(new Listener()).start();
             new Thread(new SSLListener()).start();
-            
         } catch (Exception ex) {
             Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -135,7 +138,7 @@ public class Server extends Thread {
                 try {
                     ConnectionHandler ch = new ConnectionHandler((SSLSocket) sslserversocket.accept(), que, logoutCmd);
                     ch.init(getThreads());
-                    ch.start();
+                    executor.submit(ch);
                 } catch (IOException ex) {
                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -150,7 +153,7 @@ public class Server extends Thread {
                 try {
                     ConnectionHandler ch = new ConnectionHandler((Socket) serverSocket.accept(), que, logoutCmd);
                     ch.init(getThreads());
-                    ch.start();
+                    executor.submit(ch);
                 } catch (IOException ex) {
                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                 }
