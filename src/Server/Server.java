@@ -7,8 +7,6 @@ package Server;
 
 import Queue.WriteQueue;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.KeyStore;
@@ -20,9 +18,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 
 /**
  * The class used to create an SSLServerSocket and listen to connection
@@ -46,7 +43,6 @@ public class Server extends Thread {
         return threads;
     }
 
-    private final int portSSL;
     private final int locality;
     private final String keystore;
     private final String keystorePass;
@@ -54,7 +50,6 @@ public class Server extends Thread {
     private final String logoutCmd;
     private final boolean listening = true;
     private ServerSocket serverSocket;
-    private SSLServerSocket sslserversocket;
     private final int port;
     private ExecutorService executor = null;
 
@@ -63,20 +58,17 @@ public class Server extends Thread {
      * threads of the Communication class, every time a new connection is
      * established.
      *
-     * @param portSSL The port that the SSL server should listen to, as an int.
-     * @param port The port the not secured server should listen to, as an int.
-     * @param locality An int, either 0 or 1, indicating if the server should
-     * run remotely and locally or only locally respectively.
+     * @param port The port the server should listen to, as an int.
+     * @param locality If this is 1 then loopback addresses will also be encrypted.
      * @param keystore The path to and the name of a keystore.
      * @param keystorePass The password of the keystore.
      * @param keypass The password of the private key in the keystore.
      * @param logoutCmd The logout command. If null the server will not attempt
      * to logout automatically.
      */
-    public Server(int portSSL, int port, int locality, String keystore, String keystorePass, String keypass, String logoutCmd) {
-        this.portSSL = portSSL;
+    public Server(int port, int locality, String keystore, String keystorePass, String keypass, String logoutCmd) {
         this.port = port;
-        this.locality = locality; //if 1 server is local, 0 means remote
+        this.locality = locality; //1: Testing 0: Not testing
         this.keypass = keypass;
         this.keystore = keystore;
         this.keystorePass = keystorePass;
@@ -90,8 +82,6 @@ public class Server extends Thread {
     public void run() {
 
         try {
-//            Calendar cal = Calendar.getInstance();
-//            que = new WriteQueue(cal.getTimeInMillis());
             System.out.println("Creating Server Socket.");
             //Password to the keystore
             char[] passphrase = keystorePass.toCharArray();
@@ -106,20 +96,22 @@ public class Server extends Thread {
             SSLContext context = SSLContext.getInstance("TLS");
             context.init(factory.getKeyManagers(), null, null);
             //Create a socket factory and then create a socket using the factory
-            SSLServerSocketFactory socketfactory = context.getServerSocketFactory();
-            
-            if (locality == 0) {
-                sslserversocket
-                        = (SSLServerSocket) socketfactory.createServerSocket(portSSL, 100); //port, no of max clients
-            } else {
-                sslserversocket
-                        = (SSLServerSocket) socketfactory.createServerSocket(portSSL, 100, InetAddress.getByName(null));      
-            }
-            serverSocket = new ServerSocket(port, 100, InetAddress.getByName(null));
+            SSLSocketFactory socketFactory = context.getSocketFactory();
+            serverSocket = new ServerSocket(port, 100);
             System.out.println("Server Socket created. Listening.");
-            //Creates the que and listens to the socket.
-            new Thread(new Listener()).start();
-            new Thread(new SSLListener()).start();
+            while (listening) {
+                Socket socket = serverSocket.accept();
+                ConnectionHandler ch = null;
+                if (socket.getInetAddress().isLoopbackAddress() && locality==0) {
+                    ch = new ConnectionHandler((Socket) serverSocket.accept(), que, logoutCmd);
+                } else {
+                    SSLSocket SslSock = (SSLSocket) socketFactory.createSocket(socket, socket.getInetAddress().toString(), socket.getPort(), true);
+                    SslSock.setUseClientMode(false);
+                    ch = new ConnectionHandler((SSLSocket) SslSock, que, logoutCmd);
+                }
+                ch.init(getThreads());
+                executor.submit(ch);
+            }
         } catch (Exception ex) {
             Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -128,36 +120,5 @@ public class Server extends Thread {
 
     public WriteQueue getTheQueue() {
         return que;
-    }
-
-    class SSLListener extends Thread {
-
-        @Override
-        public void run() {
-            while (listening) {
-                try {
-                    ConnectionHandler ch = new ConnectionHandler((SSLSocket) sslserversocket.accept(), que, logoutCmd);
-                    ch.init(getThreads());
-                    executor.submit(ch);
-                } catch (IOException ex) {
-                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-    }
-    class Listener extends Thread {
-
-        @Override
-        public void run() {
-            while (listening) {
-                try {
-                    ConnectionHandler ch = new ConnectionHandler((Socket) serverSocket.accept(), que, logoutCmd);
-                    ch.init(getThreads());
-                    executor.submit(ch);
-                } catch (IOException ex) {
-                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
     }
 }
