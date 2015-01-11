@@ -69,6 +69,7 @@ public class ArdConnector extends Thread {
                     if (currPortId.getName().equals(port)) {
                         if (problem) {
                             //Test
+                            //obj.close();
                             obj.initialize(this, ac, currPortId, rCmds);
                             ArdConnector.sleep(2000);
                             problem = false;
