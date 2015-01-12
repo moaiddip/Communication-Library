@@ -47,7 +47,6 @@ public class Server extends Thread {
     private final String keystore;
     private final String keystorePass;
     private final String keypass;
-    private final String logoutCmd;
     private final boolean listening = true;
     private ServerSocket serverSocket;
     private final int port;
@@ -66,7 +65,7 @@ public class Server extends Thread {
      * @param logoutCmd The logout command. If null the server will not attempt
      * to logout automatically.
      */
-    public Server(int port, int locality, String keystore, String keystorePass, String keypass, String logoutCmd) {
+    public Server(int port, int locality, String keystore, String keystorePass, String keypass) {
         this.port = port;
         this.locality = locality; //1: Testing 0: Not testing
         this.keypass = keypass;
@@ -74,7 +73,6 @@ public class Server extends Thread {
         this.keystorePass = keystorePass;
         Calendar cal = Calendar.getInstance();
         que = new WriteQueue(cal.getTimeInMillis());
-        this.logoutCmd = logoutCmd;
         executor = Executors.newCachedThreadPool();
     }
 
@@ -103,11 +101,11 @@ public class Server extends Thread {
                 Socket socket = serverSocket.accept();
                 ConnectionHandler ch = null;
                 if (socket.getInetAddress().isLoopbackAddress() && locality==0) {
-                    ch = new ConnectionHandler((Socket) serverSocket.accept(), que, logoutCmd);
+                    ch = new ConnectionHandler((Socket) serverSocket.accept(), que);
                 } else {
                     SSLSocket SslSock = (SSLSocket) socketFactory.createSocket(socket, socket.getInetAddress().toString(), socket.getPort(), true);
                     SslSock.setUseClientMode(false);
-                    ch = new ConnectionHandler((SSLSocket) SslSock, que, logoutCmd);
+                    ch = new ConnectionHandler((SSLSocket) SslSock, que);
                 }
                 ch.init(getThreads());
                 executor.submit(ch);

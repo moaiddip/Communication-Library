@@ -33,7 +33,6 @@ public class ConnectionHandler extends Thread {
     private final WriteQueue que;
     private String user = null;
     private int userPrio = -1;
-    private final String logoutCmd;
     private final String exitCmd = "isAboutToExit";
     private final String replyCmd = "isReply";
     private final AtomicBoolean terminated = new AtomicBoolean(false);
@@ -46,20 +45,16 @@ public class ConnectionHandler extends Thread {
      *
      * @param sslsocket Requires an sslsocket with an established connection.
      * @param que Requires a shared instance of the WriteQueue class.
-     * @param logoutCmd The default logout command, if null it will not attempt
-     * to logout
      */
-    public ConnectionHandler(SSLSocket sslsocket, WriteQueue que, String logoutCmd) {
+    public ConnectionHandler(SSLSocket sslsocket, WriteQueue que) {
         this.sslsocket = sslsocket;
         this.que = que;
-        this.logoutCmd = logoutCmd;
         mode = 0;
     }
 
-    public ConnectionHandler(Socket socket, WriteQueue que, String logoutCmd) {
+    public ConnectionHandler(Socket socket, WriteQueue que) {
         this.socket = socket;
         this.que = que;
-        this.logoutCmd = logoutCmd;
         mode = 1;
     }
 
@@ -123,7 +118,7 @@ public class ConnectionHandler extends Thread {
                         //Answered, then it sends the answer back to the client
                         Item item;
                         item = que.putCmd(string, remoteSocketAddress, userPrio);
-                        if (userPrio != -1) {
+                        if (user != null) {
                             item.setUser(getUser());
                             item.setUserPrio(userPrio);
                         }
@@ -135,7 +130,7 @@ public class ConnectionHandler extends Thread {
                         System.out.println("Answer processed, preparing to reply.");
 
                         string = item.getReply()+replyCmd;
-                        if (getUser() == null) {
+                        if (item.getUserChanged()) {
                             user = item.getUser();
                             userPrio = item.getUserPrio();
                         }
@@ -151,11 +146,6 @@ public class ConnectionHandler extends Thread {
         } finally {
             terminated.set(true);
             try {
-                Item item;
-                if (user != null && logoutCmd != null) {
-                    item = que.putCmd(logoutCmd, remoteSocketAddress, userPrio);
-                    item.setUser(getUser());
-                }
                 if (mode == 0) {
                     sslsocket.close();
 
@@ -179,7 +169,6 @@ public class ConnectionHandler extends Thread {
     public synchronized String getUser() {
         return user; 
     }
-
     /**
      * Sends a status update to this client.
      *

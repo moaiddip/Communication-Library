@@ -30,7 +30,7 @@ public class ArdConnector extends Thread {
     private final AtomicBoolean quit = new AtomicBoolean(false);
     private final AtomicBoolean working = new AtomicBoolean(false);
     private final AtomicBoolean finished = new AtomicBoolean(false);
-    private boolean problem = true;
+    private boolean problem = false;
     private final String defaultCommand;
     private final String[] rCmds;
     private final int retryTime = 3;
@@ -60,28 +60,9 @@ public class ArdConnector extends Thread {
     public void run() {
         try {
             SerialClass obj = new SerialClass();
-
+            simpleInit(obj);
             while (!quit.get()) {
-
-                Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
-                while (portEnum.hasMoreElements()) {
-                    CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
-                    if (currPortId.getName().equals(port)) {
-                        if (problem) {
-                            //Test
-                            //obj.close();
-                            obj.initialize(this, ac, currPortId, rCmds);
-                            ArdConnector.sleep(2000);
-                            problem = false;
-                        }
-
-                        break;
-                    } else {
-                        obj.close();
-                        problem = true;
-                    }
-
-                }
+                restart(obj);
                 if (query.get() && !problem) {
                     setQuery(false);
                     setWorking(true);
@@ -187,7 +168,7 @@ public class ArdConnector extends Thread {
     public synchronized void setCommand(String aCommand) {
         Calendar cal = Calendar.getInstance();
         long time = cal.getTimeInMillis() / 1000;
-        while (query.get() || working.get()){
+        while (query.get() || working.get()) {
             if (cal.getTimeInMillis() / 1000 - time >= timeOut) {
                 return;
             }
@@ -239,6 +220,44 @@ public class ArdConnector extends Thread {
     public synchronized void setPort(String port) {
         this.port = port;
         problem = true;
+    }
+
+    public void restart(SerialClass obj) throws InterruptedException {
+        //Doesn't work on windows 7. Works on windows 8.1
+        Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
+        while (portEnum.hasMoreElements()) {
+            CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+            if (currPortId.getName().equals(port)) {
+                if (problem) {
+                    //Test
+                    //obj.close();
+                    obj.initialize(this, ac, currPortId, rCmds);
+                    ArdConnector.sleep(2000);
+                    problem = false;
+                }
+
+                break;
+            } else {
+                obj.close();
+                problem = true;
+            }
+
+        }
+    }
+
+    public void simpleInit(SerialClass obj) throws InterruptedException {
+        Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
+        while (portEnum.hasMoreElements()) {
+            CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+            if (currPortId.getName().equals(port)) {
+                            //Test
+                //obj.close();
+                obj.initialize(this, ac, currPortId, rCmds);
+                ArdConnector.sleep(2000);
+                problem = false;
+            }
+
+        }
     }
 
 }

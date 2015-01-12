@@ -5,6 +5,8 @@
  */
 package Queue;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Holds all the relevant information in regards to a query.
  *
@@ -20,8 +22,9 @@ public class Item {
  answer to the query synchronized methods are read/written by different
  threads
      */
-    private boolean newOrOld = true;
-    private boolean answered = false;//testing: true, default: false
+    private AtomicBoolean newOrOld = new AtomicBoolean(true);
+    private AtomicBoolean answered = new AtomicBoolean(false);//testing: true, default: false
+    private AtomicBoolean userChanged = new AtomicBoolean(false);
     private String command = null;
     private String reply;
     private String address;
@@ -48,7 +51,7 @@ public class Item {
 //       
         System.out.println(command+" received in the Item class.");
         if (command.contains("test")) {
-            answered = true;
+            answered.set(true);
             reply = command;
         }
     }
@@ -59,8 +62,8 @@ public class Item {
      *
      * @return A boolean. False = Not answered True = Answered
      */
-    public synchronized Boolean isAnswered() {
-            return answered;
+    public Boolean isAnswered() {
+            return answered.get();
     }
 
     /**
@@ -104,8 +107,8 @@ public class Item {
      * Implemented automatically, should not be called. This method is already
      * synchronized.
      */
-    public synchronized void makeOld() {
-            newOrOld = !newOrOld;
+    public void makeOld() {
+            newOrOld.set(!newOrOld.get());
     }
 
     /**
@@ -116,7 +119,7 @@ public class Item {
      */
     public synchronized void setReply(String message) {
             reply = message;
-            answered = true;
+            answered.set(true);
             notify();
     }
 
@@ -126,8 +129,8 @@ public class Item {
      *
      * @return A boolean, false = old; true = new;
      */
-    public synchronized Boolean getState() {
-            return newOrOld;
+    public Boolean getState() {
+            return newOrOld.get();
     }
 
     /**
@@ -193,6 +196,11 @@ public class Item {
      */
     public synchronized void setUser(String user) {
             this.user = user;
+            userChanged.set(true);
+    }
+    
+    public boolean getUserChanged(){
+        return userChanged.get();
     }
     
     
@@ -213,5 +221,4 @@ public class Item {
    public synchronized String getSessionKey() {
             return sessionkey;
     }
-
 }
