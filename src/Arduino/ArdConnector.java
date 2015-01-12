@@ -30,7 +30,7 @@ public class ArdConnector extends Thread {
     private final AtomicBoolean quit = new AtomicBoolean(false);
     private final AtomicBoolean working = new AtomicBoolean(false);
     private final AtomicBoolean finished = new AtomicBoolean(false);
-    private boolean problem = false;
+    private boolean problem = true;
     private final String defaultCommand;
     private final String[] rCmds;
     private final int retryTime = 3;
@@ -63,7 +63,7 @@ public class ArdConnector extends Thread {
     public void run() {
         try {
             SerialClass obj = new SerialClass();
-            simpleInit(obj);
+            if(!restart){simpleInit(obj);}
             while (!quit.get()) {
                 if(restart){restart(obj);}
                 if (query.get() && !problem) {
