@@ -35,6 +35,7 @@ public class ArdConnector extends Thread {
     private final String[] rCmds;
     private final int retryTime = 3;
     private final int timeOut = 15;
+    private final boolean restart;
 
     /**
      * Sets the port that the software will communicate with.
@@ -43,12 +44,14 @@ public class ArdConnector extends Thread {
      * on my pc)
      * @param defaultCommand Restricted command
      * @param rCmds 0: divider 1: error command 2: autocheck 3: end of autocheck
+     * @param restart If you want the server to attempt to reconnect on disconnect.
      */
-    public ArdConnector(String port, String defaultCommand, String[] rCmds) {
+    public ArdConnector(String port, String defaultCommand, String[] rCmds, boolean restart) {
         this.port = port;
         this.defaultCommand = defaultCommand;
         command = defaultCommand;
         this.rCmds = rCmds;
+        this.restart = restart;
     }
 
     /**
@@ -62,7 +65,7 @@ public class ArdConnector extends Thread {
             SerialClass obj = new SerialClass();
             simpleInit(obj);
             while (!quit.get()) {
-                restart(obj);
+                if(restart){restart(obj);}
                 if (query.get() && !problem) {
                     setQuery(false);
                     setWorking(true);
