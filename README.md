@@ -9,11 +9,13 @@ We have developped a library for the purpose of keeping things simple by not get
 What's next:
 ------------
 
-Bug fixing, stress testing, optimization, redoing JDOC.
+Redoing JDOC.
 
 
 Version Revisions:
 -------------------
+Version 1.3: Changed the way the user is logged out. Changed the arduino reconnect functionality because it wasn't working on windows 7, but was working on windows 8.1. Finalized for the presentation. JDOC still needs to be done.
+
 Version 1.2e: Reduced the Server sockets to a single server socket that accepts both TLS and plain sockets.
 
 Version 1.2d: Implemented an Executor Service and fixed some bugs.
