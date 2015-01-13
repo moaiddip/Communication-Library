@@ -13,7 +13,7 @@ package Arduino;
  * @author Sozos
  */
 import Server.ConnectionHandler;
-import Queue.ACQueue;
+import Queue.SimpleQueue;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -30,8 +30,8 @@ public class SerialClass implements SerialPortEventListener {
     public SerialPort serialPort;
     public BufferedReader input;
     public OutputStream output;
-    private ArdConnector ard;
-    private ACQueue ac;
+    private ArduinoHandler ard;
+    private SimpleQueue ac;
     private String[] parts;
     private String[] parts2;
     private String divider; 
@@ -47,7 +47,7 @@ public class SerialClass implements SerialPortEventListener {
      */
     public final int DATA_RATE = 38400;
 
-    public void initialize(ArdConnector ard, ACQueue ac, CommPortIdentifier portId, String[] rCmds) {
+    public void initialize(ArduinoHandler ard, SimpleQueue ac, CommPortIdentifier portId, String[] rCmds) {
         this.ard = ard;
         this.ac = ac;
         divider = rCmds[0];

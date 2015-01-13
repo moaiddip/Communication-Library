@@ -6,7 +6,7 @@
 package Server;
 
 import Queue.Item;
-import Queue.WriteQueue;
+import Queue.DynamicQueue;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,7 +30,7 @@ public class ConnectionHandler extends Thread {
     private PrintWriter out;
     private String remoteSocketAddress;
     private SSLSocket sslsocket;
-    private final WriteQueue que;
+    private final DynamicQueue que;
     private String user = null;
     private int userPrio = -1;
     private final String exitCmd = "isAboutToExit";
@@ -46,13 +46,13 @@ public class ConnectionHandler extends Thread {
      * @param sslsocket Requires an sslsocket with an established connection.
      * @param que Requires a shared instance of the WriteQueue class.
      */
-    public ConnectionHandler(SSLSocket sslsocket, WriteQueue que) {
+    public ConnectionHandler(SSLSocket sslsocket, DynamicQueue que) {
         this.sslsocket = sslsocket;
         this.que = que;
         mode = 0;
     }
 
-    public ConnectionHandler(Socket socket, WriteQueue que) {
+    public ConnectionHandler(Socket socket, DynamicQueue que) {
         this.socket = socket;
         this.que = que;
         mode = 1;

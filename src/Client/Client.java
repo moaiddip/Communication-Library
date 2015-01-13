@@ -5,7 +5,7 @@
  */
 package Client;
 
-import Queue.ACQueue;
+import Queue.SimpleQueue;
 import Server.ConnectionHandler;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -40,7 +40,7 @@ public class Client extends Thread {
     private String command; // default command
     private String reply = null;
     private final AtomicBoolean query = new AtomicBoolean(false);
-    private final ACQueue cQue = new ACQueue(); //arduino client queue
+    private final SimpleQueue cQue = new SimpleQueue(); //arduino client queue
     private final AtomicBoolean quit = new AtomicBoolean(false);
     private final AtomicBoolean working = new AtomicBoolean(false);
     private final AtomicBoolean finished = new AtomicBoolean(false);
@@ -356,7 +356,7 @@ public class Client extends Thread {
         return respond;
     }
 
-    public ACQueue getClientQueue() {
+    public SimpleQueue getClientQueue() {
         return cQue;
     }
 

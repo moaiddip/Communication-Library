@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author Sozos Assias
  */
-public final class WriteQueue {
+public final class DynamicQueue {
 
     /**
      * Returns an atomic boolean responsible to show if a new command was added.
@@ -41,7 +41,7 @@ public final class WriteQueue {
     private long secondTime;
     private int replaceInt = 1;
 
-    public WriteQueue(long curTime) {
+    public DynamicQueue(long curTime) {
         this.firstTime = curTime / 1000;
         secondTime = firstTime;
         initialize();

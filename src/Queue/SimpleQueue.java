@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author Sozos
  */
-public class ACQueue {
+public class SimpleQueue {
 
     /**
      * Returns a boolean showing whether a new command was added to the queue.

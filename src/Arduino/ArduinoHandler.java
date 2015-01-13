@@ -6,7 +6,7 @@
 package Arduino;
 
 import Server.ConnectionHandler;
-import Queue.ACQueue;
+import Queue.SimpleQueue;
 import gnu.io.CommPortIdentifier;
 import java.util.Calendar;
 import java.util.Enumeration;
@@ -20,9 +20,9 @@ import java.util.logging.Logger;
  *
  * @author Sozos Assias
  */
-public class ArdConnector extends Thread {
+public class ArduinoHandler extends Thread {
 
-    private final ACQueue ac = new ACQueue();
+    private final SimpleQueue ac = new SimpleQueue();
     private String port;
     private String reply = null;
     private String command;
@@ -46,7 +46,7 @@ public class ArdConnector extends Thread {
      * @param rCmds 0: divider 1: error command 2: autocheck 3: end of autocheck
      * @param restart If you want the server to attempt to reconnect on disconnect.
      */
-    public ArdConnector(String port, String defaultCommand, String[] rCmds, boolean restart) {
+    public ArduinoHandler(String port, String defaultCommand, String[] rCmds, boolean restart) {
         this.port = port;
         this.defaultCommand = defaultCommand;
         command = defaultCommand;
@@ -82,6 +82,7 @@ public class ArdConnector extends Thread {
                     while ((cal.getTimeInMillis() / 1000) - time > retryTime || !isWorking());
                     if (!isWorking()) {
                         System.out.println("Did not receive an answer from the arduino, stopping.");
+                        setCommandDefault();
                         setReply("no_answer!");
                         setWorking(false);
                         setFinished(true);
@@ -177,6 +178,7 @@ public class ArdConnector extends Thread {
             }
         }
         command = aCommand;
+        finished.set(false);
         query.set(true);
     }
 
@@ -216,7 +218,7 @@ public class ArdConnector extends Thread {
         finished.set(aFinished);
     }
 
-    public ACQueue getArduinoQueue() {
+    public SimpleQueue getArduinoQueue() {
         return ac;
     }
 
@@ -235,7 +237,7 @@ public class ArdConnector extends Thread {
                     //Test
                     //obj.close();
                     obj.initialize(this, ac, currPortId, rCmds);
-                    ArdConnector.sleep(2000);
+                    ArduinoHandler.sleep(2000);
                     problem = false;
                 }
 
@@ -256,7 +258,7 @@ public class ArdConnector extends Thread {
                             //Test
                 //obj.close();
                 obj.initialize(this, ac, currPortId, rCmds);
-                ArdConnector.sleep(2000);
+                ArduinoHandler.sleep(2000);
                 problem = false;
             }
 

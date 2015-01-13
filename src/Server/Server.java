@@ -5,7 +5,7 @@
  */
 package Server;
 
-import Queue.WriteQueue;
+import Queue.DynamicQueue;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -33,7 +33,7 @@ public class Server extends Thread {
 
     private final ConcurrentHashMap<Integer, ConnectionHandler> threads = new ConcurrentHashMap<Integer, ConnectionHandler>();
 
-    private final WriteQueue que;
+    private final DynamicQueue que;
 
     /**
      *
@@ -73,7 +73,7 @@ public class Server extends Thread {
         this.keystore = keystore;
         this.keystorePass = keystorePass;
         Calendar cal = Calendar.getInstance();
-        que = new WriteQueue(cal.getTimeInMillis());
+        que = new DynamicQueue(cal.getTimeInMillis());
         executor = Executors.newCachedThreadPool();
     }
 
@@ -126,7 +126,7 @@ public class Server extends Thread {
 
     }
 
-    public WriteQueue getTheQueue() {
+    public DynamicQueue getTheQueue() {
         return que;
     }
     public boolean quit(){
