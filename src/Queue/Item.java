@@ -22,9 +22,9 @@ public class Item {
  answer to the query synchronized methods are read/written by different
  threads
      */
-    private AtomicBoolean newOrOld = new AtomicBoolean(true);
-    private AtomicBoolean answered = new AtomicBoolean(false);//testing: true, default: false
-    private AtomicBoolean userChanged = new AtomicBoolean(false);
+    private final AtomicBoolean newOrOld = new AtomicBoolean(true);
+    private final AtomicBoolean answered = new AtomicBoolean(false);//testing: true, default: false
+    private final AtomicBoolean userChanged = new AtomicBoolean(false);
     private String command = null;
     private String reply;
     private String address;
@@ -79,6 +79,7 @@ public class Item {
      * gets the age for priority queues that use aging
      * 
      * 
+     * @return 
      */
     public synchronized int  getAging() {
         return aging;

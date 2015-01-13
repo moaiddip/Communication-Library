@@ -233,15 +233,15 @@ public class Client extends Thread {
      * alive.
      */
     public void quitCommunication() {
-        setCommand("isAboutToExit");
+        setCommand(exitCmd);
         quit.set(true);
     }
 
     public void closeCommunication() throws IOException {
-        if(sslsocket!=null){
+        if(sslsocket!=null && !sslsocket.isClosed()){
             sslsocket.close();
         }
-        else if (socket!=null){
+        else if (socket!=null && !socket.isClosed()){
             socket.close();
         }
         if (in!=null){

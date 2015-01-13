@@ -7,6 +7,7 @@ package Server;
 
 import Queue.WriteQueue;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.KeyStore;
@@ -14,6 +15,7 @@ import java.util.Calendar;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.net.ssl.KeyManagerFactory;
@@ -47,10 +49,11 @@ public class Server extends Thread {
     private final String keystore;
     private final String keystorePass;
     private final String keypass;
-    private final boolean listening = true;
+    private final AtomicBoolean listening = new AtomicBoolean(true);
     private ServerSocket serverSocket;
     private final int port;
     private ExecutorService executor = null;
+    private final AtomicBoolean terminated = new AtomicBoolean(false);
 
     /**
      * Creates an SSLServerSocket and then it creates a loop that creates new
@@ -62,8 +65,6 @@ public class Server extends Thread {
      * @param keystore The path to and the name of a keystore.
      * @param keystorePass The password of the keystore.
      * @param keypass The password of the private key in the keystore.
-     * @param logoutCmd The logout command. If null the server will not attempt
-     * to logout automatically.
      */
     public Server(int port, int locality, String keystore, String keystorePass, String keypass) {
         this.port = port;
@@ -97,11 +98,11 @@ public class Server extends Thread {
             SSLSocketFactory socketFactory = context.getSocketFactory();
             serverSocket = new ServerSocket(port, 100);
             System.out.println("Server Socket created. Listening.");
-            while (listening) {
+            while (listening.get()) {
                 Socket socket = serverSocket.accept();
-                ConnectionHandler ch = null;
+                ConnectionHandler ch;
                 if (socket.getInetAddress().isLoopbackAddress() && locality==0) {
-                    ch = new ConnectionHandler((Socket) serverSocket.accept(), que);
+                    ch = new ConnectionHandler((Socket) socket, que);
                 } else {
                     SSLSocket SslSock = (SSLSocket) socketFactory.createSocket(socket, socket.getInetAddress().toString(), socket.getPort(), true);
                     SslSock.setUseClientMode(false);
@@ -111,12 +112,26 @@ public class Server extends Thread {
                 executor.submit(ch);
             }
         } catch (Exception ex) {
-            Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if(serverSocket!=null || !serverSocket.isClosed()){
+                try {
+                    serverSocket.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            terminated.set(true);
         }
 
     }
 
     public WriteQueue getTheQueue() {
         return que;
+    }
+    public boolean quit(){
+        listening.set(false);
+        while(!terminated.get());
+        return true;
     }
 }
