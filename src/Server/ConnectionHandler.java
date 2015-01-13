@@ -74,24 +74,20 @@ public class ConnectionHandler extends Thread {
         }
         if (threads.isEmpty()) {
             threads.put(0, this);
-            System.out.println("Placed client in spot no.: 0.");
 
         } else {
             boolean foundSpot = false;
             for (int i = 0; i < threads.size(); i++) {
                 if (threads.get(i) == null) {
                     threads.put(i, this);
-                    System.out.println("Placed client in spot no.:" + i + ".");
                     foundSpot = true;
                 } else if (!threads.get(i).isAlive()) {
                     threads.put(i, this);
-                    System.out.println("Placed client in spot no.:" + i + ".");
                     foundSpot = true;
                 }
             }
             if (!foundSpot) {
                 threads.put(threads.size(), this);
-                System.out.println("Placed client in spot no.:" + (threads.size() - 1) + ".");
             }
         }
     }
@@ -107,12 +103,12 @@ public class ConnectionHandler extends Thread {
             while (listener) {
                 //Get string from the input stream
                 while ((string = in.readLine()) != null) {
-                    System.out.println("Received query.");
                     //exit is the quit command, replies with ok
 
                     if (exitCmd.equals(string)) {
+                        out.print(exitCmd);
                         listener = false;
-                        out.println(exitCmd);
+                        break;
                     } else {
                         //Puts message in queue and waits until the message is
                         //Answered, then it sends the answer back to the client
@@ -127,14 +123,12 @@ public class ConnectionHandler extends Thread {
                                 item.wait();
                             }
                         }
-                        System.out.println("Answer processed, preparing to reply.");
 
-                        string = item.getReply()+replyCmd;
+                        string = item.getReply() + replyCmd;
                         if (item.getUserChanged()) {
                             user = item.getUser();
                             userPrio = item.getUserPrio();
                         }
-                        System.out.println("Replying.");
                         out.println(string);
                         item.makeOld();
                     }
@@ -144,16 +138,20 @@ public class ConnectionHandler extends Thread {
         } catch (Exception ex) {
             Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
+            System.out.println("Quiting ConnectionHandler thread with ip: "+remoteSocketAddress);
             terminated.set(true);
             try {
-                if (mode == 0) {
+                if (sslsocket != null) {
                     sslsocket.close();
-
-                } else {
+                } else if (socket != null) {
                     socket.close();
                 }
-                in.close();
-                out.close();
+                if (in != null) {
+                    in.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
             } catch (IOException ex) {
                 Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -167,8 +165,9 @@ public class ConnectionHandler extends Thread {
      * in.
      */
     public synchronized String getUser() {
-        return user; 
+        return user;
     }
+
     /**
      * Sends a status update to this client.
      *
@@ -177,7 +176,6 @@ public class ConnectionHandler extends Thread {
     public void sendUpdate(String status) {
         if (!terminated.get()) {
             out.println(status);
-            System.out.println("Sending status update: " + status);
         }
     }
 }

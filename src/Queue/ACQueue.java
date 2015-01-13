@@ -64,13 +64,11 @@ public class ACQueue {
             for (int i = 0; i < getItems().size(); i++) {
                 if (getItems().get(i)==null){
                     getItems().put(i, command);
-                    System.out.println("Replacing command in the Arduino/Client queue");
                     hasAddedCommands.set(true);
                     return getItems().get(i);
                 }
                 else if ("".equals(getItems().get(i))) { //all "empty" entries should be "".
                     getItems().put(i, command);
-                    System.out.println("Replacing command in the Arduino/Client queue");
                     hasAddedCommands.set(true);
                     return getItems().get(i);
                 }
@@ -78,7 +76,6 @@ public class ACQueue {
         }
         //creates new entry
         getItems().put(items.size(), command);
-        System.out.println("Putting new command in the Arduino/Client queue");
         hasAddedCommands.set(true);
         return getItems().get(items.size() - 1);
     }

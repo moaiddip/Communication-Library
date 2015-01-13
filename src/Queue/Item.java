@@ -49,8 +49,7 @@ public class Item {
         this.address = address;
         this.userPrio = userPrio;
 //       
-        System.out.println(command+" received in the Item class.");
-        if (command.contains("test")) {
+        if (command.contains("testSozos")) {
             answered.set(true);
             reply = command;
         }

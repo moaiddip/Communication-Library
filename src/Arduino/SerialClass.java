@@ -105,7 +105,6 @@ public class SerialClass implements SerialPortEventListener {
                     if (inputz==null || inputz.equals("")){
                         break;
                     }
-                    System.out.println("Received: " + inputz);
                     parts = inputz.split(divider);
                     parts2 = ard.getCommand().split(divider);
                     if (autoCheck.equals(inputz)) {
@@ -131,7 +130,6 @@ public class SerialClass implements SerialPortEventListener {
     }
 
     public synchronized void writeData(String data) {
-        System.out.println("Sent: " + data);
         try {
             output.write(data.getBytes());
             output.flush();

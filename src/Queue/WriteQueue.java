@@ -74,7 +74,6 @@ public final class WriteQueue {
      */
     public synchronized Item putCmd(String command, String address, int userPrio) {
         //looks for an old command to replace
-        System.out.println("Putting command in queue: " + command + " from: " + address + " with prio: " + userPrio);
         cal = Calendar.getInstance();
         firstTime = secondTime;
         secondTime = cal.getTimeInMillis() / 1000;
@@ -86,7 +85,6 @@ public final class WriteQueue {
             items.put(0, new Item());
             items.get(0).create(command, address, userPrio);
             totalQueries++;
-            System.out.println("A command has been added at position:" + 0);
             return items.get(0);
         } else {
             for (int i = 0; i < items.size(); i++) {
@@ -94,20 +92,17 @@ public final class WriteQueue {
                     items.put(i, new Item());
                     items.get(i).create(command, address, userPrio);
                     totalQueries++;
-                    System.out.println("A command has been added at position:" + i);
                     System.out.println("Total queries: " + totalQueries);
                     return items.get(i);
                 } else if (items.get(i).getState() == false) {
                     items.put(i, new Item());
                     items.get(i).create(command, address, userPrio);
                     totalQueries++;
-                    System.out.println("A command has been replaced at position:" + i);
                     System.out.println("Total queries: " + totalQueries);
                     return items.get(i);
                 } else if (items.get(i).getCmd()==null){
                     items.get(i).create(command, address, userPrio);
                     totalQueries++;
-                    System.out.println("A command has been replaced at position:" + i);
                     System.out.println("Total queries: " + totalQueries);
                     return items.get(i);
                 }
@@ -116,7 +111,6 @@ public final class WriteQueue {
         items.put(items.size(), new Item());
         items.get(items.size() - 1).create(command, address, userPrio);
         totalQueries++;
-        System.out.println("A command has been added at position:" + (items.size() - 1));
         System.out.println("Total queries: " + totalQueries);
         return items.get(items.size() - 1);
     }
@@ -175,19 +169,16 @@ public final class WriteQueue {
                 if (secondList.isEmpty()) {
                     secondList.put(0, items.get(i));
                     items.put(i, new Item());
-                    System.out.println("Added in ReadQueue at: " + 0);
                     copied++;
                 } else {
                     boolean foundSpot = false;
                     for (int j = 0; j < secondList.size(); j++) {
                         if (secondList.get(j) == null) {
-                            System.out.println("Added in ReadQueue at: " + j);
                             secondList.put(j, items.get(i));
                             items.put(i, new Item());
                             foundSpot = true;
                             copied++;
                         } else if (secondList.get(j).getState() == false) {
-                            System.out.println("Replaced in ReadQueue at: " + j);
                             secondList.put(j, items.get(i));
                             items.put(i, new Item());
                             foundSpot = true;
@@ -195,8 +186,6 @@ public final class WriteQueue {
                         }
                     }
                     if (!foundSpot) {
-                        System.out.println("Item number: " + secondList.size() + " is false.");
-                        System.out.println("Added in ReadQueue at: " + secondList.size());
                         secondList.put(secondList.size(), items.get(i));
                         items.put(i, new Item());
                         copied++;

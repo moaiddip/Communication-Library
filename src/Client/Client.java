@@ -51,6 +51,7 @@ public class Client extends Thread {
     private final String exitCmd = "isAboutToExit";
     private final String replyCmd = "isReply";
     private final int timeOut = 15;
+    private Socket socket;
 
     /**
      * The first constructor for computers.
@@ -134,7 +135,7 @@ public class Client extends Thread {
                 in = new BufferedReader(
                         new InputStreamReader(sslsocket.getInputStream()));
             } else {
-                Socket socket = new Socket(url, port);
+                socket = new Socket(url, port);
                 System.out.println("Socket created.");
                 out
                         = new PrintWriter(socket.getOutputStream(), true);
@@ -172,7 +173,6 @@ public class Client extends Thread {
                 try {
                     while ((input = in.readLine()) != null) {
 
-                        System.out.println("Received: " + input);
                         if (input.contains(replyCmd)) {
                             input = input.replace(replyCmd, "");
                             reply = input;
@@ -187,10 +187,19 @@ public class Client extends Thread {
                 } catch (Exception ex) {
                     System.out.println("Cannot read from the socket. Closing.");
                     conError.set(true);
-                    closeCommunication();
+                    quit.set(true);
+                    try {
+                        closeCommunication();
+                    } catch (IOException ex1) {
+                        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex1);
+                    }
                 }
             }
-            closeCommunication();
+            try {
+                closeCommunication();
+            } catch (IOException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -213,7 +222,6 @@ public class Client extends Thread {
                     setQuery(false);
                     setWorking(true);
                     setFinished(false);
-                    System.out.println("Sending command to the server.");
                     out.println(command);
                 }
             }
@@ -226,21 +234,23 @@ public class Client extends Thread {
      */
     public void quitCommunication() {
         setCommand("isAboutToExit");
-        getReply();
         quit.set(true);
     }
 
-    public void closeCommunication() {
-        if (!quit.get()) {
-            try {
-                sslsocket.close();
-                in.close();
-                out.close();
-                quit.set(true);
-            } catch (IOException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            }
+    public void closeCommunication() throws IOException {
+        if(sslsocket!=null){
+            sslsocket.close();
         }
+        else if (socket!=null){
+            socket.close();
+        }
+        if (in!=null){
+            in.close();
+        }
+        if (out!=null){
+            out.close();
+        }
+        System.out.println("Closed the socket.");
 
     }
 
