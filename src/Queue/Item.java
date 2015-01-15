@@ -198,26 +198,41 @@ public class Item {
             this.user = user;
             userChanged.set(true);
     }
-    
+    /**
+     * Returns a boolean that indicates if the user was changed.
+     * @return true: changed false: not changed
+     */
     public boolean getUserChanged(){
         return userChanged.get();
     }
     
-    
+    /**
+     * Sets the authorization key as requested by the server's group.
+     * @param authsessionkey 
+     */
     public synchronized void setAuthSessionKey(String authsessionkey) {
             this.authsessionkey = authsessionkey;
     }
     
-    
+    /**
+     * Returns the authorization key as requested by the server's group.
+     * @return 
+     */
    public synchronized String getAuthSessionKey() {
             return authsessionkey;
     }
-   
+   /**
+     * Sets the session key as requested by the server's group.
+     * @param sessionkey
+     */
    public synchronized void setSessionKey(String sessionkey) {
             this.sessionkey = sessionkey;
     }
     
-    
+    /**
+     *  Returns the session key as requested by the server's group.
+     * @return 
+     */
    public synchronized String getSessionKey() {
             return sessionkey;
     }

@@ -38,7 +38,7 @@ public class ArduinoHandler extends Thread {
     private final boolean restart;
 
     /**
-     * Sets the port that the software will communicate with.
+     * Sets the parameters required for the Handler to work correctly.
      *
      * @param port The port name as a string. eg. "COM3" (which is the default
      * on my pc)
@@ -136,7 +136,7 @@ public class ArduinoHandler extends Thread {
 
     /**
      * Returns the answer from the arduino.
-     *
+     * Has a timeout
      * @return A string with the answer.
      */
     public String getReply() {
@@ -166,7 +166,7 @@ public class ArduinoHandler extends Thread {
     /**
      * Sets a new command to be processed and sets the query phase to true if it
      * is false, indicating that there is a command waiting.
-     *
+     *  Has a timeout
      * @param aCommand The command to be processed by the arduino.
      */
     public synchronized void setCommand(String aCommand) {
@@ -217,16 +217,26 @@ public class ArduinoHandler extends Thread {
     public void setFinished(Boolean aFinished) {
         finished.set(aFinished);
     }
-
+    /**
+     * Returns the queue that status updates are forwarded to
+     * @return A SimpleQueue class that contains a hashmap
+     */
     public SimpleQueue getArduinoQueue() {
         return ac;
     }
-
+    /**
+     * Changes the port of the arduino and tries to connect to the new port.
+     * @param port The name of the new port
+     */
     public synchronized void setPort(String port) {
         this.port = port;
         problem = true;
     }
-
+    /**
+     * The function that connects to and also reconnects to an arduino.
+     * @param obj The SerialClass instance connected to an arduino.
+     * @throws InterruptedException 
+     */
     public void restart(SerialClass obj) throws InterruptedException {
         //Doesn't work on windows 7. Works on windows 8.1
         Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
@@ -249,7 +259,11 @@ public class ArduinoHandler extends Thread {
 
         }
     }
-
+    /**
+     * A simple method that connects to an arduino
+     * @param obj The instance of a SerialClass that handles a connection to an arduino.
+     * @throws InterruptedException 
+     */
     public void simpleInit(SerialClass obj) throws InterruptedException {
         Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
         while (portEnum.hasMoreElements()) {

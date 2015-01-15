@@ -25,7 +25,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 /**
- * This is the class used to create an SSLSocket for the client. It is a thread.
+ * This is the class used to create a socket for the client and communicate with the server. It is a thread.
  *
  * @author Sozos Assias
  */
@@ -85,7 +85,11 @@ public class Client extends Thread {
         this.trustStoreStream = truststore;
         this.trustpass = trustpass;
     }
-
+    /**
+     * Creates a plain socket, used for applications running on the same computer as the server.
+     * @param url The url (or in this case 127.0.0.1)
+     * @param port The port
+     */
     public Client(String url, int port) {
         device = 2;
         this.url = url;
@@ -93,7 +97,7 @@ public class Client extends Thread {
     }
 
     /**
-     * Creates an SSLSocket and creates 2 threads to send and receive commands.
+     * Creates an socket and creates 2 threads to send and receive commands.
      *
      *
      */
@@ -236,7 +240,10 @@ public class Client extends Thread {
         setCommand(exitCmd);
         quit.set(true);
     }
-
+    /**
+     * Closes communication with the server
+     * @throws IOException 
+     */
     public void closeCommunication() throws IOException {
         if(sslsocket!=null && !sslsocket.isClosed()){
             sslsocket.close();
@@ -355,11 +362,17 @@ public class Client extends Thread {
         reply = null;
         return respond;
     }
-
+    /**
+     * Returns the SimpleQueue instance that push messages are saved in.
+     * @return SimpleQueue instance
+     */
     public SimpleQueue getClientQueue() {
         return cQue;
     }
-
+    /**
+     * A boolean indicating if the connection is still alive
+     * @return true: crashed false: alive
+     */
     public Boolean getConError() {
         return conError.get();
     }

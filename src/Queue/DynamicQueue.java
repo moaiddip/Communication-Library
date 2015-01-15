@@ -210,18 +210,18 @@ public final class DynamicQueue {
     }
 
     /**
-     * Gets this thing
-     *
-     * @return long
+     * Returns the time that the dynamic queue compares to, to determine when to prepare queries.
+     * 
+     * @return long The refresh rate is the average time it takes for the server to process a command.
      */
     public synchronized long getRefreshRate() {
         return refresh;
     }
 
     /**
-     * Returns this thing.
-     *
-     * @param refresh long
+     * Sets the time that the dynamic queue compares to, to determine when to prepare queries.
+     * 
+     * @param refresh The refresh rate is the average time it takes for the server to process a command.
      */
     public synchronized void setRefreshRate(long refresh) {
         this.refresh = refresh;

@@ -24,7 +24,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 /**
- * The class used to create an SSLServerSocket and listen to connection
+ * The class used to create a ServerSocket and listen to connection
  * requests. This is the server.
  *
  * @author Sozos Assias
@@ -76,7 +76,9 @@ public class Server extends Thread {
         que = new DynamicQueue(cal.getTimeInMillis());
         executor = Executors.newCachedThreadPool();
     }
-
+    /**
+     * Initializes the ServerSocket and creates a loop that listens for clients.
+     */
     @Override
     public void run() {
 
@@ -125,10 +127,17 @@ public class Server extends Thread {
         }
 
     }
-
+    /**
+     * Returns the DynamicQueue used to receive the hashmap with queries to be processed.
+     * @return DynamicQueue instance
+     */
     public DynamicQueue getTheQueue() {
         return que;
     }
+    /**
+     * Quits the server.
+     * @return Returns true when the server shut down successfully.
+     */
     public boolean quit(){
         listening.set(false);
         while(!terminated.get());

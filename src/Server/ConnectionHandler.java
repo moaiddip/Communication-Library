@@ -41,23 +41,31 @@ public class ConnectionHandler extends Thread {
 
     /**
      * Handles communication with each client. It extends Thread. Implemented
-     * automatically in the Server class. Should not be called.
+     * automatically in the Server class.
      *
      * @param sslsocket Requires an sslsocket with an established connection.
-     * @param que Requires a shared instance of the WriteQueue class.
+     * @param que Requires a shared instance of the DynamicQueue class.
      */
     public ConnectionHandler(SSLSocket sslsocket, DynamicQueue que) {
         this.sslsocket = sslsocket;
         this.que = que;
         mode = 0;
     }
-
+    /**
+     * Handles communication with the unsecure clients. It extends Thread.
+     * Implemented automatically in the Server class.
+     * @param socket The plain socket
+     * @param que Requires a shared instance of the DynamicQueue class.
+     */
     public ConnectionHandler(Socket socket, DynamicQueue que) {
         this.socket = socket;
         this.que = que;
         mode = 1;
     }
-
+    /**
+     * Initializes IO and puts the ConnectionHandler in a hashmap.
+     * @param threads Requires the hashmap, passed on by the Server class.
+     */
     public synchronized void init(ConcurrentHashMap<Integer, ConnectionHandler> threads) {
         try {
             if (mode == 0) {
@@ -91,7 +99,9 @@ public class ConnectionHandler extends Thread {
             }
         }
     }
-
+    /**
+     * Creates a loop that receives commands, puts them in a queue and then replies when an answer is formed.
+     */
     @Override
     public void run() {
         System.out.println("Connection with client " + remoteSocketAddress + " initialized successfully.");

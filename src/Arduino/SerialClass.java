@@ -46,7 +46,13 @@ public class SerialClass implements SerialPortEventListener {
      * Default bits per second for COM port.
      */
     public final int DATA_RATE = 38400;
-
+    /**
+     * Initializes connection to an arduino
+     * @param ard The ArduinoHandler this class is created in
+     * @param ac The SimpleQueue created in the ArduinoHandler
+     * @param portId The port
+     * @param rCmds The restricted commands
+     */
     public void initialize(ArduinoHandler ard, SimpleQueue ac, CommPortIdentifier portId, String[] rCmds) {
         this.ard = ard;
         this.ac = ac;
