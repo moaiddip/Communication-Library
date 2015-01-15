@@ -70,5 +70,5 @@ rayaq - Raya Bogoslovova
 Related projects:
 ----------------
 
-https://github.com/roguelikerogue/SmartHouseServlet The part created by our group to establish a connection between a webbrowser and the server.
+https://github.com/roguelikerogue/Servlet The part created by our group to establish a connection between a webbrowser and the server.
 
