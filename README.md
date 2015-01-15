@@ -6,14 +6,11 @@ The Smart House project consists of four groups: Devices group, Units group, Ser
 Our job is to be able to transmit the messages in a secure and efficient way between the arduinos-servers-clients and prepare a medium for the other groups to be able to access the messages sent. 
 We have developped a library for the purpose of keeping things simple by not getting the rest of the groups involved with more complex code and in turn provide them with simple methods to use.
 
-What's next:
-------------
-
-Redoing JDOC.
-
 
 Version Revisions:
 -------------------
+Version 1.4: Final version. JDOC updated.
+
 Version 1.3: Changed the way the user is logged out. Changed the arduino reconnect functionality because it wasn't working on windows 7, but was working on windows 8.1. Finalized for the presentation. JDOC still needs to be done.
 
 Version 1.2e: Reduced the Server sockets to a single server socket that accepts both TLS and plain sockets.
