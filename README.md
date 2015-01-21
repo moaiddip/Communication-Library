@@ -1,4 +1,4 @@
-ComProt
+Communication-Library
 =======
 
 We are the communication protocol group of HKR's last year's first semester project named Smart House.
